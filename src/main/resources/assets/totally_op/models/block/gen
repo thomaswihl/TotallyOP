@@ -1,0 +1,27 @@
+#!/bin/bash
+
+MODID=totally_op
+
+for i in "$@"
+do
+	echo Making $i.json block
+	
+	echo "{" >$i.json
+	echo "    \"parent\": \"block/cube_all\"," >>$i.json
+	echo "    \"textures\": {" >>$i.json
+	echo "        \"all\": \"$MODID:blocks/$i\"" >>$i.json
+	echo "    }" >>$i.json
+	echo "}" >>$i.json
+
+	echo Making $i.json item
+	echo "{" >../item/$i.json
+	echo "    \"parent\": \"$MODID:block/$i\"" >>../item/$i.json
+	echo "}" >>../item/$i.json
+
+	echo Making $i.json blockstate
+	echo "{" >../../blockstates/$i.json
+	echo "    \"variants\": {" >>../../blockstates/$i.json
+	echo "        \"normal\": { \"model\": \"$MODID:$i\" }" >>../../blockstates/$i.json
+	echo "    }" >>../../blockstates/$i.json
+	echo "}" >>../../blockstates/$i.json
+done

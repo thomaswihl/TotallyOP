@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "normal": { "model": "totally_op:peaceful_flower" },
+        "item": { "model": "totally_op:peaceful_flower" }
+    }
+}

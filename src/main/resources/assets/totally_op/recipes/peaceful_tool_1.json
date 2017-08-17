@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "totally_op",
+  "pattern": [
+    "fff",
+    "ftf",
+    "fff"
+  ],
+  "key": {
+    "f": {
+      "item": "totally_op:peaceful_flower"
+    },
+    "t": {
+      "item": "totally_op:peaceful_tool",
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "totally_op:peaceful_tool",
+    "data": 1
+  }
+}

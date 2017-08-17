@@ -1,0 +1,16 @@
+[
+{
+  "modid": "totally_op",
+  "name": "Totally Overpowered",
+  "description": "A mod for builders that don't want to play in creative mode.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Thomas Wihl"],
+  "credits": "The Forge and FML guys, for making this possible",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
