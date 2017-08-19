@@ -5,9 +5,10 @@ import java.io.File;
 import at.witho.totally_op.MobInteraction;
 import at.witho.totally_op.ModBlocks;
 import at.witho.totally_op.WorldGen;
-import at.witho.totally_op.blocks.BlockPeacefulFlower;
+import at.witho.totally_op.blocks.FarmingFlower;
+import at.witho.totally_op.blocks.PeacefulFlower;
 import at.witho.totally_op.config.Config;
-import at.witho.totally_op.items.ItemPeacefulTool;
+import at.witho.totally_op.items.PeacefulTool;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -44,13 +45,15 @@ public class CommonProxy {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
-    	event.getRegistry().register(new BlockPeacefulFlower());
+    	event.getRegistry().register(new PeacefulFlower());
+    	event.getRegistry().register(new FarmingFlower());
     }
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
     	event.getRegistry().register(new ItemBlock(ModBlocks.peacefulFlower).setRegistryName(ModBlocks.peacefulFlower.getRegistryName()));
-    	event.getRegistry().register(new ItemPeacefulTool());
+    	event.getRegistry().register(new ItemBlock(ModBlocks.farmingFlower).setRegistryName(ModBlocks.farmingFlower.getRegistryName()));
+    	event.getRegistry().register(new PeacefulTool());
     }
 
 }

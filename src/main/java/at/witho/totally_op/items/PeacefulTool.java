@@ -3,8 +3,6 @@ package at.witho.totally_op.items;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.apache.logging.log4j.Level;
-
 import at.witho.totally_op.TotallyOP;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -22,13 +20,13 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ItemPeacefulTool extends ItemTool {
+public class PeacefulTool extends ItemTool {
 	
 	protected ConcurrentLinkedQueue<BlockPos> blocksToBreak = new ConcurrentLinkedQueue<BlockPos>();
 	protected EntityPlayerMP player = null;
 	protected World world = null;
 	
-	public ItemPeacefulTool() {
+	public PeacefulTool() {
 		super(TotallyOP.peacefulMaterial, new HashSet<>());
 		setRegistryName("peaceful_tool");
 		setUnlocalizedName(TotallyOP.MODID + ".peaceful_tool");

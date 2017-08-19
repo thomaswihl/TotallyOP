@@ -6,6 +6,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -13,9 +14,9 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockPeacefulFlower extends BlockBush {
+public class PeacefulFlower extends BlockBush {
 	
-	public BlockPeacefulFlower() {
+	public PeacefulFlower() {
 		super(Material.PLANTS, Material.PLANTS.getMaterialMapColor());
 		setUnlocalizedName(TotallyOP.MODID + ".peaceful_flower");
 		setRegistryName("peaceful_flower");
@@ -32,12 +33,13 @@ public class BlockPeacefulFlower extends BlockBush {
 	@Override
     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
     {
-        return true;
+        IBlockState soil = worldIn.getBlockState(pos.down());
+        return soil.getBlock() != Blocks.AIR;
     }
 
 	@Override
     public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state) {
-		return true;
+		return canPlaceBlockAt(worldIn, pos);
 	}
     
 
