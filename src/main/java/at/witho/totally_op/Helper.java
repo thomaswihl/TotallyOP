@@ -1,19 +1,32 @@
 package at.witho.totally_op;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 
 public class Helper {
+//	public static ItemStack peacefulWoodTool = new ItemStack(ModItems.peacefulWoodTool);
+//	public static ItemStack peacefulIronTool = new ItemStack(ModItems.peacefulIronTool);
+	
+	public static boolean isPeacefulItem(ItemStack item) {
+		return !item.isEmpty() && (item.getItem() == ModItems.peacefulWoodTool || item.getItem() == ModItems.peacefulIronTool);
+	}
+	
 	public static boolean hasPeacefulItem(EntityPlayer player) {
 		InventoryPlayer inventory = player.inventory;
-		ItemStack lookFor = new ItemStack(ModItems.peacefulTool);
         for (ItemStack item : inventory.mainInventory) {
-            if (!item.isEmpty() && item.isItemEqualIgnoreDurability(lookFor)) return true;
+            if (isPeacefulItem(item)) return true;
         }
         for (ItemStack item : inventory.offHandInventory) {
-            if (!item.isEmpty() && item.isItemEqualIgnoreDurability(lookFor)) return true;
+            if (isPeacefulItem(item)) return true;
         }
+		return false;
+	}
+
+	public static boolean isSameBlock(Block a, Block b) {
+		if (a == b) return true;
+		if (a.getUnlocalizedName().equals(b.getUnlocalizedName())) return true;
 		return false;
 	}
 }

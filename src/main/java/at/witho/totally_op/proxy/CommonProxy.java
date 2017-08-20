@@ -8,7 +8,8 @@ import at.witho.totally_op.WorldGen;
 import at.witho.totally_op.blocks.FarmingFlower;
 import at.witho.totally_op.blocks.PeacefulFlower;
 import at.witho.totally_op.config.Config;
-import at.witho.totally_op.items.PeacefulTool;
+import at.witho.totally_op.items.PeacefulIronTool;
+import at.witho.totally_op.items.PeacefulWoodTool;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -23,7 +24,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber
 public class CommonProxy {
-    // Config instance
     public static Configuration config;
 
     public void preInit(FMLPreInitializationEvent e) {
@@ -53,7 +53,8 @@ public class CommonProxy {
     public static void registerItems(RegistryEvent.Register<Item> event) {
     	event.getRegistry().register(new ItemBlock(ModBlocks.peacefulFlower).setRegistryName(ModBlocks.peacefulFlower.getRegistryName()));
     	event.getRegistry().register(new ItemBlock(ModBlocks.farmingFlower).setRegistryName(ModBlocks.farmingFlower.getRegistryName()));
-    	event.getRegistry().register(new PeacefulTool());
+    	event.getRegistry().register(new PeacefulWoodTool());
+    	event.getRegistry().register(new PeacefulIronTool());
     }
 
 }

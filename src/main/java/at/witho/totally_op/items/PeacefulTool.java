@@ -3,7 +3,9 @@ package at.witho.totally_op.items;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import at.witho.totally_op.Helper;
 import at.witho.totally_op.TotallyOP;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
@@ -22,14 +24,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class PeacefulTool extends ItemTool {
 	
-	protected ConcurrentLinkedQueue<BlockPos> blocksToBreak = new ConcurrentLinkedQueue<BlockPos>();
+	protected ConcurrentLinkedQueue<BlockPos> blockPositionsToBreak = new ConcurrentLinkedQueue<BlockPos>();
+	protected Block blockToBreak = null;
 	protected EntityPlayerMP player = null;
 	protected World world = null;
 	
-	public PeacefulTool() {
-		super(TotallyOP.peacefulMaterial, new HashSet<>());
-		setRegistryName("peaceful_tool");
-		setUnlocalizedName(TotallyOP.MODID + ".peaceful_tool");
+	public PeacefulTool(ToolMaterial material, String name) {
+		super(material, new HashSet<>());
+		setRegistryName(name);
+		setUnlocalizedName(TotallyOP.MODID + "." + name);
 	}
 
     @SideOnly(Side.CLIENT)
@@ -52,23 +55,25 @@ public class PeacefulTool extends ItemTool {
 	@Override
     public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving) {
 		if (!worldIn.isRemote) {
-			boolean wasEmpty = blocksToBreak.isEmpty(); 
+			boolean wasEmpty = blockPositionsToBreak.isEmpty(); 
 			player = (EntityPlayerMP) entityLiving;
 			world = worldIn;
 			if (state.getBlock() == Blocks.AIR) return false;
-			if (player.isSneaking()) {
+			//TotallyOP.logger.log(Level.ERROR, "btb = " + blockToBreak + ", block = " + state.getBlock());
+			if (player.isSneaking() && (blockToBreak == null || Helper.isSameBlock(blockToBreak, state.getBlock()))) {
 				for (int x = -1; x < 2; ++x) {
 					for (int y = -1; y < 2; ++y) {
 						for (int z = -1; z < 2; ++z) {
 							if (x != 0 || y != 0 || z != 0) {
 								BlockPos p = pos.add(x, y, z);
 								IBlockState pstate = worldIn.getBlockState(p);
-								if (pstate.getBlock() == state.getBlock()) blocksToBreak.add(p);
+								if (Helper.isSameBlock(pstate.getBlock(), state.getBlock())) blockPositionsToBreak.add(p);
 							}
 						}
 					}
 				}
-				if (!blocksToBreak.isEmpty() && wasEmpty) {
+				if (!blockPositionsToBreak.isEmpty() && wasEmpty) {
+					blockToBreak = state.getBlock();
 					MinecraftForge.EVENT_BUS.register(this);
 				}
 			}
@@ -80,15 +85,16 @@ public class PeacefulTool extends ItemTool {
 	public void onPostServerTick(ServerTickEvent event) {
 		if (player == null || world == null) return;
 		BlockPos p;
-		while ((p = blocksToBreak.poll()) != null) {
+		while ((p = blockPositionsToBreak.poll()) != null) {
 			IBlockState pstate = world.getBlockState(p);
 			if (pstate.getBlock() != Blocks.AIR) {
 				player.interactionManager.tryHarvestBlock(p);
 				break;
 			}
 		}
-		if (blocksToBreak.isEmpty()) {
+		if (blockPositionsToBreak.isEmpty()) {
 			MinecraftForge.EVENT_BUS.unregister(this);
+			blockToBreak = null;
 		}
 	}
 }

@@ -2,19 +2,19 @@
   "type": "minecraft:crafting_shaped",
   "group": "totally_op",
   "pattern": [
-    " f ",
-    "fhf",
-    " f "
+    "fff",
+    " s ",
+    " s "
   ],
   "key": {
     "f": {
       "item": "totally_op:peaceful_flower"
     },
-    "h": {
-      "item": "minecraft:stone_hoe"
+    "s": {
+      "item": "minecraft:stick"
     }
   },
   "result": {
-    "item": "totally_op:farming_flower"
+    "item": "totally_op:peaceful_wood_tool"
   }
 }

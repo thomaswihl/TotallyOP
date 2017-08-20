@@ -17,7 +17,8 @@ public class TotallyOP
     public static final String MODID = "totally_op";
     public static final String VERSION = "1.0";
     
-    public static final ToolMaterial peacefulMaterial = EnumHelper.addToolMaterial("PEACEFUL", 3, 999999999, 1000F, -100F, 30);
+    public static final ToolMaterial peacefulWoodMaterial = EnumHelper.addToolMaterial("PEACEFUL_WOOD", 2, 200, 10F, -40F, 10);
+    public static final ToolMaterial peacefulIronMaterial = EnumHelper.addToolMaterial("PEACEFUL_IRON", 3, 5000, 100F, -40F, 30);
     
     @SidedProxy(clientSide = "at.witho.totally_op.proxy.ClientProxy", serverSide = "at.witho.totally_op.proxy.ServerProxy")
     public static CommonProxy proxy;
