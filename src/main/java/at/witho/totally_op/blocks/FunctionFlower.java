@@ -2,6 +2,7 @@ package at.witho.totally_op.blocks;
 
 import at.witho.totally_op.TotallyOP;
 import net.minecraft.block.BlockBush;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -19,7 +20,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class FunctionFlower extends BlockBush {
+public abstract class FunctionFlower extends BlockBush implements ITileEntityProvider {
 	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 	
 	FunctionFlower(String name) {

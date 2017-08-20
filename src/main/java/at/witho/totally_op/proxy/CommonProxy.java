@@ -4,9 +4,11 @@ import java.io.File;
 
 import at.witho.totally_op.MobInteraction;
 import at.witho.totally_op.ModBlocks;
+import at.witho.totally_op.TotallyOP;
 import at.witho.totally_op.WorldGen;
 import at.witho.totally_op.blocks.FarmingFlower;
 import at.witho.totally_op.blocks.PeacefulFlower;
+import at.witho.totally_op.blocks.tileentity.TileFarmingFlower;
 import at.witho.totally_op.config.Config;
 import at.witho.totally_op.items.PeacefulIronTool;
 import at.witho.totally_op.items.PeacefulWoodTool;
@@ -21,6 +23,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 @Mod.EventBusSubscriber
 public class CommonProxy {
@@ -47,6 +50,7 @@ public class CommonProxy {
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
     	event.getRegistry().register(new PeacefulFlower());
     	event.getRegistry().register(new FarmingFlower());
+    	GameRegistry.registerTileEntity(TileFarmingFlower.class, TotallyOP.MODID + "_farming_flower");
     }
 
     @SubscribeEvent
