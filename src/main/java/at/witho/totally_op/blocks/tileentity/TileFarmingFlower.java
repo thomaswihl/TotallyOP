@@ -1,13 +1,10 @@
 package at.witho.totally_op.blocks.tileentity;
 
-import org.apache.logging.log4j.Level;
-
-import at.witho.totally_op.TotallyOP;
 import at.witho.totally_op.blocks.FunctionFlower;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -26,7 +23,6 @@ public class TileFarmingFlower extends TileEntity implements ITickable {
 	protected int maxX = 0;
 	protected int minZ = 0;
 	protected int maxZ = 0;
-	protected int slowdown = 0;
 
 	@Override
 	public void update() {
@@ -35,9 +31,6 @@ public class TileFarmingFlower extends TileEntity implements ITickable {
 			initLimits();
 			resetPos();
 		}
-		++slowdown;
-		if (slowdown > 2) slowdown = 0;
-		if (slowdown != 0) return;
 		IBlockState state = world.getBlockState(currentPos);
 		Block block = state.getBlock();
 		if (block instanceof BlockCrops) {
@@ -46,10 +39,10 @@ public class TileFarmingFlower extends TileEntity implements ITickable {
 			if (age == crop.getMaxAge()) {
 				NonNullList<ItemStack> drops = NonNullList.create();
 				block.getDrops(drops, world, currentPos, state, fortune);
-				world.destroyBlock(currentPos, false);
+				world.setBlockToAir(currentPos);
 				boolean planted = false;
 				for (ItemStack stack : drops) {
-					Block.spawnAsEntity(world, currentPos, stack);
+					world.spawnEntity(new EntityItem(world, currentPos.getX(), currentPos.getY(), currentPos.getZ(), stack));
 					if (planted) continue;
 					Item item = stack.getItem();
 					if (item instanceof IPlantable) {

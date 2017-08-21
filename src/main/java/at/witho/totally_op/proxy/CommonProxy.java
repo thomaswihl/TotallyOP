@@ -10,6 +10,8 @@ import at.witho.totally_op.blocks.FarmingFlower;
 import at.witho.totally_op.blocks.PeacefulFlower;
 import at.witho.totally_op.blocks.tileentity.TileFarmingFlower;
 import at.witho.totally_op.config.Config;
+import at.witho.totally_op.items.Alphorn;
+import at.witho.totally_op.items.PeacefulDiamondTool;
 import at.witho.totally_op.items.PeacefulIronTool;
 import at.witho.totally_op.items.PeacefulWoodTool;
 import net.minecraft.block.Block;
@@ -59,6 +61,8 @@ public class CommonProxy {
     	event.getRegistry().register(new ItemBlock(ModBlocks.farmingFlower).setRegistryName(ModBlocks.farmingFlower.getRegistryName()));
     	event.getRegistry().register(new PeacefulWoodTool());
     	event.getRegistry().register(new PeacefulIronTool());
+    	event.getRegistry().register(new PeacefulDiamondTool());
+    	event.getRegistry().register(new Alphorn());
     }
 
 }

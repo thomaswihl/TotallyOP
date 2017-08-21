@@ -1,0 +1,21 @@
+{
+  "type": "forge:ore_shaped",
+  "group": "totally_op",
+  "pattern": [
+    "  p",
+    "f p",
+    " p "
+  ],
+  "key": {
+    "f": {
+      "item": "totally_op:peaceful_flower"
+    },
+    "p": {
+      "type": "forge:ore_dict",
+      "ore": "plankWood"
+    }
+  },
+  "result": {
+    "item": "totally_op:alphorn"
+  }
+}

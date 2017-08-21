@@ -1,0 +1,21 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "totally_op:items/alphorn"
+    },
+    "display": {
+    	"thirdperson_righthand": {
+    		"rotation": [0, 90, 0]
+    	},
+    	"thirdperson_lefthand": {
+    		"rotation": [0, -90, 0]
+    	},
+    	"firstperson_righthand": {
+    		"rotation": [45, 90, 0]
+    	},
+    	"firstperson_lefthand": {
+    		"rotation": [45, -90, 0]
+    	}
+        
+    }
+}

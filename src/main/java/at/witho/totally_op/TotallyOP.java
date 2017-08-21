@@ -19,6 +19,7 @@ public class TotallyOP
     
     public static final ToolMaterial peacefulWoodMaterial = EnumHelper.addToolMaterial("PEACEFUL_WOOD", 2, 200, 10F, -40F, 10);
     public static final ToolMaterial peacefulIronMaterial = EnumHelper.addToolMaterial("PEACEFUL_IRON", 3, 5000, 100F, -40F, 30);
+    public static final ToolMaterial peacefulDiamondMaterial = EnumHelper.addToolMaterial("PEACEFUL_IRON", 3, -1, 1000F, -40F, 30);
     
     @SidedProxy(clientSide = "at.witho.totally_op.proxy.ClientProxy", serverSide = "at.witho.totally_op.proxy.ServerProxy")
     public static CommonProxy proxy;

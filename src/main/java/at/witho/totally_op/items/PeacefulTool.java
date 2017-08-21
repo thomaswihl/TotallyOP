@@ -3,16 +3,23 @@ package at.witho.totally_op.items;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import java.util.List;
 import at.witho.totally_op.Helper;
 import at.witho.totally_op.TotallyOP;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -23,22 +30,35 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class PeacefulTool extends ItemTool {
-	
 	protected ConcurrentLinkedQueue<BlockPos> blockPositionsToBreak = new ConcurrentLinkedQueue<BlockPos>();
 	protected Block blockToBreak = null;
 	protected EntityPlayerMP player = null;
 	protected World world = null;
+	protected int magnetRange = 0;
+	protected int magnetActive = 0; 
 	
-	public PeacefulTool(ToolMaterial material, String name) {
+	public PeacefulTool(ToolMaterial material, String name, int magnetRange) {
 		super(material, new HashSet<>());
 		setRegistryName(name);
 		setUnlocalizedName(TotallyOP.MODID + "." + name);
+		this.magnetRange = magnetRange;
 	}
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }    
+
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+		return super.onItemRightClick(worldIn, playerIn, handIn);
+	}
+
+	@Override
+	public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
+		magnetActive = 20; 
+		return super.onEntitySwing(entityLiving, stack);
+	}
 
 	@Override
 	public float getStrVsBlock(ItemStack stack, IBlockState blockState)
@@ -51,6 +71,21 @@ public class PeacefulTool extends ItemTool {
 	{
 		return true;
 	}
+	
+	@Override
+    public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
+    {
+		if (!worldIn.isRemote && magnetRange > 0 && magnetActive > 0) {
+			magnetActive--;
+			double x = entityIn.posX;
+			double y = entityIn.posY;
+			double z = entityIn.posZ;
+			List<EntityItem> items = worldIn.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(x - magnetRange, y - magnetRange, z - magnetRange, x + magnetRange, y + magnetRange, z + magnetRange));
+			for(EntityItem item : items) {
+				item.setPosition(x,  y,  z);
+			}
+		}
+    }
 	
 	@Override
     public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving) {
@@ -77,6 +112,7 @@ public class PeacefulTool extends ItemTool {
 					MinecraftForge.EVENT_BUS.register(this);
 				}
 			}
+			magnetActive = 20;
 		}
 		return super.onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
 	}
