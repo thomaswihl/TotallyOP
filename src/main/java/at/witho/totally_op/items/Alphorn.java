@@ -1,7 +1,5 @@
 package at.witho.totally_op.items;
 
-import java.util.List;
-
 import at.witho.totally_op.TotallyOP;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBush;
@@ -15,7 +13,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
@@ -56,8 +53,12 @@ public class Alphorn extends Item {
 	@Override
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
 		if (player.world.isRemote) return;
+		// TODO: Make it work the other way round
 		World world = player.world;
-		Block held = Block.getBlockFromItem(player.getHeldItemOffhand().getItem());
+		EnumHand activeHand = player.getActiveHand();
+		Block blockHeld = Block.getBlockFromItem((activeHand == EnumHand.MAIN_HAND) ?
+				player.getHeldItemOffhand().getItem() :
+				player.getHeldItemMainhand().getItem());
 		BlockPos playerPos = player.getPosition();
 		double x = playerPos.getX();
 		double y = playerPos.getY() + 0.5f;
@@ -66,8 +67,8 @@ public class Alphorn extends Item {
 			Block block = world.getBlockState(pos).getBlock();
 			if (block instanceof BlockBush) {
 				boolean harvest = true;
-				if (held != Blocks.AIR) {
-					harvest = held == block;
+				if (blockHeld != Blocks.AIR) {
+					harvest = blockHeld == block;
 				}
 				if (harvest) {
 					NonNullList<ItemStack> drops = NonNullList.create();

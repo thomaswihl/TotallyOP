@@ -35,12 +35,11 @@ public class TileFarmingFlower extends TileEntity implements ITickable {
 		Block block = state.getBlock();
 		if (block instanceof BlockCrops) {
 			BlockCrops crop = (BlockCrops)block;
-			int age = ((Integer)state.getValue(BlockCrops.AGE)).intValue();
-			if (age == crop.getMaxAge()) {
+			if (crop.isMaxAge(state)) {
 				NonNullList<ItemStack> drops = NonNullList.create();
-				block.getDrops(drops, world, currentPos, state, fortune);
 				world.setBlockToAir(currentPos);
 				boolean planted = false;
+				block.getDrops(drops, world, currentPos, state, fortune);
 				for (ItemStack stack : drops) {
 					world.spawnEntity(new EntityItem(world, currentPos.getX(), currentPos.getY(), currentPos.getZ(), stack));
 					if (planted) continue;
@@ -50,6 +49,19 @@ public class TileFarmingFlower extends TileEntity implements ITickable {
 						world.setBlockState(currentPos, seed.getPlant(world, currentPos), 3);
 						stack.setCount(stack.getCount() - 1);
 						planted = true;
+					}
+				}
+				/* We didn't find a seed try 3 more times (in case the god of RNG hates us) with fortune 10 (in case he really hates us) to get one */
+				for (int i = 0; i < 3 && !planted; ++i) {
+					block.getDrops(drops, world, currentPos, state, 10);
+					for (ItemStack stack : drops) {
+						Item item = stack.getItem();
+						if (item instanceof IPlantable) {
+							IPlantable seed = (IPlantable)item;
+							world.setBlockState(currentPos, seed.getPlant(world, currentPos), 3);
+							planted = true;
+							break;
+						}
 					}
 				}
 			}
