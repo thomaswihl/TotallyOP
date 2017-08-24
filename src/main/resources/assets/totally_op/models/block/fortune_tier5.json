@@ -1,0 +1,7 @@
+{
+  "parent": "totally_op:block/multiblock",
+  "textures": {
+    "all": "totally_op:blocks/fortune",
+    "overlay": "totally_op:blocks/tier1"
+  }
+}
