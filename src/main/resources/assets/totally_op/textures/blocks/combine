@@ -1,0 +1,10 @@
+#!/bin/bash
+BLOCKS="efficiency fortune"
+
+for b in $BLOCKS
+do
+    for t in $(seq 1 6)
+    do
+        composite -compose atop tier$t.png $b.png "${b}_tier$t.png"
+    done
+done
