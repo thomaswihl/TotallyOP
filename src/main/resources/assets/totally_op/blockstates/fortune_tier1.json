@@ -1,6 +1,6 @@
 {
     "variants": {
-        "normal": { "model": "totally_op:peaceful_flower" },
-        "item": { "model": "totally_op:peaceful_flower" }
+        "normal": { "model": "totally_op:fortune_tier1" },
+        "item": { "model": "totally_op:fortune_tier1" }
     }
 }

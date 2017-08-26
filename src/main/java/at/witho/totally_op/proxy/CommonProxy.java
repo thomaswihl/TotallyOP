@@ -6,9 +6,9 @@ import at.witho.totally_op.MobInteraction;
 import at.witho.totally_op.ModBlocks;
 import at.witho.totally_op.TotallyOP;
 import at.witho.totally_op.WorldGen;
-import at.witho.totally_op.blocks.FarmingFlower;
-import at.witho.totally_op.blocks.PeacefulFlower;
+import at.witho.totally_op.blocks.*;
 import at.witho.totally_op.blocks.tileentity.TileFarmingFlower;
+import at.witho.totally_op.blocks.tileentity.TileSuckingFlower;
 import at.witho.totally_op.config.Config;
 import at.witho.totally_op.items.Alphorn;
 import at.witho.totally_op.items.PeacefulDiamondTool;
@@ -52,13 +52,40 @@ public class CommonProxy {
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
     	event.getRegistry().register(new PeacefulFlower());
     	event.getRegistry().register(new FarmingFlower());
+        event.getRegistry().register(new SuckingFlower());
+        event.getRegistry().register(new FortuneTier1());
+        event.getRegistry().register(new FortuneTier2());
+        event.getRegistry().register(new FortuneTier3());
+        event.getRegistry().register(new FortuneTier4());
+        event.getRegistry().register(new FortuneTier5());
+        event.getRegistry().register(new FortuneTier6());
+        event.getRegistry().register(new EfficiencyTier1());
+        event.getRegistry().register(new EfficiencyTier2());
+        event.getRegistry().register(new EfficiencyTier3());
+        event.getRegistry().register(new EfficiencyTier4());
+        event.getRegistry().register(new EfficiencyTier5());
+        event.getRegistry().register(new EfficiencyTier6());
     	GameRegistry.registerTileEntity(TileFarmingFlower.class, TotallyOP.MODID + "_farming_flower");
+        GameRegistry.registerTileEntity(TileSuckingFlower.class, TotallyOP.MODID + "_sucking_flower");
     }
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-    	event.getRegistry().register(new ItemBlock(ModBlocks.peacefulFlower).setRegistryName(ModBlocks.peacefulFlower.getRegistryName()));
-    	event.getRegistry().register(new ItemBlock(ModBlocks.farmingFlower).setRegistryName(ModBlocks.farmingFlower.getRegistryName()));
+    	event.getRegistry().register(new ItemBlock(ModBlocks.peaceful_flower).setRegistryName(ModBlocks.peaceful_flower.getRegistryName()));
+    	event.getRegistry().register(new ItemBlock(ModBlocks.farming_flower).setRegistryName(ModBlocks.farming_flower.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.sucking_flower).setRegistryName(ModBlocks.sucking_flower.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.fortune_tier1).setRegistryName(ModBlocks.fortune_tier1.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.fortune_tier2).setRegistryName(ModBlocks.fortune_tier2.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.fortune_tier3).setRegistryName(ModBlocks.fortune_tier3.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.fortune_tier4).setRegistryName(ModBlocks.fortune_tier4.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.fortune_tier5).setRegistryName(ModBlocks.fortune_tier5.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.fortune_tier6).setRegistryName(ModBlocks.fortune_tier6.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.efficiency_tier1).setRegistryName(ModBlocks.efficiency_tier1.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.efficiency_tier2).setRegistryName(ModBlocks.efficiency_tier2.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.efficiency_tier3).setRegistryName(ModBlocks.efficiency_tier3.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.efficiency_tier4).setRegistryName(ModBlocks.efficiency_tier4.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.efficiency_tier5).setRegistryName(ModBlocks.efficiency_tier5.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.efficiency_tier6).setRegistryName(ModBlocks.efficiency_tier6.getRegistryName()));
     	event.getRegistry().register(new PeacefulWoodTool());
     	event.getRegistry().register(new PeacefulIronTool());
     	event.getRegistry().register(new PeacefulDiamondTool());

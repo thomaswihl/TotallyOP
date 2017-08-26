@@ -24,7 +24,7 @@ public class WorldGen {
 			BlockPos pos = event.getWorld().getTopSolidOrLiquidBlock(new BlockPos(x, y, z));
 
 			if(event.getWorld().isAirBlock(pos)) {
-				event.getWorld().setBlockState(pos, ModBlocks.peacefulFlower.getDefaultState());
+				event.getWorld().setBlockState(pos, ModBlocks.peaceful_flower.getDefaultState());
 				flowerGen -= 1;
 			}
 			--tries;

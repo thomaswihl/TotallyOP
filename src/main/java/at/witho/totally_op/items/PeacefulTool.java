@@ -44,7 +44,7 @@ public class PeacefulTool extends ItemTool {
 	protected int cooldown = 0;
 	protected int fortune = 0;
 	
-	public PeacefulTool(ToolMaterial material, String name, int magnetRange) {
+	public PeacefulTool(ToolMaterial material, String name, int magnetRange, int fortune) {
 		super(material, new HashSet<>());
 		setRegistryName(name);
 		setUnlocalizedName(TotallyOP.MODID + "." + name);

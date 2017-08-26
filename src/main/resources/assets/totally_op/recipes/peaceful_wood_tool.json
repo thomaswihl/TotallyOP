@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "forge:ore_shaped",
   "group": "totally_op",
   "pattern": [
     "fff",
@@ -11,7 +11,8 @@
       "item": "totally_op:peaceful_flower"
     },
     "s": {
-      "item": "minecraft:stick"
+      "type": "forge:ore_dict",
+      "ore": "stickWood"
     }
   },
   "result": {

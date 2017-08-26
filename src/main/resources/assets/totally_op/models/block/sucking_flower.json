@@ -1,0 +1,41 @@
+{
+    "textures": {
+        "green": "totally_op:blocks/green",
+        "flower": "totally_op:blocks/sucking_flower",
+        "particle": "totally_op:blocks/sucking_flower"
+    },
+    "elements": [
+        {
+            "from": [ 9, 0, 7 ], 
+            "to": [ 11, 19, 9 ], 
+            "faces": {
+                "north": { "texture": "green", "uv": [ 0, 0,  2, 16 ] },
+                "east":  { "texture": "green", "uv": [ 2, 0,  4, 16 ] },
+                "south": { "texture": "green", "uv": [ 4, 0,  6, 16 ] },
+                "west":  { "texture": "green", "uv": [ 6, 0,  8, 16 ] },
+                "up":    { "texture": "green", "uv": [ 8, 0, 10,  2 ] },
+                "down":  { "texture": "green", "uv": [ 8, 0, 10,  2 ] }
+            }
+        },
+        {
+            "from": [ 6, 13, 3 ], 
+            "to": [ 7, 23, 13 ], 
+            "faces": {
+                "west":  { "texture": "flower", "uv": [  0,  0, 16, 16 ] },
+                "east":  { "texture": "flower", "uv": [  0,  0, 16, 16 ] }
+            }
+        },
+        {
+            "from": [ 7, 16, 6 ], 
+            "to": [ 9, 20, 10 ], 
+            "faces": {
+                "north": { "texture": "green", "uv": [  4, 0,  6, 4 ] },
+                "east":  { "texture": "green", "uv": [  0, 0,  4, 4 ] },
+                "south": { "texture": "green", "uv": [  6, 0,  8, 4 ] },
+                "west":  { "texture": "green", "uv": [  0, 4,  4, 8 ] },
+                "up":    { "texture": "green", "uv": [  8, 0, 10, 4 ] },
+                "down":  { "texture": "green", "uv": [ 10, 0, 12, 4 ] }
+            }
+        }
+    ]
+}

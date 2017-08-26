@@ -1,6 +1,9 @@
 package at.witho.totally_op.blocks.tileentity;
 
+import at.witho.totally_op.blocks.Efficiency;
+import at.witho.totally_op.blocks.Fortune;
 import at.witho.totally_op.blocks.FunctionFlower;
+import at.witho.totally_op.config.Config;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.state.IBlockState;
@@ -14,23 +17,22 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.IPlantable;
 
-public class TileFarmingFlower extends TileEntity implements ITickable {
+public class TileFarmingFlower extends TileFunctionFlower {
+    protected BlockPos currentPos = null;
+    private int range = 9;
 
-	protected int fortune = 0;
-	protected BlockPos currentPos = null;
-	protected int range = 9;
-	protected int minX = 0;
-	protected int maxX = 0;
-	protected int minZ = 0;
-	protected int maxZ = 0;
+    protected int[] fortuneMultiplier;
+    protected int[] efficiencyDelay;
+    protected int delay = 0;
 
-	@Override
+    @Override
 	public void update() {
-		if (world.isRemote) return;
-		if (currentPos == null) {
-			initLimits();
-			resetPos();
-		}
+		if (!shouldRun()) return;
+        if (currentPos == null) {
+            initLimits(range);
+            resetPos();
+        }
+
 		IBlockState state = world.getBlockState(currentPos);
 		Block block = state.getBlock();
 		if (block instanceof BlockCrops) {
@@ -39,7 +41,7 @@ public class TileFarmingFlower extends TileEntity implements ITickable {
 				NonNullList<ItemStack> drops = NonNullList.create();
 				world.setBlockToAir(currentPos);
 				boolean planted = false;
-				block.getDrops(drops, world, currentPos, state, fortune);
+				block.getDrops(drops, world, currentPos, state, 0);
 				for (ItemStack stack : drops) {
 					world.spawnEntity(new EntityItem(world, currentPos.getX(), currentPos.getY(), currentPos.getZ(), stack));
 					if (planted) continue;
@@ -49,6 +51,8 @@ public class TileFarmingFlower extends TileEntity implements ITickable {
 						world.setBlockState(currentPos, seed.getPlant(world, currentPos), 3);
 						stack.setCount(stack.getCount() - 1);
 						planted = true;
+					} else {
+						stack.setCount(stack.getCount() * fortuneMultiplier[fortune]);
 					}
 				}
 				/* We didn't find a seed try 3 more times (in case the god of RNG hates us) with fortune 10 (in case he really hates us) to get one */
@@ -66,48 +70,34 @@ public class TileFarmingFlower extends TileEntity implements ITickable {
 				}
 			}
 		}
-		currentPos = currentPos.east();
-		if (currentPos.getX() > maxX) {
-			currentPos = currentPos.add(-range, 0, 1);
-			if (currentPos.getZ() > maxZ) resetPos();
-		}
+
+		nextBlock();
 	}
 
-	protected void initLimits() {
-		minX = maxX = pos.getX();
-		minZ = maxZ = pos.getZ();
-		EnumFacing facing = (EnumFacing) world.getBlockState(pos).getValue(FunctionFlower.FACING);
-		switch (facing) {
-		case EAST: // +x
-			minX++;
-			maxX += range;
-			minZ -= range / 2;
-			maxZ += range / 2;
-			break;
-		case WEST: // -x
-			minX -= range;
-			maxX--;
-			minZ -= range / 2;
-			maxZ += range / 2;
-			break;
-		case NORTH: // -z
-			minX -= range / 2;
-			maxX += range / 2;
-			minZ -= range;
-			maxZ--;
-			break;
-		case SOUTH: // +z
-			minX -= range / 2;
-			maxX += range / 2;
-			minZ++;
-			maxZ += range;
-			break;
-		default:
-			break;
-		}
-	}
+    protected boolean shouldRun() {
+        if (world.isRemote) return false;
+        if (efficiencyDelay != null && delay < efficiencyDelay[efficiency]) {
+            ++delay;
+            return false;
+        }
+        delay = 0;
+        return true;
+    }
 
-	protected void resetPos() {
-		currentPos = new BlockPos(minX, pos.getY(), minZ);
-	}
+    protected void resetPos() {
+        checkForModifiers();
+        currentPos = new BlockPos(minX, pos.getY(), minZ);
+        efficiencyDelay = Config.intArray(Config.efficiencyDelay.getStringList());
+        fortuneMultiplier = Config.intArray(Config.fortuneMultiplier.getStringList());
+    }
+
+    protected void nextBlock() {
+        currentPos = currentPos.east();
+        if (currentPos.getX() > maxX) {
+            currentPos = currentPos.add(-range, 0, 1);
+            if (currentPos.getZ() > maxZ) resetPos();
+        }
+    }
+
+
 }
