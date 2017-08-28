@@ -1,5 +1,7 @@
 package at.witho.totally_op;
 
+import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemArmor;
 import org.apache.logging.log4j.Logger;
 
 import at.witho.totally_op.proxy.CommonProxy;
@@ -17,10 +19,11 @@ public class TotallyOP
     public static final String MODID = "totally_op";
     public static final String VERSION = "1.0";
     
-    public static final ToolMaterial peacefulWoodMaterial = EnumHelper.addToolMaterial("PEACEFUL_WOOD", 2, 200, 10F, -40F, 10);
-    public static final ToolMaterial peacefulIronMaterial = EnumHelper.addToolMaterial("PEACEFUL_IRON", 3, 5000, 100F, -40F, 30);
+    public static final ToolMaterial peacefulWoodMaterial = EnumHelper.addToolMaterial("PEACEFUL_WOOD", 2, 400, 20F, -40F, 10);
+    public static final ToolMaterial peacefulIronMaterial = EnumHelper.addToolMaterial("PEACEFUL_IRON", 3, 8000, 100F, -40F, 30);
     public static final ToolMaterial peacefulDiamondMaterial = EnumHelper.addToolMaterial("PEACEFUL_IRON", 3, -1, 1000F, -40F, 30);
-    
+    public static final ItemArmor.ArmorMaterial armorMaterial = EnumHelper.addArmorMaterial("PEACEFUL_RUBBER", "rubber_boots", -1, new int[]{3, 6, 8, 3}, 40, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 2.0f);
+
     @SidedProxy(clientSide = "at.witho.totally_op.proxy.ClientProxy", serverSide = "at.witho.totally_op.proxy.ServerProxy")
     public static CommonProxy proxy;
 

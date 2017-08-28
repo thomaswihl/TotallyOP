@@ -2,22 +2,19 @@
   "type": "minecraft:crafting_shaped",
   "group": "totally_op",
   "pattern": [
-    "fff",
-    " d ",
-    " d "
+    "   ",
+    "f f",
+    "f f"
   ],
   "key": {
     "f": {
       "item": "totally_op:peaceful_flower"
-    },
-    "d": {
-      "item": "minecraft:diamond"
     }
   },
   "result": {
-    "item": "totally_op:peaceful_diamond_tool",
+    "item": "totally_op:rubber_boots",
     "nbt": {
-      "ench": [{"id":35,"lvl":3}]
+      "ench": [{"id":2,"lvl":4},{"id":8,"lvl":3}]
     }
   }
 }

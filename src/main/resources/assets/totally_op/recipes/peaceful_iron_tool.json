@@ -15,6 +15,9 @@
     }
   },
   "result": {
-    "item": "totally_op:peaceful_iron_tool"
+    "item": "totally_op:peaceful_iron_tool",
+    "nbt": {
+      "ench": [{"id":35,"lvl":2}]
+    }
   }
 }

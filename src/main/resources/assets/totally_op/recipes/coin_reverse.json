@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "totally_op",
+  "ingredients": [
+    {
+      "item": "totally_op:coin"
+    }
+  ],
+  "result": {
+    "item": "minecraft:gold_ingot",
+    "count": 2
+  }
+}

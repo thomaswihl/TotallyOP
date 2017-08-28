@@ -10,7 +10,9 @@ public class Helper {
 //	public static ItemStack peacefulIronTool = new ItemStack(ModItems.peacefulIronTool);
 	
 	public static boolean isPeacefulItem(ItemStack item) {
-		return !item.isEmpty() && (item.getItem() == ModItems.peacefulWoodTool || item.getItem() == ModItems.peacefulIronTool);
+		return !item.isEmpty() && (item.getItem() == ModItems.peaceful_wood_tool ||
+                item.getItem() == ModItems.peaceful_iron_tool ||
+                item.getItem() == ModItems.peaceful_diamond_tool);
 	}
 	
 	public static boolean hasPeacefulItem(EntityPlayer player) {

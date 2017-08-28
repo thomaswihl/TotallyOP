@@ -3,6 +3,7 @@ package at.witho.totally_op.items;
 import at.witho.totally_op.TotallyOP;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBush;
+import net.minecraft.block.BlockLeaves;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -18,6 +19,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.IShearable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -53,7 +55,6 @@ public class Alphorn extends Item {
 	@Override
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
 		if (player.world.isRemote) return;
-		// TODO: Make it work the other way round
 		World world = player.world;
 		EnumHand activeHand = player.getActiveHand();
 		Block blockHeld = Block.getBlockFromItem((activeHand == EnumHand.MAIN_HAND) ?
@@ -65,7 +66,7 @@ public class Alphorn extends Item {
 		double z = playerPos.getZ();
 		for(BlockPos pos : BlockPos.getAllInBox(playerPos.add(-rangeH, -rangeV, -rangeH), playerPos.add(rangeH, rangeV, rangeH))) {
 			Block block = world.getBlockState(pos).getBlock();
-			if (block instanceof BlockBush) {
+			if (block instanceof BlockBush || (block instanceof IShearable && !(block instanceof BlockLeaves))) {
 				boolean harvest = true;
 				if (blockHeld != Blocks.AIR) {
 					harvest = blockHeld == block;

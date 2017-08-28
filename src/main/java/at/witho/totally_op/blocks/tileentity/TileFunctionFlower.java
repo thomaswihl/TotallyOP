@@ -63,10 +63,11 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
 	}
 
     protected void checkForModifiers() {
-        BlockPos p = getPos().down();
+        BlockPos p = getPos();
         fortune = 0;
         efficiency = 0;
-        for (int i = 0; i < 2; ++i) {
+        for (int i = 0; i < 3; ++i) {
+            p = p.down();
             IBlockState state = world.getBlockState(p);
             Block block = state.getBlock();
             if (block instanceof Efficiency) {

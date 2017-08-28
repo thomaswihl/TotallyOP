@@ -18,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -35,6 +36,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class PeacefulTool extends ItemTool {
+    protected static final int MAGNET_ACTIVE_TIME = 40;
+    protected static final int VEINMINE_COOLDOWN_TIME = 10;
 	protected ConcurrentLinkedQueue<BlockPos> blockPositionsToBreak = new ConcurrentLinkedQueue<BlockPos>();
 	protected Block blockToBreak = null;
 	protected EntityPlayerMP player = null;
@@ -49,6 +52,7 @@ public class PeacefulTool extends ItemTool {
 		setRegistryName(name);
 		setUnlocalizedName(TotallyOP.MODID + "." + name);
 		this.magnetRange = magnetRange;
+		this.fortune = fortune;
 	}
 
     @SideOnly(Side.CLIENT)
@@ -91,11 +95,14 @@ public class PeacefulTool extends ItemTool {
 		if (!worldIn.isRemote && playerIn.isSneaking()) {
 			ItemStack stack = playerIn.getHeldItem(handIn);
 			NBTTagList ench = stack.getEnchantmentTagList();
-			if (ench.tagCount() == 0) {
+            NBTTagCompound nbt = ench.getCompoundTagAt(0);
+			if (nbt.getShort("id") != 33) {
+                stack.setTagInfo("ench", new NBTTagList());
 				stack.addEnchantment(Enchantment.getEnchantmentByID(33), 1);
 			}
 			else {
 				stack.setTagInfo("ench", new NBTTagList());
+                stack.addEnchantment(Enchantment.getEnchantmentByID(35), fortune);
 			}
 		}
 		return super.onItemRightClick(worldIn, playerIn, handIn);
@@ -103,7 +110,7 @@ public class PeacefulTool extends ItemTool {
 
 	@Override
 	public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
-		magnetActive = 20; 
+		magnetActive = MAGNET_ACTIVE_TIME;
 		return super.onEntitySwing(entityLiving, stack);
 	}
 
@@ -185,8 +192,8 @@ public class PeacefulTool extends ItemTool {
 				}
 			}
 			else if (!blockPositionsToBreak.isEmpty()) blockPositionsToBreak.clear();
-			magnetActive = 20;
-			cooldown = 20;
+			magnetActive = MAGNET_ACTIVE_TIME;
+			cooldown = VEINMINE_COOLDOWN_TIME;
 		}
 		return super.onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
 	}

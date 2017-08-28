@@ -16,6 +16,9 @@
     }
   },
   "result": {
-    "item": "totally_op:peaceful_wood_tool"
+    "item": "totally_op:peaceful_wood_tool",
+    "nbt": {
+      "ench": [{"id":35,"lvl":1}]
+    }
   }
 }

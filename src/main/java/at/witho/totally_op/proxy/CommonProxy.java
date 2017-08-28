@@ -10,10 +10,7 @@ import at.witho.totally_op.blocks.*;
 import at.witho.totally_op.blocks.tileentity.TileFarmingFlower;
 import at.witho.totally_op.blocks.tileentity.TileSuckingFlower;
 import at.witho.totally_op.config.Config;
-import at.witho.totally_op.items.Alphorn;
-import at.witho.totally_op.items.PeacefulDiamondTool;
-import at.witho.totally_op.items.PeacefulIronTool;
-import at.witho.totally_op.items.PeacefulWoodTool;
+import at.witho.totally_op.items.*;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -40,6 +37,7 @@ public class CommonProxy {
     public void init(FMLInitializationEvent e) {
     	MinecraftForge.TERRAIN_GEN_BUS.register(WorldGen.class);
 		MinecraftForge.EVENT_BUS.register(MobInteraction.class);
+        MinecraftForge.EVENT_BUS.register(RubberBoots.class);
     }
 
     public void postInit(FMLPostInitializationEvent e) {
@@ -90,6 +88,9 @@ public class CommonProxy {
     	event.getRegistry().register(new PeacefulIronTool());
     	event.getRegistry().register(new PeacefulDiamondTool());
     	event.getRegistry().register(new Alphorn());
+        event.getRegistry().register(new Coin());
+        event.getRegistry().register(new Euro());
+        event.getRegistry().register(new RubberBoots());
     }
 
 }

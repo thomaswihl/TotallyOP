@@ -48,7 +48,7 @@ public class TileSuckingFlower extends TileFunctionFlower {
         }
         double y = pos.getY();
         List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class,
-                new AxisAlignedBB(minX, y, minZ, maxX + 1, y + 1, maxZ + 1));
+                new AxisAlignedBB(minX, y - range[efficiency], minZ, maxX + 1, y + range[efficiency] + 1, maxZ + 1));
         for(EntityItem item : items) {
             item.setPosition(pos.getX(), pos.getY(), pos.getZ());
         }
