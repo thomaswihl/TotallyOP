@@ -1,0 +1,10 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "totally_op:peaceful_double_flower_top"
+  },
+  "variants": {
+    "half=lower": { "model": "totally_op:peaceful_double_flower_bottom" },
+    "half=upper": { "model": "totally_op:peaceful_double_flower_top" }
+  }
+}

@@ -1,5 +1,6 @@
 package at.witho.totally_op;
 
+import at.witho.totally_op.items.PeacefulTool;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -10,9 +11,7 @@ public class Helper {
 //	public static ItemStack peacefulIronTool = new ItemStack(ModItems.peacefulIronTool);
 	
 	public static boolean isPeacefulItem(ItemStack item) {
-		return !item.isEmpty() && (item.getItem() == ModItems.peaceful_wood_tool ||
-                item.getItem() == ModItems.peaceful_iron_tool ||
-                item.getItem() == ModItems.peaceful_diamond_tool);
+		return !item.isEmpty() && (item.getItem() instanceof PeacefulTool);
 	}
 	
 	public static boolean hasPeacefulItem(EntityPlayer player) {

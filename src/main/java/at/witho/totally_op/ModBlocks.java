@@ -9,6 +9,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ModBlocks {
 	/* Forge will fill these with actual blocks on init, just make sure the names match with the blocks registry name */
     public static final PeacefulFlower peaceful_flower = null;
+    public static final PeacefulDoubleFlower peaceful_double_flower = null;
     public static final FarmingFlower farming_flower = null;
     public static final SuckingFlower sucking_flower = null;
     public static final FortuneTier1 fortune_tier1 = null;
@@ -27,6 +28,7 @@ public class ModBlocks {
     @SideOnly(Side.CLIENT)
     public static void initModels() {
         peaceful_flower.initModel();
+        peaceful_double_flower.initModel();
         farming_flower.initModel();
         sucking_flower.initModel();
         fortune_tier1.initModel();

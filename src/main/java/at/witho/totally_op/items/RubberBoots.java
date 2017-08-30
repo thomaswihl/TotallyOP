@@ -3,6 +3,7 @@ package at.witho.totally_op.items;
 import at.witho.totally_op.TotallyOP;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
@@ -15,6 +16,8 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nullable;
 
 public class RubberBoots extends ItemArmor {
 	public RubberBoots() {
@@ -42,5 +45,12 @@ public class RubberBoots extends ItemArmor {
             }
         }
     }
+
+    @Override
+    public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type)
+    {
+        return String.format("%s:textures/models/armor/%s_layer_1.png", TotallyOP.MODID, getRegistryName().getResourcePath());
+    }
+
 
 }

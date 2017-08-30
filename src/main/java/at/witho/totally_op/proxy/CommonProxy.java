@@ -37,7 +37,6 @@ public class CommonProxy {
     public void init(FMLInitializationEvent e) {
     	MinecraftForge.TERRAIN_GEN_BUS.register(WorldGen.class);
 		MinecraftForge.EVENT_BUS.register(MobInteraction.class);
-        MinecraftForge.EVENT_BUS.register(RubberBoots.class);
     }
 
     public void postInit(FMLPostInitializationEvent e) {
@@ -49,6 +48,7 @@ public class CommonProxy {
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
     	event.getRegistry().register(new PeacefulFlower());
+        event.getRegistry().register(new PeacefulDoubleFlower());
     	event.getRegistry().register(new FarmingFlower());
         event.getRegistry().register(new SuckingFlower());
         event.getRegistry().register(new FortuneTier1());
@@ -70,6 +70,7 @@ public class CommonProxy {
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
     	event.getRegistry().register(new ItemBlock(ModBlocks.peaceful_flower).setRegistryName(ModBlocks.peaceful_flower.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.peaceful_double_flower).setRegistryName(ModBlocks.peaceful_double_flower.getRegistryName()));
     	event.getRegistry().register(new ItemBlock(ModBlocks.farming_flower).setRegistryName(ModBlocks.farming_flower.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.sucking_flower).setRegistryName(ModBlocks.sucking_flower.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.fortune_tier1).setRegistryName(ModBlocks.fortune_tier1.getRegistryName()));
