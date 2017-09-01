@@ -10,10 +10,12 @@ import at.witho.totally_op.blocks.*;
 import at.witho.totally_op.blocks.tileentity.TileFarmingFlower;
 import at.witho.totally_op.blocks.tileentity.TileSuckingFlower;
 import at.witho.totally_op.config.Config;
+import at.witho.totally_op.entity.Car;
 import at.witho.totally_op.items.*;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.RegistryEvent;
@@ -22,6 +24,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 @Mod.EventBusSubscriber
@@ -92,6 +96,12 @@ public class CommonProxy {
         event.getRegistry().register(new Coin());
         event.getRegistry().register(new Euro());
         event.getRegistry().register(new RubberBoots());
+    }
+
+    @SubscribeEvent
+    public static void registerEntities(RegistryEvent.Register<EntityEntry> event) {
+        int id = 1;
+        //EntityRegistry.registerModEntity(new ResourceLocation(TotallyOP.MODID, "car"), Car.class, "car", id++, TotallyOP.instance, 64, 3, true, 0x996600, 0x00ff00);
     }
 
 }

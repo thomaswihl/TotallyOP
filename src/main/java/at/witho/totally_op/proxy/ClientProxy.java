@@ -1,6 +1,7 @@
 package at.witho.totally_op.proxy;
 
 import at.witho.totally_op.ModBlocks;
+import at.witho.totally_op.ModEntities;
 import at.witho.totally_op.ModItems;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -19,6 +20,7 @@ public class ClientProxy extends CommonProxy {
 	public static void registerModels(ModelRegistryEvent event) {
 		ModBlocks.initModels();
 		ModItems.initModels();
+        ModEntities.initModels();
 	}
 
 }
