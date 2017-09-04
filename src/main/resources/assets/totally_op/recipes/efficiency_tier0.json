@@ -11,10 +11,10 @@
     },
     {
       "type": "forge:ore_dict",
-      "ore": "gemDiamond"
+      "ore": "logWood"
     }
   ],
   "result": {
-    "item": "totally_op:efficiency_tier5"
+    "item": "totally_op:efficiency_tier0"
   }
 }

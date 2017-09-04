@@ -60,7 +60,13 @@ public class TileFarmingFlower extends TileFunctionFlower {
                     world.setBlockState(currentPos, seed.getPlant(world, currentPos), 3);
                 }
             }
-		}
+		} else {
+            Block block = state.getBlock();
+            if (block instanceof BlockCrops) {
+                BlockCrops crop = (BlockCrops) block;
+                crop.grow(world, currentPos, state);
+            }
+        }
 
 		nextBlock();
 	}

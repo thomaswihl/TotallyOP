@@ -1,21 +1,19 @@
 {
-  "type": "forge:ore_shaped",
+  "type": "forge:ore_shapeless",
   "group": "totally_op",
-  "pattern": [
-    "rrr",
-    "rwr",
-    "rrr"
-  ],
-  "key": {
-    "r": {
+  "ingredients": [
+    {
       "type": "forge:ore_dict",
-      "ore": "dustRedstone"
+      "ore": "blockRedstone"
     },
-    "w": {
+    {
+      "item": "totally_op:peaceful_flower"
+    },
+    {
       "type": "forge:ore_dict",
       "ore": "gemEmerald"
     }
-  },
+  ],
   "result": {
     "item": "totally_op:efficiency_tier6"
   }

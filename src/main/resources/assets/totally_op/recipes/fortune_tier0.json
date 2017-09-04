@@ -4,17 +4,13 @@
   "ingredients": [
     {
       "type": "forge:ore_dict",
-      "ore": "blockRedstone"
+      "ore": "blockLapis"
     },
     {
       "item": "totally_op:peaceful_flower"
-    },
-    {
-      "type": "forge:ore_dict",
-      "ore": "gemDiamond"
     }
   ],
   "result": {
-    "item": "totally_op:efficiency_tier5"
+    "item": "totally_op:fortune_tier0"
   }
 }

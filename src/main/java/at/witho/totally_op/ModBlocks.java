@@ -12,18 +12,20 @@ public class ModBlocks {
     public static final PeacefulDoubleFlower peaceful_double_flower = null;
     public static final FarmingFlower farming_flower = null;
     public static final SuckingFlower sucking_flower = null;
-    public static final FortuneTier1 fortune_tier1 = null;
-    public static final FortuneTier2 fortune_tier2 = null;
-    public static final FortuneTier3 fortune_tier3 = null;
-    public static final FortuneTier4 fortune_tier4 = null;
-    public static final FortuneTier5 fortune_tier5 = null;
-    public static final FortuneTier6 fortune_tier6 = null;
-    public static final EfficiencyTier1 efficiency_tier1 = null;
-    public static final EfficiencyTier2 efficiency_tier2 = null;
-    public static final EfficiencyTier3 efficiency_tier3 = null;
-    public static final EfficiencyTier4 efficiency_tier4 = null;
-    public static final EfficiencyTier5 efficiency_tier5 = null;
-    public static final EfficiencyTier6 efficiency_tier6 = null;
+    public static final Fortune fortune_tier0 = null;
+    public static final Fortune fortune_tier1 = null;
+    public static final Fortune fortune_tier2 = null;
+    public static final Fortune fortune_tier3 = null;
+    public static final Fortune fortune_tier4 = null;
+    public static final Fortune fortune_tier5 = null;
+    public static final Fortune fortune_tier6 = null;
+    public static final Efficiency efficiency_tier0 = null;
+    public static final Efficiency efficiency_tier1 = null;
+    public static final Efficiency efficiency_tier2 = null;
+    public static final Efficiency efficiency_tier3 = null;
+    public static final Efficiency efficiency_tier4 = null;
+    public static final Efficiency efficiency_tier5 = null;
+    public static final Efficiency efficiency_tier6 = null;
 
     @SideOnly(Side.CLIENT)
     public static void initModels() {
@@ -31,12 +33,14 @@ public class ModBlocks {
         peaceful_double_flower.initModel();
         farming_flower.initModel();
         sucking_flower.initModel();
+        fortune_tier0.initModel();
         fortune_tier1.initModel();
         fortune_tier2.initModel();
         fortune_tier3.initModel();
         fortune_tier4.initModel();
         fortune_tier5.initModel();
         fortune_tier6.initModel();
+        efficiency_tier0.initModel();
         efficiency_tier1.initModel();
         efficiency_tier2.initModel();
         efficiency_tier3.initModel();

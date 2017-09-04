@@ -9,22 +9,18 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nullable;
-
-public class RubberBoots extends ItemArmor {
-	public RubberBoots() {
-	    super(TotallyOP.armorMaterial, 0, EntityEquipmentSlot.FEET);
-		setRegistryName("rubber_boots");
-		setUnlocalizedName(TotallyOP.MODID + "." + getRegistryName());
-	}
+public class ScubaHelmet extends ItemArmor {
+    public ScubaHelmet() {
+        super(TotallyOP.armorMaterial, 0, EntityEquipmentSlot.HEAD);
+        setRegistryName("scuba_helmet");
+        setUnlocalizedName(TotallyOP.MODID + "." + getRegistryName());
+    }
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
@@ -34,8 +30,6 @@ public class RubberBoots extends ItemArmor {
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type)
     {
-        return String.format("%s:textures/models/armor/armor_layer_1.png", TotallyOP.MODID);
+        return String.format("%s:textures/models/armor/armor_layer_1.png", TotallyOP.MODID, TotallyOP.MODID);
     }
-
-
 }

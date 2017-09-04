@@ -15,6 +15,7 @@ public class ModItems {
     public static final Coin coin = null;
     public static final Euro euro = null;
     public static final RubberBoots rubber_boots = null;
+    public static final ScubaHelmet scuba_helmet = null;
 
 
     @SideOnly(Side.CLIENT)
@@ -26,6 +27,7 @@ public class ModItems {
         coin.initModel();
         euro.initModel();
         rubber_boots.initModel();
+        scuba_helmet.initModel();
     }
 
 }

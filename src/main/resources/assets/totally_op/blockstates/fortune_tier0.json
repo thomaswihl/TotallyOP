@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "normal": { "model": "totally_op:fortune_tier0" },
+        "item": { "model": "totally_op:fortune_tier0" }
+    }
+}
