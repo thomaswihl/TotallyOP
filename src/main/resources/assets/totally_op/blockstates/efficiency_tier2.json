@@ -1,6 +1,0 @@
-{
-    "variants": {
-        "normal": { "model": "totally_op:efficiency_tier2" },
-        "item": { "model": "totally_op:efficiency_tier2" }
-    }
-}

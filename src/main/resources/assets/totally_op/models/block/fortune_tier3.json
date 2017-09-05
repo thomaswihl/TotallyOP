@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "totally_op:blocks/fortune_tier3"
-  }
-}

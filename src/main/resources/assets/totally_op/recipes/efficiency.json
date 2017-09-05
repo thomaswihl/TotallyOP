@@ -8,13 +8,9 @@
     },
     {
       "item": "totally_op:peaceful_flower"
-    },
-    {
-      "type": "forge:ore_dict",
-      "ore": "gemDiamond"
     }
   ],
   "result": {
-    "item": "totally_op:efficiency_tier5"
+    "item": "totally_op:efficiency"
   }
 }

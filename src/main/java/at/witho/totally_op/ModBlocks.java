@@ -12,20 +12,8 @@ public class ModBlocks {
     public static final PeacefulDoubleFlower peaceful_double_flower = null;
     public static final FarmingFlower farming_flower = null;
     public static final SuckingFlower sucking_flower = null;
-    public static final Fortune fortune_tier0 = null;
-    public static final Fortune fortune_tier1 = null;
-    public static final Fortune fortune_tier2 = null;
-    public static final Fortune fortune_tier3 = null;
-    public static final Fortune fortune_tier4 = null;
-    public static final Fortune fortune_tier5 = null;
-    public static final Fortune fortune_tier6 = null;
-    public static final Efficiency efficiency_tier0 = null;
-    public static final Efficiency efficiency_tier1 = null;
-    public static final Efficiency efficiency_tier2 = null;
-    public static final Efficiency efficiency_tier3 = null;
-    public static final Efficiency efficiency_tier4 = null;
-    public static final Efficiency efficiency_tier5 = null;
-    public static final Efficiency efficiency_tier6 = null;
+    public static final TierableBlock fortune = null;
+    public static final TierableBlock efficiency = null;
 
     @SideOnly(Side.CLIENT)
     public static void initModels() {
@@ -33,20 +21,8 @@ public class ModBlocks {
         peaceful_double_flower.initModel();
         farming_flower.initModel();
         sucking_flower.initModel();
-        fortune_tier0.initModel();
-        fortune_tier1.initModel();
-        fortune_tier2.initModel();
-        fortune_tier3.initModel();
-        fortune_tier4.initModel();
-        fortune_tier5.initModel();
-        fortune_tier6.initModel();
-        efficiency_tier0.initModel();
-        efficiency_tier1.initModel();
-        efficiency_tier2.initModel();
-        efficiency_tier3.initModel();
-        efficiency_tier4.initModel();
-        efficiency_tier5.initModel();
-        efficiency_tier6.initModel();
+        fortune.initModel();
+        efficiency.initModel();
     }
 
 }

@@ -1,0 +1,46 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "totally_op:efficiency",
+    "textures": {
+      "all": "totally_op:blocks/efficiency"
+    }
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "tier": {
+      "0": {},
+      "1": {
+        "textures": {
+          "all": "totally_op:blocks/efficiency_tier1"
+        }
+      },
+      "2": {
+        "textures": {
+          "all": "totally_op:blocks/efficiency_tier2"
+        }
+      },
+      "3": {
+        "textures": {
+          "all": "totally_op:blocks/efficiency_tier3"
+        }
+      },
+      "4": {
+        "textures": {
+          "all": "totally_op:blocks/efficiency_tier4"
+        }
+      },
+      "5": {
+        "textures": {
+          "all": "totally_op:blocks/efficiency_tier5"
+        }
+      },
+      "6": {
+        "textures": {
+          "all": "totally_op:blocks/efficiency_tier6"
+        }
+      }
+    }
+  }
+}
