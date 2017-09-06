@@ -55,8 +55,9 @@ public class CommonProxy {
         event.getRegistry().register(new PeacefulDoubleFlower());
     	event.getRegistry().register(new FarmingFlower());
         event.getRegistry().register(new SuckingFlower());
-        event.getRegistry().register(new TierableBlock("fortune"));
-        event.getRegistry().register(new TierableBlock("efficiency"));
+        event.getRegistry().register(new TierableBlock(TierableBlock.FORTUNE));
+        event.getRegistry().register(new TierableBlock(TierableBlock.EFFICIENCY));
+        event.getRegistry().register(new TierableBlock(TierableBlock.RANGE));
     	GameRegistry.registerTileEntity(TileFarmingFlower.class, TotallyOP.MODID + "_farming_flower");
         GameRegistry.registerTileEntity(TileSuckingFlower.class, TotallyOP.MODID + "_sucking_flower");
     }
@@ -69,6 +70,7 @@ public class CommonProxy {
         event.getRegistry().register(new ItemBlock(ModBlocks.sucking_flower).setRegistryName(ModBlocks.sucking_flower.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.fortune).setRegistryName(ModBlocks.fortune.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.efficiency).setRegistryName(ModBlocks.efficiency.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.range).setRegistryName(ModBlocks.range.getRegistryName()));
     	event.getRegistry().register(new PeacefulWoodTool());
     	event.getRegistry().register(new PeacefulIronTool());
     	event.getRegistry().register(new PeacefulDiamondTool());

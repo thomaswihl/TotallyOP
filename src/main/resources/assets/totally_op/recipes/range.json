@@ -1,0 +1,16 @@
+{
+  "type": "forge:ore_shapeless",
+  "group": "totally_op",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "blockCoal"
+    },
+    {
+      "item": "totally_op:peaceful_flower"
+    }
+  ],
+  "result": {
+    "item": "totally_op:range"
+  }
+}

@@ -1,6 +1,7 @@
 package at.witho.totally_op.blocks;
 
 import at.witho.totally_op.TotallyOP;
+import at.witho.totally_op.config.Config;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -8,6 +9,7 @@ import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -63,21 +65,31 @@ public class TierableBlock extends Block {
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        //if (worldIn.isRemote) return false;
         ItemStack stack = playerIn.getHeldItem(hand);
         if (stack == null || stack.isEmpty()) return false;
-        if (stack.isItemEqual(new ItemStack(Blocks.GOLD_BLOCK))) {
+        if (stack.isItemEqual(new ItemStack(Config.upgradeTierBlock))) {
             int tier = getTier(state);
             if (tier < 6) {
-                tier++;
                 if (!worldIn.isRemote) {
+                    tier++;
                     worldIn.setBlockState(pos, getDefaultState().withProperty(TIER, tier));
                     stack.setCount(stack.getCount() - 1);
                 }
-                return true;
             }
+            return true;
         }
         return false;
+    }
+
+    @Override
+    public void onBlockDestroyedByPlayer(World worldIn, BlockPos pos, IBlockState state)
+    {
+        if (worldIn.isRemote) return;
+        int tier = getTier(state);
+        if (tier != 0) {
+            ItemStack stack = new ItemStack(Config.upgradeTierBlock, tier);
+            worldIn.spawnEntity(new EntityItem(worldIn, pos.getX(), pos.getY(), pos.getZ(), stack));
+        }
     }
 
 }

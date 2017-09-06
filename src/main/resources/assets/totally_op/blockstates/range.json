@@ -1,0 +1,46 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "totally_op:range",
+    "textures": {
+      "all": "totally_op:blocks/range"
+    }
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "tier": {
+      "0": {},
+      "1": {
+        "textures": {
+          "all": "totally_op:blocks/range_tier1"
+        }
+      },
+      "2": {
+        "textures": {
+          "all": "totally_op:blocks/range_tier2"
+        }
+      },
+      "3": {
+        "textures": {
+          "all": "totally_op:blocks/range_tier3"
+        }
+      },
+      "4": {
+        "textures": {
+          "all": "totally_op:blocks/range_tier4"
+        }
+      },
+      "5": {
+        "textures": {
+          "all": "totally_op:blocks/range_tier5"
+        }
+      },
+      "6": {
+        "textures": {
+          "all": "totally_op:blocks/range_tier6"
+        }
+      }
+    }
+  }
+}

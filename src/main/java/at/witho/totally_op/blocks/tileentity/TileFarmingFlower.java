@@ -1,6 +1,5 @@
 package at.witho.totally_op.blocks.tileentity;
 
-import at.witho.totally_op.TotallyOP;
 import at.witho.totally_op.config.Config;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
@@ -13,16 +12,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.IPlantable;
-import org.apache.logging.log4j.Level;
 
 public class TileFarmingFlower extends TileFunctionFlower {
+
+
     protected BlockPos currentPos = null;
 
-    protected int[] fortuneMultiplier;
-    protected int[] efficiencyDelay;
-    protected int[] efficiencyRange;
-    protected int delay = 0;
-    protected int range = 0;
+    protected int delay = 1;
+
+    public TileFarmingFlower() {
+        super();
+    }
 
     @Override
 	public void update() {
@@ -46,7 +46,7 @@ public class TileFarmingFlower extends TileFunctionFlower {
                     stack.setCount(stack.getCount() - 1);
                     planted = true;
                 } else {
-                    stack.setCount(stack.getCount() * fortuneMultiplier[fortune]);
+                    stack.setCount(stack.getCount() * fortune);
                 }
                 world.spawnEntity(new EntityItem(world, currentPos.getX(), currentPos.getY(), currentPos.getZ(), stack));
             }
@@ -86,7 +86,7 @@ public class TileFarmingFlower extends TileFunctionFlower {
 
     protected boolean shouldRun() {
         if (world.isRemote) return false;
-        if (efficiencyDelay != null && delay < efficiencyDelay[efficiency]) {
+        if (delay < efficiency) {
             ++delay;
             return false;
         }
@@ -96,13 +96,7 @@ public class TileFarmingFlower extends TileFunctionFlower {
 
     protected void resetPos() {
         checkForModifiers();
-        efficiencyDelay = Config.intArray(Config.efficiencyDelay.getStringList());
-        fortuneMultiplier = Config.intArray(Config.fortuneMultiplier.getStringList());
-        efficiencyRange = Config.intArray(Config.farmingRange.getStringList());
-        range = efficiencyRange[efficiency];
-        initLimits(range);
         currentPos = new BlockPos(minX, pos.getY(), minZ);
-        TotallyOP.logger.log(Level.ERROR, "range = " + range + ", delay = " + efficiencyDelay[efficiency] + ", multi = " + fortuneMultiplier[fortune]);
     }
 
     protected void nextBlock() {

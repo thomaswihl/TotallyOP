@@ -14,6 +14,7 @@ public class ModBlocks {
     public static final SuckingFlower sucking_flower = null;
     public static final TierableBlock fortune = null;
     public static final TierableBlock efficiency = null;
+    public static final TierableBlock range = null;
 
     @SideOnly(Side.CLIENT)
     public static void initModels() {
@@ -23,6 +24,7 @@ public class ModBlocks {
         sucking_flower.initModel();
         fortune.initModel();
         efficiency.initModel();
+        range.initModel();
     }
 
 }

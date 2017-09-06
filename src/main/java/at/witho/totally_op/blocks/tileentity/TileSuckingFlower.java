@@ -4,85 +4,70 @@ import at.witho.totally_op.config.Config;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityHopper;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 import java.util.List;
 
 public class TileSuckingFlower extends TileFunctionFlower {
-
     private int counter = 0;
-    private int efficiencyOld = -1;
-    private int[] range = null;
 
     @Override
 	public void update() {
         if (world.isRemote) return;
-        if (counter < 20) {
+        if (counter < efficiency) {
             ++counter;
             return;
         }
         counter = 0;
         checkForModifiers();
-        if (efficiencyOld != efficiency) {
-            efficiencyOld = efficiency;
-            if (range == null) {
-                range = Config.intArray(Config.suckingRange.getStringList());
-            }
-            initLimits(range[efficiency]);
-            --minX;
-            --minZ;
-            ++maxX;
-            ++maxZ;
-        }
         double y = pos.getY();
         List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class,
-                new AxisAlignedBB(minX, y - range[efficiency], minZ, maxX + 1, y + range[efficiency] + 1, maxZ + 1));
+                new AxisAlignedBB(minX, y - rangeConfig[rangeTier], minZ, maxX, y + rangeConfig[rangeTier], maxZ));
         if (items.isEmpty()) return;
         if (!findInventory(items)) {
             for (EntityItem item : items) {
-                item.setPosition(pos.getX(), pos.getY(), pos.getZ());
+                BlockPos p = new BlockPos(pos.getX() - facing.getFrontOffsetX(), pos.getY(), pos.getZ() - facing.getFrontOffsetZ());
+                item.setPosition(p.getX(), p.getY(), p.getZ());
             }
         }
+    }
+
+    @Override
+    protected void initLimits(int range) {
+        super.initLimits(range);
+        --minX;
+        --minZ;
+        ++maxX;
+        ++maxZ;
     }
 
     private boolean findInventory(List<EntityItem> items) {
         int r = 1;
         for (BlockPos pos : BlockPos.getAllInBox(pos.add(-r, -r, -r), pos.add(r, r, r))) {
-            IInventory inventory = TileEntityHopper.getInventoryAtPosition(getWorld(), pos.getX(), pos.getY(), pos.getZ());
-            if (inventory != null && addToInventory(inventory, items)) return true;
+            TileEntity e = world.getTileEntity(pos);
+            if (e != null) {
+                IItemHandler inventory = e.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                if (inventory != null && addToInventory(inventory, items)) return true;
+            }
         }
         return false;
     }
 
-    private boolean addToInventory(IInventory inventory, List<EntityItem> items) {
-        for (int i = 0; i < inventory.getSizeInventory(); ++i) {
+    private boolean addToInventory(IItemHandler inventory, List<EntityItem> items) {
+        for (int i = 0; i < inventory.getSlots(); ++i) {
             boolean allDone = true;
             for (EntityItem item : items) {
                 ItemStack itemStack = item.getItem();
                 if (itemStack.isEmpty()) continue;
-                ItemStack invStack = inventory.getStackInSlot(i);
-                if (invStack.isEmpty()) {
-                    inventory.setInventorySlotContents(i, itemStack.copy());
-                    itemStack.setCount(0);
-                }
-                else if (invStack.isItemEqual(itemStack)) {
-                    int used = invStack.getCount();
-                    int free = invStack.getMaxStackSize() - used;
-                    if (free > 0) {
-                        int add = Math.min(itemStack.getCount(), free);
-                        invStack.setCount(invStack.getCount() + add);
-                        itemStack.setCount(itemStack.getCount() - add);
-                        if (!itemStack.isEmpty()) allDone = false;
-                    }
-                    else {
-                        allDone = false;
-                    }
-                }
-                else {
-                    allDone = false;
-                }
+                ItemStack remain = inventory.insertItem(i, itemStack.copy(), false);
+                itemStack.setCount(remain.getCount());
+                if (remain.getCount() != 0) allDone = false;
             }
             if (allDone) return true;
         }
