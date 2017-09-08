@@ -1,5 +1,6 @@
 package at.witho.totally_op.blocks.tileentity;
 
+import at.witho.totally_op.TotallyOP;
 import at.witho.totally_op.config.Config;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
@@ -12,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.IPlantable;
+import org.apache.logging.log4j.Level;
 
 public class TileFarmingFlower extends TileFunctionFlower {
 
@@ -28,6 +30,7 @@ public class TileFarmingFlower extends TileFunctionFlower {
 	public void update() {
 		if (!shouldRun()) return;
         if (currentPos == null) {
+            checkForModifiers();
             resetPos();
         }
 
@@ -95,7 +98,6 @@ public class TileFarmingFlower extends TileFunctionFlower {
     }
 
     protected void resetPos() {
-        checkForModifiers();
         currentPos = new BlockPos(minX, pos.getY(), minZ);
     }
 
@@ -103,7 +105,7 @@ public class TileFarmingFlower extends TileFunctionFlower {
         currentPos = currentPos.east();
         if (currentPos.getX() > maxX) {
             currentPos = currentPos.add(-range, 0, 1);
-            if (currentPos.getZ() > maxZ) resetPos();
+            if (currentPos.getZ() > maxZ) currentPos = null;
         }
     }
 

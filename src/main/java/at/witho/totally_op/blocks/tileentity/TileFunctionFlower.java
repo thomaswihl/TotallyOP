@@ -11,8 +11,8 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 
 public abstract class TileFunctionFlower extends TileEntity implements ITickable {
-    public static final int[] DEFAULT_FORTUNE_CONFIG = {1, 2, 3, 4, 5, 6, 7};
-    public static final int[] DEFAULT_EFFICIENCY_CONFIG = {80, 40, 20, 8, 4, 2, 1};
+    public static final int[] DEFAULT_FORTUNE_CONFIG = {1, 2, 4, 6, 8, 12, 16};
+    public static final int[] DEFAULT_EFFICIENCY_CONFIG = {400, 200, 100, 50, 20, 10, 5};
     public static final int[] DEFAULT_RANGE_CONFIG = {1, 3, 5, 7, 9, 11, 15};
 
     protected int[] fortuneConfig = DEFAULT_FORTUNE_CONFIG;
@@ -34,10 +34,10 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
 	protected int maxZ = 0;
 
 	public TileFunctionFlower() {
+	    super();
         fortuneConfig = Config.intArray(Config.fortuneMultiplier.getStringList());
         efficiencyConfig = Config.intArray(Config.efficiencyDelay.getStringList());
         rangeConfig = Config.intArray(Config.farmingRange.getStringList());
-        initLimits(range);
     }
 
     public int getFortune() {

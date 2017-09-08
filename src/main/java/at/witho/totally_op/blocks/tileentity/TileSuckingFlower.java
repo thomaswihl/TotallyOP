@@ -16,6 +16,7 @@ import java.util.List;
 
 public class TileSuckingFlower extends TileFunctionFlower {
     private int counter = 0;
+    private int checkCounter = 0;
 
     @Override
 	public void update() {
@@ -25,7 +26,11 @@ public class TileSuckingFlower extends TileFunctionFlower {
             return;
         }
         counter = 0;
-        checkForModifiers();
+        checkCounter += efficiency;
+        if (checkCounter > 40) {
+            checkCounter = 0;
+            checkForModifiers();
+        }
         double y = pos.getY();
         List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class,
                 new AxisAlignedBB(minX, y - rangeConfig[rangeTier], minZ, maxX, y + rangeConfig[rangeTier], maxZ));

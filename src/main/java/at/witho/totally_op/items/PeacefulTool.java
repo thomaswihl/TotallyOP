@@ -26,6 +26,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.IShearable;
@@ -99,10 +100,12 @@ public class PeacefulTool extends ItemTool {
 			if (nbt.getShort("id") != 33) {
                 stack.setTagInfo("ench", new NBTTagList());
 				stack.addEnchantment(Enchantment.getEnchantmentByID(33), 1);
+                playerIn.sendMessage(new TextComponentString("Your tool has now silk touch."));
 			}
 			else {
 				stack.setTagInfo("ench", new NBTTagList());
                 stack.addEnchantment(Enchantment.getEnchantmentByID(35), fortune);
+                playerIn.sendMessage(new TextComponentString("Your tool has now fortune " + fortune + "."));
 			}
 		}
 		return super.onItemRightClick(worldIn, playerIn, handIn);
