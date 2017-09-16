@@ -42,12 +42,20 @@ public class TileFarmingFlower extends TileFunctionFlower {
             Block block = state.getBlock();
             block.getDrops(drops, world, info.harvestPos, state, 0);
             world.setBlockToAir(info.harvestPos);
+            boolean allIsSeed = info.seed != null;
             for (ItemStack stack : drops) {
                 Item item = stack.getItem();
+                if (allIsSeed && !stack.isItemEqual(info.seed)) allIsSeed = false;
                 if ((info.seed == null || !stack.isItemEqual(info.seed)) && !info.ignoreFortune) {
                     stack.setCount(stack.getCount() * fortune);
                 }
                 world.spawnEntity(new EntityItem(world, info.harvestPos.getX(), info.harvestPos.getY(), info.harvestPos.getZ(), stack));
+            }
+            if (allIsSeed) {
+                for (ItemStack stack : drops) {
+                    stack.setCount(stack.getCount() * fortune - 1);
+                    world.spawnEntity(new EntityItem(world, info.harvestPos.getX(), info.harvestPos.getY(), info.harvestPos.getZ(), stack));
+                }
             }
             if (info.seed != null) {
                 Item item = info.seed.getItem();
@@ -85,7 +93,7 @@ public class TileFarmingFlower extends TileFunctionFlower {
             }
         } else if (block instanceof BlockMelon || block instanceof BlockPumpkin) {
             return new HarvestInfo();
-        } else if (block instanceof BlockCactus || block instanceof BlockReed) {
+        } else if (block instanceof IPlantable) {//BlockCactus || block instanceof BlockReed) {
             int size = 0;
             BlockPos pos = currentPos;
             do {
