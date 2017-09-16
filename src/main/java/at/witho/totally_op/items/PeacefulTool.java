@@ -141,23 +141,24 @@ public class PeacefulTool extends ItemTool {
 			if (cooldown > 0) cooldown--;
 		}
     }
-	
-	@Override
+
+    @Override
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand,
 			EnumFacing facing, float hitX, float hitY, float hitZ) {
-		if (!worldIn.isRemote) {
-			IBlockState state = worldIn.getBlockState(pos);
-			Block block = state.getBlock();
-			if (block instanceof IShearable) {
-				IShearable shear = (IShearable)block;
-				List<ItemStack> drops = shear.onSheared(player.getHeldItem(hand), worldIn, pos, fortune);
+        IBlockState state = player.world.getBlockState(pos);
+        Block block = state.getBlock();
+        if (block instanceof IShearable) {
+            if (!player.world.isRemote) {
+                IShearable shear = (IShearable)block;
+                List<ItemStack> drops = shear.onSheared(player.getHeldItem(hand), player.world, pos, fortune);
                 player.world.setBlockState(pos, Blocks.AIR.getDefaultState(), 11);
-				BlockPos currentPos = player.getPosition();
-				for (ItemStack stack : drops)
-					worldIn.spawnEntity(new EntityItem(worldIn, currentPos.getX(), currentPos.getY(), currentPos.getZ(), stack));
-			}
+                BlockPos currentPos = player.getPosition();
+                for (ItemStack stack : drops)
+                    player.world.spawnEntity(new EntityItem(player.world, currentPos.getX(), currentPos.getY(), currentPos.getZ(), stack));
+            }
+            return EnumActionResult.SUCCESS;
 		}
-		return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+        return EnumActionResult.PASS;
 	}
 
 	
