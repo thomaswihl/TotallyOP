@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "totally_op",
+  "pattern": [
+    "g g",
+    "gfg",
+    "g g"
+  ],
+  "key": {
+    "f": {
+      "item": "totally_op:peaceful_flower"
+    },
+    "g": {
+      "item": "minecraft:gold_block"
+    }
+  },
+  "result": {
+    "item": "totally_op:wings"
+  }
+}

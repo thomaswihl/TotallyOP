@@ -17,6 +17,7 @@ public class ModItems {
     public static final RubberBoots rubber_boots = null;
     public static final ScubaHelmet scuba_helmet = null;
     public static final Rucksack rucksack = null;
+    public static final Wings wings = null;
 
 
     @SideOnly(Side.CLIENT)
@@ -30,6 +31,7 @@ public class ModItems {
         rubber_boots.initModel();
         scuba_helmet.initModel();
         rucksack.initModel();
+        wings.initModel();
     }
 
 }

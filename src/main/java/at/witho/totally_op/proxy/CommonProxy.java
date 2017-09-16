@@ -80,6 +80,7 @@ public class CommonProxy {
         event.getRegistry().register(new RubberBoots());
         event.getRegistry().register(new ScubaHelmet());
         event.getRegistry().register(new Rucksack());
+        event.getRegistry().register(new Wings());
     }
 
     @SubscribeEvent
