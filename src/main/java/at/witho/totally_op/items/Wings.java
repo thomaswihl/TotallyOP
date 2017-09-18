@@ -1,12 +1,15 @@
 package at.witho.totally_op.items;
 
+import at.witho.totally_op.ModItems;
 import at.witho.totally_op.TotallyOP;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemElytra;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -14,10 +17,19 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.logging.log4j.Level;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 public class Wings extends ItemArmor {
+    private int counter = 0;
+
 	public Wings() {
         super(TotallyOP.armorMaterial, 0, EntityEquipmentSlot.CHEST);
+        setMaxStackSize(1);
 		setRegistryName("wings");
 		setUnlocalizedName(TotallyOP.MODID + "." + getRegistryName());
         MinecraftForge.EVENT_BUS.register(this);
@@ -35,22 +47,32 @@ public class Wings extends ItemArmor {
     }
 
     public static ItemStack getWingsFromPlayer(EntityPlayer player) {
-        for(int i = 0; i < player.inventory.armorInventory.size(); i++) {
-            if(player.inventory.armorInventory.get(i).getItem() instanceof Wings){
-                return player.inventory.armorInventory.get(i);
-            }
-        }
+        ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+        if (stack.getItem() == ModItems.wings) return stack;
         return ItemStack.EMPTY;
     }
 
     @SubscribeEvent
     public void livingUpdateEvent(LivingEvent.LivingUpdateEvent event) {
-        if(event.getEntityLiving() instanceof EntityPlayer) {
+	    ++counter;
+	    if (counter < 20) return;
+	    counter = 0;
+        if (event.getEntityLiving() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer)event.getEntityLiving();
-            //if (player.world.isRemote) return;
+            if (player.capabilities.isCreativeMode) return;
             ItemStack wings = getWingsFromPlayer(player);
             player.capabilities.allowFlying = !wings.isEmpty();
+//            if (player.isAirBorne && !player.capabilities.isFlying) {
+//                Entity entity = (Entity)player;
+//                Class clazz = entity.getClass();
+//                try {
+//                    EntityPlayerSP
+//                    Method setFlag = clazz.getDeclaredMethod("setFlag", int.class, boolean.class);
+//                    setFlag.setAccessible(true);
+//                    setFlag.invoke(clazz, 7, true);
+//                    TotallyOP.logger.log(Level.ERROR, "SUCCESS");
+//                } catch (NoSuchMethodException|IllegalAccessException|InvocationTargetException x) { TotallyOP.logger.log(Level.ERROR, x); }
+//            }
         }
     }
-
 }
