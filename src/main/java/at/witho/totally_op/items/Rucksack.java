@@ -38,7 +38,7 @@ public class Rucksack extends Item {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         ItemStack stack = playerIn.getHeldItem(handIn);
-        if (playerIn.isSneaking()) {
+        if (!playerIn.isSneaking()) {
             if (!worldIn.isRemote) {
                 playerIn.openGui(TotallyOP.instance, GUI_ID, worldIn, 0, 0, 0);
             }

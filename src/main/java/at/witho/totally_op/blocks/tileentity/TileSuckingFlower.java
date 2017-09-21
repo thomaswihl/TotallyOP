@@ -33,7 +33,7 @@ public class TileSuckingFlower extends TileFunctionFlower {
         }
         double y = pos.getY();
         List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class,
-                new AxisAlignedBB(minX, y - rangeConfig[rangeTier], minZ, maxX, y + rangeConfig[rangeTier], maxZ));
+                new AxisAlignedBB(minX, y - rangeConfig[rangeTier], minZ, maxX + 1, y + rangeConfig[rangeTier] + 1, maxZ + 1));
         if (items.isEmpty()) return;
         if (!findInventory(items)) {
             for (EntityItem item : items) {

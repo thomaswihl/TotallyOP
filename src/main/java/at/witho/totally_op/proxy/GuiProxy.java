@@ -2,6 +2,7 @@ package at.witho.totally_op.proxy;
 
 import at.witho.totally_op.gui.RucksackGui;
 import at.witho.totally_op.items.Rucksack;
+import at.witho.totally_op.storage.RucksackContainer;
 import at.witho.totally_op.storage.RucksackStorage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ContainerChest;
@@ -15,7 +16,7 @@ public class GuiProxy implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         if (ID == Rucksack.GUI_ID) {
-            return new ContainerChest(player.inventory, new RucksackStorage(player.getHeldItemMainhand()), player);
+            return new RucksackContainer(player.inventory, new RucksackStorage(player.getHeldItemMainhand()));
         }
         return null;
     }
@@ -23,7 +24,7 @@ public class GuiProxy implements IGuiHandler {
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         if (ID == Rucksack.GUI_ID) {
-            return new RucksackGui(new ContainerChest(player.inventory, new RucksackStorage(player.getHeldItemMainhand()), player));
+            return new RucksackGui(new RucksackContainer(player.inventory, new RucksackStorage(player.getHeldItemMainhand())));
         }
         return null;
     }
