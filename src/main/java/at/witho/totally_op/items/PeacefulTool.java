@@ -36,16 +36,17 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.StringUtils;
 
 public class PeacefulTool extends ItemTool {
-    protected static final int MAGNET_ACTIVE_TIME = 40;
-    protected static final int VEINMINE_COOLDOWN_TIME = 10;
-	protected ConcurrentLinkedQueue<BlockPos> blockPositionsToBreak = new ConcurrentLinkedQueue<BlockPos>();
-	protected Block blockToBreak = null;
-	protected EntityPlayerMP player = null;
-	protected World worldUsed = null;
-	protected int magnetRange = 0;
-	protected int magnetActive = 0;
-	protected int cooldown = 0;
-	protected int fortune = 0;
+    private static final int MAGNET_MAX_TIME = 400;
+    private static final int MAGNET_ACTIVE_TIME = 40;
+    private static final int VEINMINE_COOLDOWN_TIME = 10;
+    private ConcurrentLinkedQueue<BlockPos> blockPositionsToBreak = new ConcurrentLinkedQueue<BlockPos>();
+    private Block blockToBreak = null;
+    private EntityPlayerMP player = null;
+    private World worldUsed = null;
+    private int magnetRange = 0;
+    private int magnetActive = 0;
+    private int cooldown = 0;
+    private int fortune = 0;
 	
 	public PeacefulTool(ToolMaterial material, String name, int magnetRange, int fortune) {
 		super(material, new HashSet<>());
@@ -191,7 +192,8 @@ public class PeacefulTool extends ItemTool {
 				}
 			}
 			else if (!blockPositionsToBreak.isEmpty()) blockPositionsToBreak.clear();
-			magnetActive = MAGNET_ACTIVE_TIME;
+			magnetActive += MAGNET_ACTIVE_TIME;
+			if (magnetActive > MAGNET_MAX_TIME) magnetActive = MAGNET_MAX_TIME;
 			cooldown = VEINMINE_COOLDOWN_TIME;
 		}
 		return super.onBlockDestroyed(stack, worldIn, state, pos, entityLiving);

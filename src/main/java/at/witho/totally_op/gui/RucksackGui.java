@@ -21,10 +21,15 @@ public class RucksackGui extends GuiContainer {
     public static final int compressY = firstItemY;
     public static final int slotsX = 12;
     public static final int slotsY = 6;
-    public static final int playerFirstItemX = 40 + 8;
+    public static final int rucksackGuiWidth = 256;
+    public static final int rucksackGuiHeight = 162;
+    public static final int playerGuiWidth = 206;
+    public static final int playerGuiHieght = 90;
+    public static final int playerGuiOffsetX = (rucksackGuiWidth - playerGuiWidth) / 2;
+    public static final int playerFirstItemX = playerGuiOffsetX + 8;
     public static final int playerFirstItemY = 162 + 8;
     public static final int hotbarFirstItemY = 162 + 66;
-
+    public static final int offhandItemX = playerGuiOffsetX + 178;
 
     public RucksackGui(Container inventorySlotsIn) {
         super(inventorySlotsIn);
@@ -35,8 +40,8 @@ public class RucksackGui extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         mc.getTextureManager().bindTexture(rucksackInventory);
-        drawTexturedModalRect(guiLeft, guiTop, 0, 0, 256, 162);
+        drawTexturedModalRect(guiLeft, guiTop, 0, 0, rucksackGuiWidth, rucksackGuiHeight);
         mc.getTextureManager().bindTexture(playerInventory);
-        drawTexturedModalRect(guiLeft + 40, guiTop + 162, 0, 0, 176, 90);
+        drawTexturedModalRect(guiLeft + playerGuiOffsetX, guiTop + rucksackGuiHeight, 0, 0, playerGuiWidth, playerGuiHieght);
     }
 }

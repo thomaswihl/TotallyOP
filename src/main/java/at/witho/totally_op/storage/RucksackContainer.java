@@ -4,6 +4,7 @@ import at.witho.totally_op.gui.RucksackGui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -27,6 +28,10 @@ public class RucksackContainer extends Container {
                         ((y == 0) ? RucksackGui.hotbarFirstItemY : (RucksackGui.playerFirstItemY - 18)) + y * 18));
             }
         }
+        addSlotToContainer(new Slot(inventory,
+                40,
+                RucksackGui.offhandItemX,
+                RucksackGui.playerFirstItemY));
     }
 
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
