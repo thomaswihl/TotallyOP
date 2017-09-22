@@ -1,7 +1,6 @@
 package at.witho.totally_op.storage;
 
 import at.witho.totally_op.gui.RucksackGui;
-import com.sun.xml.internal.ws.api.server.Container;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.IInventoryChangedListener;
