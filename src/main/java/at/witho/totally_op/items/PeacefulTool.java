@@ -55,6 +55,7 @@ public class PeacefulTool extends ItemTool {
 		setUnlocalizedName(TotallyOP.MODID + "." + name);
 		this.magnetRange = magnetRange;
 		this.fortune = fortune;
+        MinecraftForge.EVENT_BUS.register(this);
 	}
 
     @SideOnly(Side.CLIENT)
@@ -193,7 +194,6 @@ public class PeacefulTool extends ItemTool {
 				}
 				if (!blockPositionsToBreak.isEmpty() && wasEmpty) {
 					blockToBreak = state.getBlock();
-					MinecraftForge.EVENT_BUS.register(this);
 				}
 			}
 			else if (!blockPositionsToBreak.isEmpty()) blockPositionsToBreak.clear();
@@ -216,7 +216,6 @@ public class PeacefulTool extends ItemTool {
 			}
 		}
 		if (blockPositionsToBreak.isEmpty()) {
-			MinecraftForge.EVENT_BUS.unregister(this);
 			blockToBreak = null;
 		}
 	}
