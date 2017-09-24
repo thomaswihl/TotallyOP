@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "totally_op",
+  "pattern": [
+    "dfd",
+    " o ",
+    " o "
+  ],
+  "key": {
+    "o": {
+      "item": "minecraft:obsidian"
+    },
+    "f": {
+      "item": "totally_op:peaceful_flower"
+    },
+    "d": {
+      "item": "minecraft:diamond_block"
+    }
+  },
+  "result": {
+    "item": "totally_op:rough_tool",
+    "nbt": {
+      "ench": [{"id":35,"lvl":5}]
+    }
+  }
+}

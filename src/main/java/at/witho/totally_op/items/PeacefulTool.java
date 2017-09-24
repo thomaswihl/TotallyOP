@@ -13,6 +13,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -36,8 +37,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.StringUtils;
 
 public class PeacefulTool extends ItemTool {
-    private static final int MAGNET_MAX_TIME = 400;
-    private static final int MAGNET_ACTIVE_TIME = 40;
+    private static final int MAGNET_MAX_TIME = 80;
+    private static final int MAGNET_ACTIVE_TIME = 20;
     private static final int VEINMINE_COOLDOWN_TIME = 10;
     private ConcurrentLinkedQueue<BlockPos> blockPositionsToBreak = new ConcurrentLinkedQueue<BlockPos>();
     private Block blockToBreak = null;
@@ -134,10 +135,14 @@ public class PeacefulTool extends ItemTool {
 				double x = entityIn.posX;
 				double y = entityIn.posY;
 				double z = entityIn.posZ;
-				List<EntityItem> items = worldIn.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(x - magnetRange, y - magnetRange, z - magnetRange, x + magnetRange, y + magnetRange, z + magnetRange));
+				List<EntityItem> items = worldIn.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(x - magnetRange, y - magnetRange, z - magnetRange, x + magnetRange + 1, y + magnetRange + 1, z + magnetRange + 1));
 				for(EntityItem item : items) {
 					item.setPosition(x,  y,  z);
 				}
+                List<EntityXPOrb> xpOrbs = worldIn.getEntitiesWithinAABB(EntityXPOrb.class, new AxisAlignedBB(x - magnetRange, y - magnetRange, z - magnetRange, x + magnetRange + 1, y + magnetRange + 1, z + magnetRange + 1));
+                for(EntityXPOrb item : xpOrbs) {
+                    item.setPosition(x,  y,  z);
+                }
 			}
 			if (cooldown > 0) cooldown--;
 		}

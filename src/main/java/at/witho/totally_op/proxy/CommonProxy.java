@@ -73,9 +73,10 @@ public class CommonProxy {
         event.getRegistry().register(new ItemBlock(ModBlocks.fortune).setRegistryName(ModBlocks.fortune.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.efficiency).setRegistryName(ModBlocks.efficiency.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.range).setRegistryName(ModBlocks.range.getRegistryName()));
-    	event.getRegistry().register(new PeacefulWoodTool());
-    	event.getRegistry().register(new PeacefulIronTool());
-    	event.getRegistry().register(new PeacefulDiamondTool());
+    	event.getRegistry().register(new PeacefulTool(TotallyOP.peacefulWoodMaterial, "peaceful_wood_tool", 2, 1));
+    	event.getRegistry().register(new PeacefulTool(TotallyOP.peacefulIronMaterial, "peaceful_iron_tool", 4, 2));
+    	event.getRegistry().register(new PeacefulTool(TotallyOP.peacefulDiamondMaterial, "peaceful_diamond_tool", 8, 3));
+        event.getRegistry().register(new RoughTool());
     	event.getRegistry().register(new Alphorn());
         event.getRegistry().register(new Coin());
         event.getRegistry().register(new Euro());

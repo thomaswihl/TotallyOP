@@ -20,6 +20,10 @@ public class RucksackContainer extends Container {
                         RucksackGui.firstItemY + y * 18));
             }
         }
+        addSlotToContainer(new Slot(inventory,
+                40,
+                RucksackGui.offhandItemX,
+                RucksackGui.playerFirstItemY));
         for(int y = 0; y < 4; y++) {
             for(int x = 0; x < 9; x++) {
                 addSlotToContainer(new Slot(inventory,
@@ -28,10 +32,6 @@ public class RucksackContainer extends Container {
                         ((y == 0) ? RucksackGui.hotbarFirstItemY : (RucksackGui.playerFirstItemY - 18)) + y * 18));
             }
         }
-        addSlotToContainer(new Slot(inventory,
-                40,
-                RucksackGui.offhandItemX,
-                RucksackGui.playerFirstItemY));
     }
 
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
