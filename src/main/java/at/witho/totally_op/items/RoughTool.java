@@ -3,6 +3,7 @@ package at.witho.totally_op.items;
 import at.witho.totally_op.Helper;
 import at.witho.totally_op.TotallyOP;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -14,14 +15,12 @@ import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -77,7 +76,9 @@ public class RoughTool extends ItemTool {
     public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, EntityPlayer player)
     {
         if (active) return false;
-        if (!player.world.isRemote && !active) {
+        SoundType sound = null;
+        World world = player.world;
+        if (!player.world.isRemote) {
             active = true;
             int vertical = Math.round(player.rotationPitch / 90.0f);
             int horizontal = Math.round(player.rotationYaw * 4.0F / 360.0F) & 1;
@@ -108,6 +109,7 @@ public class RoughTool extends ItemTool {
                         BlockPos p = startPos.add(x, y, z);
                         IBlockState thisState = player.world.getBlockState(p);
                         Block thisBlock = thisState.getBlock();
+                        if (sound == null) sound = thisBlock.getSoundType(thisState, world, p, player);
                         if (thisBlock == Blocks.AIR) continue;
                         if (thisBlock == Blocks.STONE || thisBlock == Blocks.DIRT || thisBlock == Blocks.GRAVEL) player.world.setBlockToAir(p);
                         else if (canHarvestBlock(thisState, itemstack)) {
@@ -119,6 +121,7 @@ public class RoughTool extends ItemTool {
             active = false;
             magnetActive = MAGNET_ACTIVE_TIME;
         }
+        if (sound != null) world.playSound(player, pos.getX(), pos.getY(), pos.getZ(), sound.getBreakSound(), SoundCategory.BLOCKS, sound.volume, sound.pitch);
         return true;
     }
 

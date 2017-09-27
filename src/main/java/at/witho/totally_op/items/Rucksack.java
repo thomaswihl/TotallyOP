@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,6 +14,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
@@ -26,6 +28,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
+
+import java.util.Random;
 
 public class Rucksack extends Item {
     public static final int GUI_ID = 1;
@@ -69,11 +73,17 @@ public class Rucksack extends Item {
     @SubscribeEvent
     public void onItemPickup(EntityItemPickupEvent event) {
         if (event.isCanceled()) return;
+        EntityPlayer player = event.getEntityPlayer();
         ItemStack rucksack = getActiveRucksack(event.getEntityPlayer());
         if (!rucksack.isEmpty()) {
             RucksackStorage storage = new RucksackStorage(rucksack);
             ItemStack remain = storage.addItem(event.getItem().getItem());
             event.getItem().getItem().setCount(remain.getCount());
+            World world = player.world;
+            Random rand = player.getEntityWorld().rand;
+            world.playSound(player, player.posX, player.posY, player.posZ,
+                    SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+            event.getEntityPlayer().playSound(SoundEvents.ENTITY_ITEM_PICKUP, 0.2F, ((rand.nextFloat() - rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
         }
     }
 

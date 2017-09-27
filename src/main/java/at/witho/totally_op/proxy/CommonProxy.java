@@ -12,6 +12,7 @@ import at.witho.totally_op.blocks.tileentity.TileSuckingFlower;
 import at.witho.totally_op.config.Config;
 import at.witho.totally_op.entity.Car;
 import at.witho.totally_op.items.*;
+import at.witho.totally_op.util.HarvestHelper;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -42,6 +43,7 @@ public class CommonProxy {
     public void init(FMLInitializationEvent e) {
     	MinecraftForge.TERRAIN_GEN_BUS.register(WorldGen.class);
 		MinecraftForge.EVENT_BUS.register(MobInteraction.class);
+		MinecraftForge.EVENT_BUS.register(HarvestHelper.class);
         NetworkRegistry.INSTANCE.registerGuiHandler(TotallyOP.instance, new GuiProxy());
     }
 
