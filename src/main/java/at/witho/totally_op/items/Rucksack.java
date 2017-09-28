@@ -81,9 +81,8 @@ public class Rucksack extends Item {
             event.getItem().getItem().setCount(remain.getCount());
             World world = player.world;
             Random rand = player.getEntityWorld().rand;
-            world.playSound(player, player.posX, player.posY, player.posZ,
+            world.playSound(null, player.posX, player.posY, player.posZ,
                     SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
-            event.getEntityPlayer().playSound(SoundEvents.ENTITY_ITEM_PICKUP, 0.2F, ((rand.nextFloat() - rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
         }
     }
 

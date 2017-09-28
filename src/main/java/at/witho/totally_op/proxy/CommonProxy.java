@@ -43,7 +43,7 @@ public class CommonProxy {
     public void init(FMLInitializationEvent e) {
     	MinecraftForge.TERRAIN_GEN_BUS.register(WorldGen.class);
 		MinecraftForge.EVENT_BUS.register(MobInteraction.class);
-		MinecraftForge.EVENT_BUS.register(HarvestHelper.class);
+		if (Config.xpForHarvesting > 0) MinecraftForge.EVENT_BUS.register(HarvestHelper.class);
         NetworkRegistry.INSTANCE.registerGuiHandler(TotallyOP.instance, new GuiProxy());
     }
 

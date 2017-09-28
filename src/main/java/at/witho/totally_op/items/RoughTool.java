@@ -121,7 +121,7 @@ public class RoughTool extends ItemTool {
             active = false;
             magnetActive = MAGNET_ACTIVE_TIME;
         }
-        if (sound != null) world.playSound(player, pos.getX(), pos.getY(), pos.getZ(), sound.getBreakSound(), SoundCategory.BLOCKS, sound.volume, sound.pitch);
+        if (sound != null) world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), sound.getBreakSound(), SoundCategory.BLOCKS, sound.volume, sound.pitch);
         return true;
     }
 
