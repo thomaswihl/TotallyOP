@@ -1,0 +1,22 @@
+ 
+tile.totally_op.peaceful_flower.name=Peaceful Flower
+tile.totally_op.peaceful_double_flower.name=Extreme Peaceful Flower
+tile.totally_op.farming_flower.name=Farming Flower
+tile.totally_op.sucking_flower.name=Vacuum Flower
+tile.totally_op.fortune.name=Fortunate Block
+tile.totally_op.efficiency.name=Efficient Block
+tile.totally_op.range.name=Expanding Block
+
+item.totally_op.peaceful_wood_tool.name=Beginners Tool
+item.totally_op.peaceful_iron_tool.name=Interim Tool
+item.totally_op.peaceful_diamond_tool.name=End Tool
+item.totally_op.rough_tool.name=Brutal Tool
+item.totally_op.rubber_boots.name=Rubber Boots
+item.totally_op.scuba_helmet.name=Scuba Helmet
+item.totally_op.wings.name=Wings
+item.totally_op.alphorn.name=Alphorn
+item.totally_op.coin.name=Coin
+item.totally_op.euro.name=Euro
+item.totally_op.rucksack.name=Rucksack
+
+

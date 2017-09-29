@@ -9,8 +9,11 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -18,6 +21,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.logging.log4j.Level;
 
 import java.util.Random;
 
@@ -27,7 +31,7 @@ public class PeacefulFlower extends BlockBush implements IGrowable {
 		super(Material.PLANTS, Material.PLANTS.getMaterialMapColor());
 		setUnlocalizedName(TotallyOP.MODID + ".peaceful_flower");
 		setRegistryName("peaceful_flower");
-        this.setTickRandomly(false);
+        //this.setTickRandomly(false);
         this.setSoundType(SoundType.PLANT);
         setHardness(0F);
 	}
@@ -37,7 +41,25 @@ public class PeacefulFlower extends BlockBush implements IGrowable {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
-	@Override
+    @Override
+    public void randomTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    {
+        super.randomTick(worldIn, pos, state, rand);
+        IBlockState below = worldIn.getBlockState(pos.down());
+        if (below.getBlock() == Blocks.COBBLESTONE) return;
+        ItemStack smeltingResult = FurnaceRecipes.instance().getSmeltingResult(new ItemStack(below.getBlock(), 1, below.getBlock().getMetaFromState(below)));
+        if (!smeltingResult.isEmpty()) {
+            ItemStack stack = smeltingResult.copy();
+            stack.setCount(stack.getCount() * 9);
+            worldIn.setBlockState(pos.down(), Blocks.COBBLESTONE.getDefaultState());
+            worldIn.setBlockToAir(pos);
+            worldIn.spawnEntity(new EntityItem(worldIn, pos.getX(), pos.getY(), pos.getZ(), stack));
+            TotallyOP.logger.log(Level.ERROR, "tick@" + pos + stack);
+        }
+    }
+
+
+    @Override
     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
     {
         IBlockState soil = worldIn.getBlockState(pos.down());

@@ -4,6 +4,7 @@ import net.minecraft.block.BlockBush;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -15,7 +16,7 @@ public class HarvestHelper {
         IBlockState state = event.getState();
         boolean drop = false;
         if (state.getBlock() instanceof BlockBush) drop = true;
-        if (!drop) {
+        if (!drop && state.getBlock() != Blocks.AIR) {
             int[] ids = OreDictionary.getOreIDs(new ItemStack(state.getBlock()));
             for (int id : ids) {
                 String name = OreDictionary.getOreName(id);

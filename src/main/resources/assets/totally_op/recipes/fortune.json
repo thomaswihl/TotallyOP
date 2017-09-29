@@ -4,7 +4,11 @@
   "ingredients": [
     {
       "type": "forge:ore_dict",
-      "ore": "blockLapis"
+      "ore": "gemLapis"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "stone"
     },
     {
       "item": "totally_op:peaceful_flower"
