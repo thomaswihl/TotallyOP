@@ -8,6 +8,7 @@ import at.witho.totally_op.TotallyOP;
 import at.witho.totally_op.WorldGen;
 import at.witho.totally_op.blocks.*;
 import at.witho.totally_op.blocks.tileentity.TileFarmingFlower;
+import at.witho.totally_op.blocks.tileentity.TilePlacingFlower;
 import at.witho.totally_op.blocks.tileentity.TileSuckingFlower;
 import at.witho.totally_op.config.Config;
 import at.witho.totally_op.entity.Car;
@@ -59,11 +60,13 @@ public class CommonProxy {
         event.getRegistry().register(new PeacefulDoubleFlower());
     	event.getRegistry().register(new FarmingFlower());
         event.getRegistry().register(new SuckingFlower());
+        event.getRegistry().register(new PlacingFlower());
         event.getRegistry().register(new TierableBlock(TierableBlock.FORTUNE));
         event.getRegistry().register(new TierableBlock(TierableBlock.EFFICIENCY));
         event.getRegistry().register(new TierableBlock(TierableBlock.RANGE));
     	GameRegistry.registerTileEntity(TileFarmingFlower.class, TotallyOP.MODID + "_farming_flower");
         GameRegistry.registerTileEntity(TileSuckingFlower.class, TotallyOP.MODID + "_sucking_flower");
+        GameRegistry.registerTileEntity(TilePlacingFlower.class, TotallyOP.MODID + "_placing_flower");
     }
 
     @SubscribeEvent
@@ -72,6 +75,7 @@ public class CommonProxy {
         event.getRegistry().register(new ItemBlock(ModBlocks.peaceful_double_flower).setRegistryName(ModBlocks.peaceful_double_flower.getRegistryName()));
     	event.getRegistry().register(new ItemBlock(ModBlocks.farming_flower).setRegistryName(ModBlocks.farming_flower.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.sucking_flower).setRegistryName(ModBlocks.sucking_flower.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.placing_flower).setRegistryName(ModBlocks.placing_flower.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.fortune).setRegistryName(ModBlocks.fortune.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.efficiency).setRegistryName(ModBlocks.efficiency.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.range).setRegistryName(ModBlocks.range.getRegistryName()));

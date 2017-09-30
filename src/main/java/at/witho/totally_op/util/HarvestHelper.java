@@ -16,13 +16,16 @@ public class HarvestHelper {
         IBlockState state = event.getState();
         boolean drop = false;
         if (state.getBlock() instanceof BlockBush) drop = true;
-        if (!drop && state.getBlock() != Blocks.AIR) {
-            int[] ids = OreDictionary.getOreIDs(new ItemStack(state.getBlock()));
-            for (int id : ids) {
-                String name = OreDictionary.getOreName(id);
-                if (name == "logWood") {
-                    drop = true;
-                    break;
+        if (!drop) {
+            ItemStack stack = new ItemStack(state.getBlock());
+            if (!stack.isEmpty()) {
+                int[] ids = OreDictionary.getOreIDs(stack);
+                for (int id : ids) {
+                    String name = OreDictionary.getOreName(id);
+                    if (name == "logWood") {
+                        drop = true;
+                        break;
+                    }
                 }
             }
         }

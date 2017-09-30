@@ -32,6 +32,7 @@ public class TileFarmingFlower extends TileFunctionFlower {
         if (currentPos == null) {
             checkForModifiers();
             resetPos();
+            return;
         }
 
 		IBlockState state = world.getBlockState(currentPos);
@@ -64,13 +65,14 @@ public class TileFarmingFlower extends TileFunctionFlower {
                     world.setBlockState(currentPos, seed.getPlant(world, currentPos), 3);
                 }
             }
-		} else {
-            Block block = state.getBlock();
-            if (block instanceof IGrowable) {
-                IGrowable crop = (IGrowable)block;
-                crop.grow(world, world.rand, currentPos, state);
-            }
-        }
+		}
+//		else {
+//            Block block = state.getBlock();
+//            if (block instanceof IGrowable) {
+//                IGrowable crop = (IGrowable)block;
+//                crop.grow(world, world.rand, currentPos, state);
+//            }
+//        }
 
 		nextBlock();
 	}

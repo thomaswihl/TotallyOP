@@ -12,6 +12,7 @@ public class ModBlocks {
     public static final PeacefulDoubleFlower peaceful_double_flower = null;
     public static final FarmingFlower farming_flower = null;
     public static final SuckingFlower sucking_flower = null;
+    public static final PlacingFlower placing_flower = null;
     public static final TierableBlock fortune = null;
     public static final TierableBlock efficiency = null;
     public static final TierableBlock range = null;
@@ -22,6 +23,7 @@ public class ModBlocks {
         peaceful_double_flower.initModel();
         farming_flower.initModel();
         sucking_flower.initModel();
+        placing_flower.initModel();
         fortune.initModel();
         efficiency.initModel();
         range.initModel();
