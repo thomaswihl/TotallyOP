@@ -20,21 +20,15 @@ import net.minecraftforge.items.IItemHandler;
 import java.util.List;
 
 public class TilePlacingFlower extends TileFunctionFlower {
-
-
-    protected BlockPos currentPos = null;
-
-    protected int delay = 1;
-
     public TilePlacingFlower() {
         super();
     }
 
     @Override
 	public void update() {
+        super.update();
 		if (!shouldRun()) return;
         if (currentPos == null) {
-            checkForModifiers();
             resetPos();
             return;
         }
@@ -68,7 +62,7 @@ public class TilePlacingFlower extends TileFunctionFlower {
                 }
             }
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     private ItemStack extractItem(IItemHandler inventory, Block block) {
@@ -84,6 +78,6 @@ public class TilePlacingFlower extends TileFunctionFlower {
                 }
             }
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 }

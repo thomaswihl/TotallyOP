@@ -15,22 +15,11 @@ import net.minecraftforge.items.IItemHandler;
 import java.util.List;
 
 public class TileSuckingFlower extends TileFunctionFlower {
-    private int counter = 0;
-    private int checkCounter = 0;
 
     @Override
 	public void update() {
-        if (world.isRemote) return;
-        if (counter < efficiency) {
-            ++counter;
-            return;
-        }
-        counter = 0;
-        checkCounter += efficiency;
-        if (checkCounter > 40) {
-            checkCounter = 0;
-            checkForModifiers();
-        }
+        super.update();
+        if (!shouldRun()) return;
         double y = pos.getY();
         List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class,
                 new AxisAlignedBB(minX, y - rangeConfig[rangeTier], minZ, maxX + 1, y + rangeConfig[rangeTier] + 1, maxZ + 1));

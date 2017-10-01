@@ -6,6 +6,7 @@ import at.witho.totally_op.config.Config;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -39,6 +40,8 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
     protected ItemStack filter = ItemStack.EMPTY;
     protected boolean filterIsWhitelist = true;
 
+    private int checkCounter = 0;
+
 	public TileFunctionFlower() {
 	    super();
         fortuneConfig = Config.intArray(Config.fortuneMultiplier.getStringList());
@@ -49,20 +52,28 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
     public int getFortune() {
         return fortune;
     }
-
     public int getEfficiency() {
         return efficiency;
     }
-
     public int getRange() {
         return range;
     }
 
     public ItemStack getFilter() { return filter; }
-    public void setFilter(ItemStack block) { filter = block.copy(); }
+    public void setFilter(ItemStack block) { filter = block.copy(); markDirty(); }
 
     public boolean getFilterIsWhitelist() { return filterIsWhitelist; }
-    public void setFilterIsWhitelist(boolean whitelist) { filterIsWhitelist = whitelist; }
+    public void setFilterIsWhitelist(boolean whitelist) { filterIsWhitelist = whitelist; markDirty(); }
+
+    @Override
+    public void update() {
+        checkCounter += efficiency;
+        if (checkCounter > 40) {
+            checkCounter = 0;
+            checkForModifiers();
+        }
+
+    }
 
     protected void initLimits(int range) {
 		minX = maxX = pos.getX();
@@ -147,6 +158,25 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
             currentPos = currentPos.add(-range, 0, 1);
             if (currentPos.getZ() > maxZ) currentPos = null;
         }
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+	    super.readFromNBT(compound);
+	    filterIsWhitelist = compound.getBoolean("filterIsWhitelist");
+	    filter = new ItemStack(compound.getCompoundTag("filter"));
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        super.writeToNBT(compound);
+        if (!filter.isEmpty()) {
+            NBTTagCompound stack = new NBTTagCompound();
+            filter.writeToNBT(stack);
+            compound.setTag("filter", stack);
+            compound.setBoolean("filterIsWhitelist", filterIsWhitelist);
+        }
+        return compound;
     }
 
 }

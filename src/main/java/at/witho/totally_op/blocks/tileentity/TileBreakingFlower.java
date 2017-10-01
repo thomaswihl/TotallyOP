@@ -16,7 +16,8 @@ public class TileBreakingFlower extends TileFunctionFlower {
 
     @Override
 	public void update() {
-		if (!shouldRun()) return;
+        super.update();
+        if (!shouldRun()) return;
         if (currentPos == null) {
             checkForModifiers();
             resetPos();

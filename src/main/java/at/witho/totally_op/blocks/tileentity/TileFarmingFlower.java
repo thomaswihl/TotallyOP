@@ -16,19 +16,14 @@ import org.apache.logging.log4j.Level;
 import java.util.Random;
 
 public class TileFarmingFlower extends TileFunctionFlower {
-
-
-    protected BlockPos currentPos = null;
-
-    protected int delay = 1;
-
     public TileFarmingFlower() {
         super();
     }
 
     @Override
 	public void update() {
-		if (!shouldRun()) return;
+        super.update();
+        if (!shouldRun()) return;
         if (currentPos == null) {
             checkForModifiers();
             resetPos();
