@@ -11,12 +11,12 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -85,10 +85,16 @@ public abstract class FunctionFlower extends BlockBush implements ITileEntityPro
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         TileEntity tile = worldIn.getTileEntity(pos);
-        if (hand == EnumHand.MAIN_HAND && playerIn.getHeldItem(hand).isEmpty() && tile != null && tile instanceof TileFunctionFlower) {
+        if (hand == EnumHand.MAIN_HAND && tile != null && tile instanceof TileFunctionFlower) {
             if (!worldIn.isRemote) {
                 TileFunctionFlower flower = (TileFunctionFlower) tile;
-                String info = "Fortune multiplier is " + flower.getFortune() + ", delay is " + flower.getEfficiency() + " and range is " + flower.getRange();
+                if (flower.getFilter().isItemEqual(playerIn.getHeldItem(hand))) {
+                    flower.setFilterIsWhitelist(!flower.getFilterIsWhitelist());
+                } else {
+                    flower.setFilter(playerIn.getHeldItem(hand));
+                    flower.setFilterIsWhitelist(true);
+                }
+                String info = "Fortune multiplier is " + flower.getFortune() + ", delay is " + flower.getEfficiency() + " and range is " + flower.getRange() + " filter block is " + (flower.getFilterIsWhitelist() ? "" : "all but ") + flower.getFilter().getItem().getItemStackDisplayName(flower.getFilter());
                 playerIn.sendMessage(new TextComponentString(info));
             }
             return true;

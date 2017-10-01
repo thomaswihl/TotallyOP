@@ -5,6 +5,7 @@ import at.witho.totally_op.blocks.TierableBlock;
 import at.witho.totally_op.config.Config;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -33,6 +34,11 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
 	protected int minZ = 0;
 	protected int maxZ = 0;
 
+    protected BlockPos currentPos = null;
+    protected int delay = 1;
+    protected ItemStack filter = ItemStack.EMPTY;
+    protected boolean filterIsWhitelist = true;
+
 	public TileFunctionFlower() {
 	    super();
         fortuneConfig = Config.intArray(Config.fortuneMultiplier.getStringList());
@@ -51,6 +57,12 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
     public int getRange() {
         return range;
     }
+
+    public ItemStack getFilter() { return filter; }
+    public void setFilter(ItemStack block) { filter = block.copy(); }
+
+    public boolean getFilterIsWhitelist() { return filterIsWhitelist; }
+    public void setFilterIsWhitelist(boolean whitelist) { filterIsWhitelist = whitelist; }
 
     protected void initLimits(int range) {
 		minX = maxX = pos.getX();
@@ -113,6 +125,28 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
         }
         efficiency = efficiencyConfig[efficiencyTier];
         fortune = fortuneConfig[fortuneTier];
+    }
+
+    protected boolean shouldRun() {
+        if (world.isRemote) return false;
+        if (delay < efficiency) {
+            ++delay;
+            return false;
+        }
+        delay = 0;
+        return true;
+    }
+
+    protected void resetPos() {
+        currentPos = new BlockPos(minX, pos.getY(), minZ);
+    }
+
+    protected void nextBlock() {
+        currentPos = currentPos.east();
+        if (currentPos.getX() > maxX) {
+            currentPos = currentPos.add(-range, 0, 1);
+            if (currentPos.getZ() > maxZ) currentPos = null;
+        }
     }
 
 }

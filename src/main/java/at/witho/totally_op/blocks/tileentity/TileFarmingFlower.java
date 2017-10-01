@@ -111,29 +111,4 @@ public class TileFarmingFlower extends TileFunctionFlower {
         }
         return null;
     }
-
-
-    protected boolean shouldRun() {
-        if (world.isRemote) return false;
-        if (delay < efficiency) {
-            ++delay;
-            return false;
-        }
-        delay = 0;
-        return true;
-    }
-
-    protected void resetPos() {
-        currentPos = new BlockPos(minX, pos.getY(), minZ);
-    }
-
-    protected void nextBlock() {
-        currentPos = currentPos.east();
-        if (currentPos.getX() > maxX) {
-            currentPos = currentPos.add(-range, 0, 1);
-            if (currentPos.getZ() > maxZ) currentPos = null;
-        }
-    }
-
-
 }

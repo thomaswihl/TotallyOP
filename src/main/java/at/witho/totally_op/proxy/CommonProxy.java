@@ -7,6 +7,7 @@ import at.witho.totally_op.ModBlocks;
 import at.witho.totally_op.TotallyOP;
 import at.witho.totally_op.WorldGen;
 import at.witho.totally_op.blocks.*;
+import at.witho.totally_op.blocks.tileentity.TileBreakingFlower;
 import at.witho.totally_op.blocks.tileentity.TileFarmingFlower;
 import at.witho.totally_op.blocks.tileentity.TilePlacingFlower;
 import at.witho.totally_op.blocks.tileentity.TileSuckingFlower;
@@ -61,12 +62,14 @@ public class CommonProxy {
     	event.getRegistry().register(new FarmingFlower());
         event.getRegistry().register(new SuckingFlower());
         event.getRegistry().register(new PlacingFlower());
+        event.getRegistry().register(new BreakingFlower());
         event.getRegistry().register(new TierableBlock(TierableBlock.FORTUNE));
         event.getRegistry().register(new TierableBlock(TierableBlock.EFFICIENCY));
         event.getRegistry().register(new TierableBlock(TierableBlock.RANGE));
     	GameRegistry.registerTileEntity(TileFarmingFlower.class, TotallyOP.MODID + "_farming_flower");
         GameRegistry.registerTileEntity(TileSuckingFlower.class, TotallyOP.MODID + "_sucking_flower");
         GameRegistry.registerTileEntity(TilePlacingFlower.class, TotallyOP.MODID + "_placing_flower");
+        GameRegistry.registerTileEntity(TileBreakingFlower.class, TotallyOP.MODID + "_breaking_flower");
     }
 
     @SubscribeEvent
@@ -76,6 +79,7 @@ public class CommonProxy {
     	event.getRegistry().register(new ItemBlock(ModBlocks.farming_flower).setRegistryName(ModBlocks.farming_flower.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.sucking_flower).setRegistryName(ModBlocks.sucking_flower.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.placing_flower).setRegistryName(ModBlocks.placing_flower.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.breaking_flower).setRegistryName(ModBlocks.breaking_flower.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.fortune).setRegistryName(ModBlocks.fortune.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.efficiency).setRegistryName(ModBlocks.efficiency.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.range).setRegistryName(ModBlocks.range.getRegistryName()));

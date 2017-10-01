@@ -43,9 +43,11 @@ public class TilePlacingFlower extends TileFunctionFlower {
         if (state.getBlock() == Blocks.AIR) {
             IBlockState stateBelow = world.getBlockState(currentPos.down());
             Block block = stateBelow.getBlock();
-            Block place = findItem(block);
-            if (place != null) {
-                world.setBlockState(currentPos, place.getDefaultState());
+            ItemStack place = findItem(block);
+            if (!place.isEmpty()) {
+                Block b = Block.getBlockFromItem(place.getItem());
+                IBlockState s = b.getStateFromMeta(place.getMetadata());
+                world.setBlockState(currentPos, s);
             }
         }
 
@@ -54,56 +56,34 @@ public class TilePlacingFlower extends TileFunctionFlower {
 	}
 
 
-    private Block findItem(Block block) {
+    private ItemStack findItem(Block block) {
         int r = 1;
         for (BlockPos pos : BlockPos.getAllInBox(pos.add(-r, -r, -r), pos.add(r, r, r))) {
             TileEntity e = world.getTileEntity(pos);
             if (e != null) {
                 IItemHandler inventory = e.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
                 if (inventory != null) {
-                    Block place = extractItem(inventory, block);
-                    if (place != null) return place;
+                    ItemStack place = extractItem(inventory, block);
+                    if (!place.isEmpty()) return place;
                 }
             }
         }
         return null;
     }
 
-    private Block extractItem(IItemHandler inventory, Block block) {
+    private ItemStack extractItem(IItemHandler inventory, Block block) {
         for (int i = 0; i < inventory.getSlots(); ++i) {
             ItemStack stack = inventory.extractItem(i, 1, true);
             if (!stack.isEmpty()) {
+                if (!filter.isEmpty()) {
+                    if (stack.isItemEqual(filter) ^ filterIsWhitelist) continue;
+                }
                 Block place = Block.getBlockFromItem(stack.getItem());
                 if (place.canPlaceBlockAt(world, currentPos)) {
-                    inventory.extractItem(i, 1, false);
-                    return place;
+                    return inventory.extractItem(i, 1, false);
                 }
             }
         }
         return null;
     }
-
-    protected boolean shouldRun() {
-        if (world.isRemote) return false;
-        if (delay < efficiency) {
-            ++delay;
-            return false;
-        }
-        delay = 0;
-        return true;
-    }
-
-    protected void resetPos() {
-        currentPos = new BlockPos(minX, pos.getY(), minZ);
-    }
-
-    protected void nextBlock() {
-        currentPos = currentPos.east();
-        if (currentPos.getX() > maxX) {
-            currentPos = currentPos.add(-range, 0, 1);
-            if (currentPos.getZ() > maxZ) currentPos = null;
-        }
-    }
-
-
 }
