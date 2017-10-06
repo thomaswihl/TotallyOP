@@ -90,7 +90,8 @@ public class TileFarmingFlower extends TileFunctionFlower {
             }
         } else if (block instanceof BlockMelon || block instanceof BlockPumpkin) {
             return new HarvestInfo();
-        } else if (block instanceof IPlantable) {//BlockCactus || block instanceof BlockReed) {
+        } else if (block instanceof IPlantable) {
+            // cactus and sugar cane
             int size = 0;
             BlockPos pos = currentPos;
             do {
@@ -103,7 +104,13 @@ public class TileFarmingFlower extends TileFunctionFlower {
                 info.ignoreFortune = true;
                 return info;
             }
+        } else if (block instanceof IGrowable) {
+            // cocoa beans
+            IGrowable growable = (IGrowable)block;
+            if (growable.canGrow(world, pos, state, false)) return null;
+            return new HarvestInfo();
         }
+
         return null;
     }
 }

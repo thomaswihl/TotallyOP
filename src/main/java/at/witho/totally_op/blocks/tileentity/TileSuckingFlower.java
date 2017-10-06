@@ -12,6 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
+import java.util.Iterator;
 import java.util.List;
 
 public class TileSuckingFlower extends TileFunctionFlower {
@@ -24,6 +25,13 @@ public class TileSuckingFlower extends TileFunctionFlower {
         List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class,
                 new AxisAlignedBB(minX, y - rangeConfig[rangeTier], minZ, maxX + 1, y + rangeConfig[rangeTier] + 1, maxZ + 1));
         if (items.isEmpty()) return;
+        if (!filter.isEmpty()) {
+            for (Iterator<EntityItem> iter = items.iterator(); iter.hasNext();) {
+                EntityItem item = iter.next();
+                boolean match = item.getItem().isItemEqual(filter);
+                if (filterIsWhitelist != match) iter.remove();
+            }
+        }
         if (!findInventory(items)) {
             for (EntityItem item : items) {
                 BlockPos p = new BlockPos(pos.getX() - facing.getFrontOffsetX(), pos.getY(), pos.getZ() - facing.getFrontOffsetZ());
