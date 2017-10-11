@@ -14,6 +14,8 @@ import at.witho.totally_op.blocks.tileentity.TileSuckingFlower;
 import at.witho.totally_op.config.Config;
 import at.witho.totally_op.entity.Car;
 import at.witho.totally_op.items.*;
+import at.witho.totally_op.net.PacketHandler;
+import at.witho.totally_op.net.RoughToolChange;
 import at.witho.totally_op.util.HarvestHelper;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -31,6 +33,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 @Mod.EventBusSubscriber
 public class CommonProxy {
@@ -40,6 +43,7 @@ public class CommonProxy {
         File directory = e.getModConfigurationDirectory();
         config = new Configuration(new File(directory.getPath(), "totally_op.cfg"));
         Config.readConfig();
+        PacketHandler.init();
     }
 
     public void init(FMLInitializationEvent e) {

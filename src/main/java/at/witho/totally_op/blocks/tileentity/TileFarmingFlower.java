@@ -44,33 +44,36 @@ public class TileFarmingFlower extends TileFunctionFlower {
             // New way isn't supported by all
             // block.getDrops(drops, world, info.harvestPos, state, 0);
             // so use the old way:
-            drops.addAll(block.getDrops(world, currentPos, state, 0));
-            world.setBlockToAir(info.harvestPos);
-            boolean allIsSeed = info.seed != null;
-            boolean seedRemoved = false;
-            for (ItemStack stack : drops) {
-                Item item = stack.getItem();
-                if (allIsSeed && !stack.isItemEqual(info.seed)) allIsSeed = false;
-                if ((info.seed == null || !stack.isItemEqual(info.seed)) && !info.ignoreFortune) {
-                    stack.setCount(stack.getCount() * fortune);
-                }
-                if (!seedRemoved && stack.isItemEqual(info.seed)) {
-                    stack.setCount(stack.getCount() - 1);
-                    seedRemoved = true;
-                }
-                world.spawnEntity(new EntityItem(world, info.harvestPos.getX(), info.harvestPos.getY(), info.harvestPos.getZ(), stack));
-            }
-            if (allIsSeed) {
+            List<ItemStack> list = block.getDrops(world, currentPos, state, 0);
+            if (list != null) {
+                drops.addAll(list);
+                world.setBlockToAir(info.harvestPos);
+                boolean allIsSeed = info.seed != null;
+                boolean seedRemoved = false;
                 for (ItemStack stack : drops) {
-                    stack.setCount(stack.getCount() * fortune - 1);
+                    Item item = stack.getItem();
+                    if (allIsSeed && !stack.isItemEqual(info.seed)) allIsSeed = false;
+                    if ((info.seed == null || !stack.isItemEqual(info.seed)) && !info.ignoreFortune) {
+                        stack.setCount(stack.getCount() * fortune);
+                    }
+                    if (info.seed != null && !seedRemoved && stack.isItemEqual(info.seed)) {
+                        stack.setCount(stack.getCount() - 1);
+                        seedRemoved = true;
+                    }
                     world.spawnEntity(new EntityItem(world, info.harvestPos.getX(), info.harvestPos.getY(), info.harvestPos.getZ(), stack));
                 }
-            }
-            if (info.seed != null) {
-                Item item = info.seed.getItem();
-                if (item instanceof IPlantable) {
-                    IPlantable seed = (IPlantable)item;
-                    world.setBlockState(currentPos, seed.getPlant(world, currentPos), 3);
+                if (allIsSeed) {
+                    for (ItemStack stack : drops) {
+                        stack.setCount(stack.getCount() * fortune - 1);
+                        world.spawnEntity(new EntityItem(world, info.harvestPos.getX(), info.harvestPos.getY(), info.harvestPos.getZ(), stack));
+                    }
+                }
+                if (info.seed != null) {
+                    Item item = info.seed.getItem();
+                    if (item instanceof IPlantable) {
+                        IPlantable seed = (IPlantable) item;
+                        world.setBlockState(currentPos, seed.getPlant(world, currentPos), 3);
+                    }
                 }
             }
 		}
@@ -109,6 +112,8 @@ public class TileFarmingFlower extends TileFunctionFlower {
             // cocoa beans
             IGrowable growable = (IGrowable)block;
             if (growable.canGrow(world, pos, state, false)) return null;
+            // No melon or pumpkin stems
+            if (block instanceof BlockStem) return null;
             HarvestInfo info = new HarvestInfo();
             info.seed = new ItemStack(block.getItemDropped(state, world.rand, 0));
             return info;

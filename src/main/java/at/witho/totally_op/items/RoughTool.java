@@ -2,9 +2,13 @@ package at.witho.totally_op.items;
 
 import at.witho.totally_op.Helper;
 import at.witho.totally_op.TotallyOP;
+import at.witho.totally_op.net.PacketHandler;
+import at.witho.totally_op.net.RoughToolChange;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.enchantment.Enchantment;
@@ -27,6 +31,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.common.MinecraftForge;
@@ -44,16 +49,60 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class RoughTool extends ItemTool {
     private static final int MAGNET_ACTIVE_TIME = 20;
     private int magnetActive = 0;
+    private static final String DIMENSION = "Dimension";
+    private static int MAX_DIMENSION = 9;
+    private static int MIN_DIMENSION = 3;
 
     private boolean active = false;
-    private int width = 2;
 
 
     public RoughTool() {
 		super(TotallyOP.peacefulDiamondMaterial, new HashSet<>());
 		setRegistryName("rough_tool");
 		setUnlocalizedName(TotallyOP.MODID + "." + "rough_tool");
+		MinecraftForge.EVENT_BUS.register(this);
 	}
+
+	@SubscribeEvent
+    void mouseEvent(MouseEvent event) {
+        if (event.getDwheel() != 0) {
+            EntityPlayerSP player = Minecraft.getMinecraft().player;
+            if (player.isSneaking()) {
+                ItemStack item = player.getHeldItemMainhand();
+                if (item.getItem() instanceof RoughTool) {
+                    TotallyOP.logger.log(Level.ERROR, "Sending packet");
+                    PacketHandler.INSTANCE.sendToServer(new RoughToolChange((event.getDwheel() > 0) ? 1 : -1));
+                }
+                event.setCanceled(true);
+            }
+        }
+    }
+
+    public void changeDimension(ItemStack stack, EntityPlayer player, int amount) {
+        int dimension = getDimension(stack) + amount;
+        if (dimension < MIN_DIMENSION) dimension = MAX_DIMENSION;
+        else if (dimension > MAX_DIMENSION) dimension = MIN_DIMENSION;
+        setDimension(stack, dimension);
+        int width = dimension >> 1;
+        boolean round = (dimension & 1) == 0;
+        player.sendMessage(new TextComponentString("Dimension is now " + (width * 2 + 1) + "x" + (width * 2 + 1) + (round ? " round" : "")));
+    }
+
+    public int getDimension(ItemStack stack) {
+        if (stack.hasTagCompound()) {
+            NBTTagCompound compound = stack.getTagCompound();
+            return compound.getInteger(DIMENSION);
+        }
+        return MIN_DIMENSION;
+    }
+
+    public void setDimension(ItemStack stack, int dimension) {
+        if (!stack.hasTagCompound()) {
+            stack.setTagCompound(new NBTTagCompound());
+        }
+        NBTTagCompound compound = stack.getTagCompound();
+        compound.setInteger(DIMENSION, dimension);
+    }
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
@@ -79,6 +128,9 @@ public class RoughTool extends ItemTool {
         SoundType sound = null;
         World world = player.world;
         if (!player.world.isRemote) {
+            int width = getDimension(itemstack);
+            boolean round = (width & 1) == 0;
+            width >>= 1;
             active = true;
             int vertical = Math.round(player.rotationPitch / 90.0f);
             int horizontal = Math.round(player.rotationYaw * 4.0F / 360.0F) & 1;
@@ -102,10 +154,11 @@ public class RoughTool extends ItemTool {
                 zstart = -width;
                 zstop = width;
             }
-
+            int radius = (int)((width + 0.5f)*(width + 0.5f));
             for (int x = xstart; x <= xstop; x++) {
                 for (int y = ystart; y <= ystop; y++) {
                     for (int z = zstart; z <= zstop; z++) {
+                        if (round && (x*x + y*y + z*z > radius)) continue;
                         BlockPos p = startPos.add(x, y, z);
                         IBlockState thisState = player.world.getBlockState(p);
                         Block thisBlock = thisState.getBlock();
@@ -125,6 +178,8 @@ public class RoughTool extends ItemTool {
         return true;
     }
 
+
+
     @Override
     public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
     {
@@ -133,7 +188,7 @@ public class RoughTool extends ItemTool {
             double x = entityIn.posX;
             double y = entityIn.posY;
             double z = entityIn.posZ;
-            int range = width + 3;
+            int range = getDimension(stack) + 3;
             List<EntityItem> items = worldIn.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(x - range, y - range, z - range, x + range + 1, y + range + 1, z + range + 1));
             for(EntityItem item : items) {
                 item.setPosition(x,  y,  z);
