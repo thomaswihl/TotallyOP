@@ -50,7 +50,7 @@ public class RoughTool extends ItemTool {
     private static final int MAGNET_ACTIVE_TIME = 20;
     private int magnetActive = 0;
     private static final String DIMENSION = "Dimension";
-    private static int MAX_DIMENSION = 9;
+    private static int MAX_DIMENSION = 15;
     private static int MIN_DIMENSION = 3;
 
     private boolean active = false;
@@ -132,21 +132,63 @@ public class RoughTool extends ItemTool {
             boolean round = (width & 1) == 0;
             width >>= 1;
             active = true;
-            int vertical = Math.round(player.rotationPitch / 90.0f);
-            int horizontal = Math.round(player.rotationYaw * 4.0F / 360.0F) & 1;
+
+            EnumFacing facing = EnumFacing.getHorizontal(MathHelper.floor((double)(player.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3);
+
+            int angle = Math.round(player.rotationPitch / 22.5f);
+
+            boolean vertical = angle > 2 || angle < -2;
             int xstart = 0, ystart = 0, zstart = 0;
             int xstop = 0, ystop = 0, zstop = 0;
-            BlockPos startPos = new BlockPos(pos);
-            if (vertical == 0) {
-                startPos = startPos.up(width - 1);
+            BlockPos startPos = null;
+            if (!vertical) {
+                BlockPos preceding = pos.offset(facing, -1);
+                boolean found = false;
+                for (int i = 0; i < 2 * width + 2; ++i) {
+                    if (world.getBlockState(preceding).isOpaqueCube()) {
+                        found = true;
+                        break;
+                    }
+                    preceding = preceding.down();
+                }
+                if (found) {
+                    startPos = preceding.offset(facing);
+                    // So preceding is already on a solid block, so 1 too low, consider this when moving up
+                    switch (angle) {
+                        case -2:
+                            startPos = startPos.up(width + 2);
+                            break;
+                        case -1: {
+                            BlockPos posStep = preceding.offset(facing, -1);
+                            boolean stepBefore = world.getBlockState(posStep).isOpaqueCube();
+                            startPos = startPos.up(width + (stepBefore ? 2 : 1));
+                        }   break;
+                        case 0:
+                            startPos = startPos.up(width + 1);
+                            break;
+                        case 1: {
+                            BlockPos posStep = preceding.offset(facing, -1).up();
+                            boolean stepBefore = world.getBlockState(posStep).isOpaqueCube();
+                            startPos = startPos.up(width + (stepBefore ? 1 : 0));
+                        }   break;
+                        case 2:
+                            startPos = startPos.up(width);
+                            break;
+                    }
+
+                }
+
+            }
+            if (startPos == null) startPos = new BlockPos(pos);
+            if (!vertical) {
                 ystart = -width;
                 ystop = width;
-                if (horizontal == 0) {
-                    xstart = -width;
-                    xstop = width;
-                } else {
+                if (facing.getAxis() == EnumFacing.Axis.X) {
                     zstart = -width;
                     zstop = width;
+                } else {
+                    xstart = -width;
+                    xstop = width;
                 }
             } else {
                 xstart = -width;
@@ -154,7 +196,7 @@ public class RoughTool extends ItemTool {
                 zstart = -width;
                 zstop = width;
             }
-            int radius = (int)((width + 0.5f)*(width + 0.5f));
+            int radius = (int)((width + 0.5f)*(width + 0.5f) + 0.5f);
             for (int x = xstart; x <= xstop; x++) {
                 for (int y = ystart; y <= ystop; y++) {
                     for (int z = zstart; z <= zstop; z++) {
@@ -175,7 +217,7 @@ public class RoughTool extends ItemTool {
             magnetActive = MAGNET_ACTIVE_TIME;
         }
         if (sound != null) world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), sound.getBreakSound(), SoundCategory.BLOCKS, sound.volume, sound.pitch);
-        return true;
+        return false;
     }
 
 
