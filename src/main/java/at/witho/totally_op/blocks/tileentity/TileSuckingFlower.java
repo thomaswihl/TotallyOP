@@ -1,5 +1,6 @@
 package at.witho.totally_op.blocks.tileentity;
 
+import at.witho.totally_op.blocks.SuckingFlower;
 import at.witho.totally_op.config.Config;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
@@ -16,6 +17,9 @@ import java.util.Iterator;
 import java.util.List;
 
 public class TileSuckingFlower extends TileFunctionFlower {
+    public TileSuckingFlower() {
+        super();
+    }
 
     @Override
 	public void update() {

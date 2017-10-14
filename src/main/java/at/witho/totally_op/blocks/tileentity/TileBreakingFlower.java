@@ -1,5 +1,6 @@
 package at.witho.totally_op.blocks.tileentity;
 
+import at.witho.totally_op.blocks.BreakingFlower;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;

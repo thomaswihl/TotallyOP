@@ -1,5 +1,6 @@
 package at.witho.totally_op.blocks.tileentity;
 
+import at.witho.totally_op.blocks.FarmingFlower;
 import at.witho.totally_op.blocks.FunctionFlower;
 import at.witho.totally_op.blocks.TierableBlock;
 import at.witho.totally_op.config.Config;
@@ -72,7 +73,6 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
             checkCounter = 0;
             checkForModifiers();
         }
-
     }
 
     protected void initLimits(int range) {
@@ -140,6 +140,7 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
 
     protected boolean shouldRun() {
         if (world.isRemote) return false;
+        if (FarmingFlower.isPowered(getBlockMetadata())) return false;
         if (delay < efficiency) {
             ++delay;
             return false;

@@ -2,16 +2,15 @@ package at.witho.totally_op.blocks;
 
 import at.witho.totally_op.TotallyOP;
 import at.witho.totally_op.blocks.tileentity.TileFunctionFlower;
-import net.minecraft.block.BlockBush;
-import net.minecraft.block.BlockHorizontal;
-import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.SoundType;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -29,10 +28,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public abstract class FunctionFlower extends BlockBush implements ITileEntityProvider {
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
-	
-	FunctionFlower(String name) {
+    public static final PropertyBool POWERED = PropertyBool.create("powered");
+
+
+    FunctionFlower(String name) {
 		super(Material.PLANTS, Material.PLANTS.getMaterialMapColor());
-		this.setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+		this.setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(POWERED, false));
 		setUnlocalizedName(TotallyOP.MODID + "." + name);
 		setRegistryName(name);
         setTickRandomly(false);
@@ -42,30 +43,52 @@ public abstract class FunctionFlower extends BlockBush implements ITileEntityPro
 
 	@SideOnly(Side.CLIENT)
     public void initModel() {
+        ModelLoader.setCustomStateMapper(this, new StateMap.Builder().ignore(POWERED).build());
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
+    }
+
+    @Override
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
+    {
+        boolean next = worldIn.isBlockPowered(pos) || worldIn.isBlockPowered(pos.up());
+        boolean current = ((Boolean)state.getValue(POWERED)).booleanValue();
+
+        if (next && !current)
+        {
+            worldIn.scheduleUpdate(pos, this, this.tickRate(worldIn));
+            worldIn.setBlockState(pos, state.withProperty(POWERED, Boolean.valueOf(true)), 4);
+        }
+        else if (!next && current)
+        {
+            worldIn.setBlockState(pos, state.withProperty(POWERED, Boolean.valueOf(false)), 4);
+        }
+    }
+
+    public static boolean isPowered(int meta) {
+        return (meta & 4) != 0;
     }
 
 	@Override
     public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
     {
-        return getDefaultState().withProperty(FACING, placer.getHorizontalFacing());
+        return getDefaultState().withProperty(FACING, placer.getHorizontalFacing()).withProperty(POWERED, Boolean.valueOf(worldIn.isBlockPowered(pos) || worldIn.isBlockPowered(pos.up())));
     }
 	
 	@Override
 	public BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, new IProperty[] {FACING});
+        return new BlockStateContainer(this, new IProperty[] {FACING, POWERED});
     }
 	
 	@Override
     public IBlockState getStateFromMeta(int meta)
     {
-        return this.getDefaultState().withProperty(FACING, EnumFacing.getHorizontal(meta & 3));
+        return this.getDefaultState().withProperty(FACING, EnumFacing.getHorizontal(meta & 3)).withProperty(POWERED, Boolean.valueOf((meta & 4) != 0));
     }
 
 	@Override
     public int getMetaFromState(IBlockState state)
     {
-        int i = 0;
+        int i = state.getValue(POWERED) ? 4 : 0;
         i = i | ((EnumFacing)state.getValue(FACING)).getHorizontalIndex();
         return i;
     }

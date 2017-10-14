@@ -1,6 +1,7 @@
 package at.witho.totally_op.blocks.tileentity;
 
 import at.witho.totally_op.TotallyOP;
+import at.witho.totally_op.blocks.FarmingFlower;
 import at.witho.totally_op.config.Config;
 import at.witho.totally_op.util.PrintClassHierarchy;
 import com.mojang.authlib.GameProfile;
