@@ -1,23 +1,29 @@
 package at.witho.totally_op.blocks.tileentity;
 
-import at.witho.totally_op.blocks.SuckingFlower;
-import at.witho.totally_op.config.Config;
+import at.witho.totally_op.TotallyOP;
+import at.witho.totally_op.util.CraftingUtils;
+import com.google.common.collect.Lists;
+import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityHopper;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import org.apache.logging.log4j.Level;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class TileSuckingFlower extends TileFunctionFlower {
-    public TileSuckingFlower() {
+public class TileCompressingFlower extends TileFunctionFlower {
+
+    public TileCompressingFlower() {
         super();
     }
 
@@ -36,13 +42,27 @@ public class TileSuckingFlower extends TileFunctionFlower {
                 if (filterIsWhitelist != match) iter.remove();
             }
         }
-        if (!findInventory(items)) {
-            for (EntityItem item : items) {
+        List<EntityItem> moveItems = new ArrayList<EntityItem>();
+        for (EntityItem entity : items) {
+            ItemStack item = entity.getItem();
+            Block block = CraftingUtils.itemToBlock.get(item.getItem());
+            if (block != null && item.getCount() >= 9) {
+                int blockCount = item.getCount() / 9;
+                item.setCount(item.getCount() % 9);
+                entity.setItem(item);
+                EntityItem ei = new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(block, blockCount));
+                world.spawnEntity(ei);
+                moveItems.add(ei);
+            }
+        }
+        if (!findInventory(moveItems)) {
+            for (EntityItem item : moveItems) {
                 BlockPos p = pos.offset(facing, -1);
                 item.setPosition(p.getX() + 0.5f, p.getY(), p.getZ() + 0.5f);
             }
         }
     }
+
 
     @Override
     protected void initLimits(int range) {

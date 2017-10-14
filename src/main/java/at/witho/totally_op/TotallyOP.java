@@ -1,5 +1,6 @@
 package at.witho.totally_op;
 
+import at.witho.totally_op.util.CraftingUtils;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemArmor;
 import org.apache.logging.log4j.Logger;
@@ -46,5 +47,6 @@ public class TotallyOP
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         proxy.postInit(e);
+        CraftingUtils.init();
     }
 }
