@@ -35,6 +35,7 @@ public class TileSuckingFlower extends TileFunctionFlower {
                 boolean match = item.getItem().isItemEqual(filter);
                 if (filterIsWhitelist != match) iter.remove();
             }
+            if (items.isEmpty()) return;
         }
         if (!findInventory(items)) {
             for (EntityItem item : items) {

@@ -12,6 +12,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class TileFunctionFlower extends TileEntity implements ITickable {
     public static final int[] DEFAULT_FORTUNE_CONFIG = {1, 2, 4, 6, 8, 12, 16};
@@ -109,6 +115,30 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
 		}
 	}
 
+	protected List<IItemHandler> inputInventories() {
+        ArrayList<IItemHandler> list = new ArrayList<>();
+	    addInventory(list, pos.offset(facing));
+	    return list;
+    }
+
+    protected List<IItemHandler> outputInventories() {
+        ArrayList<IItemHandler> list = new ArrayList<>();
+        addInventory(list, pos.offset(facing, -1));
+        addInventory(list, pos.up());
+        addInventory(list, pos.offset(facing.rotateY()));
+        addInventory(list, pos.down());
+        addInventory(list, pos.offset(facing.rotateYCCW()));
+        return list;
+    }
+
+    protected void addInventory(List<IItemHandler> list, BlockPos pos) {
+        TileEntity e = world.getTileEntity(pos);
+        if (e != null) {
+            IItemHandler inventory = e.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+            if (inventory != null) list.add(inventory);
+        }
+    }
+
     protected void checkForModifiers() {
         BlockPos p = getPos();
         fortuneTier = 0;
@@ -140,7 +170,7 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
 
     protected boolean shouldRun() {
         if (world.isRemote) return false;
-        if (FarmingFlower.isPowered(getBlockMetadata())) return false;
+        if (FunctionFlower.isPowered(getBlockMetadata())) return false;
         if (delay < efficiency) {
             ++delay;
             return false;
@@ -178,6 +208,12 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
             compound.setBoolean("filterIsWhitelist", filterIsWhitelist);
         }
         return compound;
+    }
+
+    @Override
+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
+    {
+        return oldState.getBlock() != newSate.getBlock();
     }
 
 }

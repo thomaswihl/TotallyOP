@@ -17,11 +17,10 @@ import java.util.List;
 import java.util.Map;
 
 public class CraftingUtils {
-    public static HashMap<Item, Block> itemToBlock = null;
+    public static HashMap<Item, Block> itemToBlock = new HashMap<Item, Block>();
+    public static HashMap<Item, Item> itemToItem = new HashMap<Item, Item>();
 
     public static void init() {
-        TotallyOP.logger.log(Level.ERROR, "Looking for recipes");
-        itemToBlock = new HashMap<Item, Block>();
         for (IRecipe irecipe : CraftingManager.REGISTRY)
         {
             NonNullList<Ingredient> ingredients = irecipe.getIngredients();
@@ -40,9 +39,11 @@ public class CraftingUtils {
                 if (!failed) {
                     Block output = Block.getBlockFromItem(irecipe.getRecipeOutput().getItem());
                     Item input = prev[0].getItem();
-                    TotallyOP.logger.log(Level.ERROR, "Found recipe:" + input.getRegistryName() + " -> " + output.getRegistryName());
+                    //TotallyOP.logger.log(Level.ERROR, "Found recipe:" + input.getRegistryName() + " -> " + output.getRegistryName());
                     if (output != Blocks.AIR) {
                         itemToBlock.put(input, output);
+                    } else {
+                        itemToItem.put(input, irecipe.getRecipeOutput().getItem());
                     }
                 }
             }

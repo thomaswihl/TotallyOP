@@ -45,8 +45,6 @@ public class TilePlacingFlower extends TileFunctionFlower {
                 world.setBlockState(currentPos, s);
             }
         }
-
-
 		nextBlock();
 	}
 

@@ -5,6 +5,7 @@ import at.witho.totally_op.util.CraftingUtils;
 import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
@@ -13,6 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.logging.log4j.Level;
@@ -28,59 +30,73 @@ public class TileCompressingFlower extends TileFunctionFlower {
     }
 
     @Override
-	public void update() {
+    public void update() {
         super.update();
         if (!shouldRun()) return;
-        double y = pos.getY();
-        List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class,
-                new AxisAlignedBB(minX, y - rangeConfig[rangeTier], minZ, maxX + 1, y + rangeConfig[rangeTier] + 1, maxZ + 1));
-        if (items.isEmpty()) return;
-        if (!filter.isEmpty()) {
-            for (Iterator<EntityItem> iter = items.iterator(); iter.hasNext();) {
-                EntityItem item = iter.next();
-                boolean match = item.getItem().isItemEqual(filter);
-                if (filterIsWhitelist != match) iter.remove();
-            }
-        }
+        List<IItemHandler> inventories = inputInventories();
         List<EntityItem> moveItems = new ArrayList<EntityItem>();
-        for (EntityItem entity : items) {
-            ItemStack item = entity.getItem();
-            Block block = CraftingUtils.itemToBlock.get(item.getItem());
-            if (block != null && item.getCount() >= 9) {
-                int blockCount = item.getCount() / 9;
-                item.setCount(item.getCount() % 9);
-                entity.setItem(item);
-                EntityItem ei = new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(block, blockCount));
-                world.spawnEntity(ei);
-                moveItems.add(ei);
+        BlockPos outputPos = pos.offset(facing, -1);
+        if (inventories.isEmpty()) {
+            double y = pos.getY();
+            List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class,
+                    new AxisAlignedBB(minX, y, minZ, maxX + 1, y + 1, maxZ + 1));
+            if (items.isEmpty()) return;
+            if (!filter.isEmpty()) {
+                for (Iterator<EntityItem> iter = items.iterator(); iter.hasNext(); ) {
+                    EntityItem item = iter.next();
+                    boolean match = item.getItem().isItemEqual(filter);
+                    if (filterIsWhitelist != match) iter.remove();
+                }
+            }
+            for (EntityItem entity : items) {
+                ItemStack stack = entity.getItem();
+                Block block = CraftingUtils.itemToBlock.get(stack.getItem());
+                Item item = CraftingUtils.itemToItem.get(stack.getItem());
+                if ((block != null || item != null) && stack.getCount() >= 9) {
+                    int count = stack.getCount() / 9;
+                    stack.setCount(stack.getCount() % 9);
+                    entity.setItem(stack);
+                    EntityItem ei = new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, (block != null) ? new ItemStack(block, count) : new ItemStack(item, count));
+                    ei.motionX = ei.motionY = ei.motionZ = 0;
+                    moveItems.add(ei);
+                }
+            }
+        } else {
+            for (IItemHandler inventory : inventories) {
+                for (int i = 0; i < inventory.getSlots(); ++i) {
+                    ItemStack stack = inventory.getStackInSlot(i);
+                    Block block = CraftingUtils.itemToBlock.get(stack.getItem());
+                    Item item = CraftingUtils.itemToItem.get(stack.getItem());
+                    if ((block != null || item != null) && stack.getCount() >= 9) {
+                        int count = stack.getCount() / 9;
+                        ItemStack move = inventory.extractItem(i, count * 9, false);
+                        if (!move.isEmpty()) {
+                            EntityItem ei = new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, (block != null) ? new ItemStack(block, count) : new ItemStack(item, count));
+                            ei.motionX = ei.motionY = ei.motionZ = 0;
+                            moveItems.add(ei);
+                        }
+                    }
+                }
             }
         }
         if (!findInventory(moveItems)) {
             for (EntityItem item : moveItems) {
-                BlockPos p = pos.offset(facing, -1);
-                item.setPosition(p.getX() + 0.5f, p.getY(), p.getZ() + 0.5f);
+                world.spawnEntity(item);
             }
         }
     }
 
 
+
     @Override
     protected void initLimits(int range) {
-        super.initLimits(range);
-        --minX;
-        --minZ;
-        ++maxX;
-        ++maxZ;
+        super.initLimits(1);
     }
 
     private boolean findInventory(List<EntityItem> items) {
-        int r = 1;
-        for (BlockPos pos : BlockPos.getAllInBox(pos.add(-r, -r, -r), pos.add(r, r, r))) {
-            TileEntity e = world.getTileEntity(pos);
-            if (e != null) {
-                IItemHandler inventory = e.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-                if (inventory != null && addToInventory(inventory, items)) return true;
-            }
+        List<IItemHandler> inventories = outputInventories();
+        for (IItemHandler inventory : inventories) {
+            if (addToInventory(inventory, items)) return true;
         }
         return false;
     }
