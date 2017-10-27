@@ -27,8 +27,9 @@ public class Alphorn extends Item {
 	protected int rangeH = 16;
 	protected int rangeV = 4;
 	public Alphorn() {
-		setRegistryName("alphorn");
-		setUnlocalizedName(TotallyOP.MODID + "." + getRegistryName());
+        String name = "alphorn";
+        setRegistryName(name);
+        setUnlocalizedName(TotallyOP.MODID + "." + name);
 	}
 
     @SideOnly(Side.CLIENT)

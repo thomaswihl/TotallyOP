@@ -23,8 +23,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class Coin extends Item {
 	public Coin() {
-		setRegistryName("coin");
-		setUnlocalizedName(TotallyOP.MODID + "." + getRegistryName());
+        String name = "coin";
+		setRegistryName(name);
+		setUnlocalizedName(TotallyOP.MODID + "." + name);
 	}
 
     @SideOnly(Side.CLIENT)

@@ -37,8 +37,9 @@ public class Rucksack extends Item {
     private ItemStack[] inventory = new ItemStack[INV_SIZE];
 
     public Rucksack() {
-        setRegistryName("rucksack");
-        setUnlocalizedName(TotallyOP.MODID + "." + getRegistryName());
+        String name = "rucksack";
+        setRegistryName(name);
+        setUnlocalizedName(TotallyOP.MODID + "." + name);
         setMaxStackSize(1);
         MinecraftForge.EVENT_BUS.register(this);
     }

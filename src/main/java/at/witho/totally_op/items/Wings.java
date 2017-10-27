@@ -30,8 +30,9 @@ public class Wings extends ItemArmor {
 	public Wings() {
         super(TotallyOP.armorMaterial, 0, EntityEquipmentSlot.CHEST);
         setMaxStackSize(1);
-		setRegistryName("wings");
-		setUnlocalizedName(TotallyOP.MODID + "." + getRegistryName());
+        String name = "wings";
+        setRegistryName(name);
+        setUnlocalizedName(TotallyOP.MODID + "." + name);
         MinecraftForge.EVENT_BUS.register(this);
 	}
 

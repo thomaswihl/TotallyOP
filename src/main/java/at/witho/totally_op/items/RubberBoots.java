@@ -22,8 +22,9 @@ import javax.annotation.Nullable;
 public class RubberBoots extends ItemArmor {
 	public RubberBoots() {
 	    super(TotallyOP.armorMaterial, 0, EntityEquipmentSlot.FEET);
-		setRegistryName("rubber_boots");
-		setUnlocalizedName(TotallyOP.MODID + "." + getRegistryName());
+        String name = "rubber_boots";
+        setRegistryName(name);
+        setUnlocalizedName(TotallyOP.MODID + "." + name);
 	}
 
     @SideOnly(Side.CLIENT)

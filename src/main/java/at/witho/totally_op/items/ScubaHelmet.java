@@ -18,8 +18,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ScubaHelmet extends ItemArmor {
     public ScubaHelmet() {
         super(TotallyOP.armorMaterial, 0, EntityEquipmentSlot.HEAD);
-        setRegistryName("scuba_helmet");
-        setUnlocalizedName(TotallyOP.MODID + "." + getRegistryName());
+        String name = "scuba_helmet";
+        setRegistryName(name);
+        setUnlocalizedName(TotallyOP.MODID + "." + name);
     }
 
     @SideOnly(Side.CLIENT)

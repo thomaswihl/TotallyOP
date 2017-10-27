@@ -9,8 +9,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class Euro extends Item {
 	public Euro() {
-		setRegistryName("euro");
-		setUnlocalizedName(TotallyOP.MODID + "." + getRegistryName());
+	    String name = "euro";
+		setRegistryName(name);
+		setUnlocalizedName(TotallyOP.MODID + "." + name);
 	}
 
     @SideOnly(Side.CLIENT)
