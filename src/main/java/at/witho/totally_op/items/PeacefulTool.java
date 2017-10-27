@@ -1,11 +1,11 @@
 package at.witho.totally_op.items;
 
-import java.util.HashSet;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import java.util.List;
 import at.witho.totally_op.Helper;
 import at.witho.totally_op.TotallyOP;
+import at.witho.totally_op.util.VeinMiner;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -35,19 +35,19 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.StringUtils;
+import org.omg.CORBA.PRIVATE_MEMBER;
 
 public class PeacefulTool extends ItemTool {
+    private static final String VEIN_MINE_INFO = "VeinMineId";
     private static final int MAGNET_MAX_TIME = 80;
     private static final int MAGNET_ACTIVE_TIME = 20;
     private static final int VEINMINE_COOLDOWN_TIME = 10;
-    private ConcurrentLinkedQueue<BlockPos> blockPositionsToBreak = new ConcurrentLinkedQueue<BlockPos>();
-    private Block blockToBreak = null;
-    private EntityPlayerMP player = null;
-    private World worldUsed = null;
     private int magnetRange = 0;
     private int magnetActive = 0;
     private int cooldown = 0;
     private int fortune = 0;
+    private int nextId = 1;
+    private HashMap<Integer, VeinMiner> veinMiners = new HashMap<>();
 	
 	public PeacefulTool(ToolMaterial material, String name, int magnetRange, int fortune) {
 		super(material, new HashSet<>());
@@ -168,35 +168,53 @@ public class PeacefulTool extends ItemTool {
         return EnumActionResult.PASS;
 	}
 
-	
-	@Override
+	private VeinMiner getVeinMiner(ItemStack stack) {
+	    NBTTagCompound comp = stack.getTagCompound();
+	    VeinMiner veinMiner = null;
+	    if (comp != null && comp.hasKey(VEIN_MINE_INFO)) {
+	        int id = comp.getInteger(VEIN_MINE_INFO);
+	        veinMiner = veinMiners.get(id);
+        }
+        return veinMiner;
+    }
+
+    private VeinMiner createVeinMiner(ItemStack stack, World world, EntityPlayerMP player, Block block) {
+        NBTTagCompound comp = stack.getTagCompound();
+        VeinMiner veinMiner = new VeinMiner(world, player, block);
+        veinMiners.put(nextId, veinMiner);
+        if (comp == null) {
+            comp = new NBTTagCompound();
+            stack.setTagCompound(comp);
+        }
+        comp.setInteger(VEIN_MINE_INFO, nextId);
+        ++nextId;
+        return veinMiner;
+    }
+
+    private void removeVeinMiner(ItemStack stack) {
+        NBTTagCompound comp = stack.getTagCompound();
+        VeinMiner veinMiner = null;
+        if (comp != null && comp.hasKey(VEIN_MINE_INFO)) {
+            int id = comp.getInteger(VEIN_MINE_INFO);
+            veinMiners.remove(id);
+            comp.setInteger(VEIN_MINE_INFO, 0);
+        }
+    }
+
+    @Override
     public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving) {
 		if (!worldIn.isRemote) {
-			boolean wasEmpty = blockPositionsToBreak.isEmpty(); 
-			player = (EntityPlayerMP) entityLiving;
-			worldUsed = worldIn;
+			VeinMiner veinMiner = getVeinMiner(stack);
+            EntityPlayerMP player = (EntityPlayerMP) entityLiving;
 			if (state.getBlock() == Blocks.AIR) return false;
 			//TotallyOP.logger.log(Level.ERROR, "btb = " + blockToBreak + ", block = " + state.getBlock());
 			if (player.isSneaking()) {
-				if (((blockToBreak == null && cooldown == 0) ||
-					 (blockToBreak != null && Helper.isSameBlock(blockToBreak, state.getBlock())))) {
-					for (int x = -1; x < 2; ++x) {
-						for (int y = -1; y < 2; ++y) {
-							for (int z = -1; z < 2; ++z) {
-								if (x != 0 || y != 0 || z != 0) {
-									BlockPos p = pos.add(x, y, z);
-									IBlockState pstate = worldIn.getBlockState(p);
-									if (Helper.isSameBlock(pstate.getBlock(), state.getBlock())) blockPositionsToBreak.add(p);
-								}
-							}
-						}
-					}
-				}
-				if (!blockPositionsToBreak.isEmpty() && wasEmpty) {
-					blockToBreak = state.getBlock();
-				}
+				if (veinMiner == null && cooldown == 0) veinMiner = createVeinMiner(stack, worldIn, player, state.getBlock());
+				if (veinMiner != null) veinMiner.addBlock(pos);
 			}
-			else if (!blockPositionsToBreak.isEmpty()) blockPositionsToBreak.clear();
+			else if (veinMiner != null) {
+			    removeVeinMiner(stack);
+            }
 			magnetActive += MAGNET_ACTIVE_TIME;
 			if (magnetActive > MAGNET_MAX_TIME) magnetActive = MAGNET_MAX_TIME;
 			cooldown = VEINMINE_COOLDOWN_TIME;
@@ -206,18 +224,11 @@ public class PeacefulTool extends ItemTool {
 
 	@SubscribeEvent
 	public void onPostServerTick(ServerTickEvent event) {
-		if (player == null || worldUsed == null) return;
-		BlockPos p;
-		while ((p = blockPositionsToBreak.poll()) != null) {
-			IBlockState pstate = worldUsed.getBlockState(p);
-			if (pstate.getBlock() != Blocks.AIR) {
-				player.interactionManager.tryHarvestBlock(p);
-				break;
-			}
-		}
-		if (blockPositionsToBreak.isEmpty()) {
-			blockToBreak = null;
-		}
+	    Iterator<Map.Entry<Integer, VeinMiner>> iterator = veinMiners.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, VeinMiner> entry = iterator.next();
+            if (!entry.getValue().harvestBlock()) iterator.remove();
+        }
 	}
 }
 
