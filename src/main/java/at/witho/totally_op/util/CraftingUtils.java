@@ -11,14 +11,10 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import org.apache.logging.log4j.Level;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CraftingUtils {
-    public static HashMap<Item, Block> itemToBlock = new HashMap<Item, Block>();
-    public static HashMap<Item, Item> itemToItem = new HashMap<Item, Item>();
+    private static HashMap<ItemStack, ItemStack> toBlockList = new HashMap<ItemStack, ItemStack>();
 
     public static void init() {
         for (IRecipe irecipe : CraftingManager.REGISTRY)
@@ -37,18 +33,17 @@ public class CraftingUtils {
                     prev = stack;
                 }
                 if (!failed) {
-                    Block output = Block.getBlockFromItem(irecipe.getRecipeOutput().getItem());
-                    Item input = prev[0].getItem();
-                    //TotallyOP.logger.log(Level.ERROR, "Found recipe:" + input.getRegistryName() + " -> " + output.getRegistryName());
-                    if (output != Blocks.AIR) {
-                        itemToBlock.put(input, output);
-                    } else {
-                        itemToItem.put(input, irecipe.getRecipeOutput().getItem());
-                    }
+                    toBlockList.put(ingredients.get(0).getMatchingStacks()[0], irecipe.getRecipeOutput());
                 }
             }
         }
     }
 
+    public static ItemStack toBlock(ItemStack input) {
+        for (Map.Entry<ItemStack, ItemStack> set : toBlockList.entrySet()) {
+            if (set.getKey().isItemEqual(input)) return set.getValue();
+        }
+        return null;
+    }
 
 }

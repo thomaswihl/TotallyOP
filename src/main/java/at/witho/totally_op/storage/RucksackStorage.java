@@ -8,10 +8,15 @@ import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 
 public class RucksackStorage extends InventoryBasic implements IInventoryChangedListener {
-    public static final int INVENTORY_SIZE = RucksackGui.slotsX * RucksackGui.slotsY;
+    public enum Page { Smeltables, Gems, Other, Tools };
+    public static final int pages = 1;//Page.values().length;
+    public static final int INVENTORY_SIZE = RucksackGui.slotsX * RucksackGui.slotsY * pages;
+    public final NonNullList<ItemStack> filter;
+
     private ItemStack invItem;
 
     public RucksackStorage(ItemStack stack) {
@@ -22,11 +27,17 @@ public class RucksackStorage extends InventoryBasic implements IInventoryChanged
         }
         readFromNBT(invItem.getTagCompound());
         addInventoryChangeListener(this);
+        filter = NonNullList.<ItemStack>withSize(pages * RucksackGui.slotWidth, ItemStack.EMPTY);
     }
 
     @Override
     public void onInventoryChanged(IInventory invBasic) {
         writeToNBT(invItem.getTagCompound());
+    }
+
+    @Override
+    public ItemStack addItem(ItemStack stack) {
+        return super.addItem(stack);
     }
 
     /**

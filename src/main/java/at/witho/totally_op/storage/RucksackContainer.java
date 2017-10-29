@@ -12,12 +12,14 @@ import java.awt.*;
 
 public class RucksackContainer extends Container {
     public RucksackContainer(InventoryPlayer inventory, RucksackStorage rucksack) {
-        for(int y = 0; y < RucksackGui.slotsY; y++) {
-            for(int x = 0; x < RucksackGui.slotsX; x++) {
-                addSlotToContainer(new Slot(rucksack,
-                        x + y * RucksackGui.slotsX,
-                        RucksackGui.firstItemX + x * 18,
-                        RucksackGui.firstItemY + y * 18));
+        for (int p = 0; p < RucksackStorage.pages; ++p) {
+            for (int y = 0; y < RucksackGui.slotsY; y++) {
+                for (int x = 0; x < RucksackGui.slotsX; x++) {
+                    addSlotToContainer(new Slot(rucksack,
+                            x + y * RucksackGui.slotsX + p * RucksackGui.slotsX * RucksackGui.slotsY,
+                            RucksackGui.firstItemX + x * RucksackGui.slotWidth,
+                            RucksackGui.firstItemY + y * RucksackGui.slotHeight));
+                }
             }
         }
         addSlotToContainer(new Slot(inventory,
@@ -28,8 +30,8 @@ public class RucksackContainer extends Container {
             for(int x = 0; x < 9; x++) {
                 addSlotToContainer(new Slot(inventory,
                         x + y * 9,
-                        RucksackGui.playerFirstItemX + x * 18,
-                        ((y == 0) ? RucksackGui.hotbarFirstItemY : (RucksackGui.playerFirstItemY - 18)) + y * 18));
+                        RucksackGui.playerFirstItemX + x * RucksackGui.slotWidth,
+                        ((y == 0) ? RucksackGui.hotbarFirstItemY : (RucksackGui.playerFirstItemY - RucksackGui.slotWidth)) + y * RucksackGui.slotHeight));
             }
         }
     }

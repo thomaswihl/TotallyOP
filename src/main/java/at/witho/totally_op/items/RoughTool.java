@@ -4,6 +4,7 @@ import at.witho.totally_op.Helper;
 import at.witho.totally_op.TotallyOP;
 import at.witho.totally_op.net.PacketHandler;
 import at.witho.totally_op.net.RoughToolChange;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
@@ -52,6 +53,9 @@ public class RoughTool extends ItemTool {
     private static final String DIMENSION = "Dimension";
     private static int MAX_DIMENSION = 15;
     private static int MIN_DIMENSION = 3;
+    private static final ImmutableList<Block> DELETE_BLOCKS = ImmutableList.of(
+            Blocks.COBBLESTONE, Blocks.STONE, Blocks.DIRT, Blocks.GRASS, Blocks.GRAVEL, Blocks.SANDSTONE, Blocks.SAND, Blocks.CONCRETE,
+            Blocks.NETHERRACK, Blocks.SOUL_SAND, Blocks.END_STONE);
 
     private boolean active = false;
 
@@ -206,7 +210,7 @@ public class RoughTool extends ItemTool {
                         Block thisBlock = thisState.getBlock();
                         if (sound == null) sound = thisBlock.getSoundType(thisState, world, p, player);
                         if (thisBlock == Blocks.AIR) continue;
-                        if (thisBlock == Blocks.STONE || thisBlock == Blocks.DIRT || thisBlock == Blocks.GRAVEL) player.world.setBlockToAir(p);
+                        if (DELETE_BLOCKS.contains(thisBlock)) player.world.setBlockToAir(p);
                         else if (canHarvestBlock(thisState, itemstack)) {
                             ((EntityPlayerMP) player).interactionManager.tryHarvestBlock(p);
                         }
@@ -219,8 +223,6 @@ public class RoughTool extends ItemTool {
         if (sound != null) world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), sound.getBreakSound(), SoundCategory.BLOCKS, sound.volume, sound.pitch);
         return false;
     }
-
-
 
     @Override
     public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)

@@ -39,15 +39,15 @@ public class VeinMiner {
 
     public boolean harvestBlock() {
         BlockPos p;
+        if (blockPositionsToBreak.isEmpty()) {
+            return false;
+        }
         while ((p = blockPositionsToBreak.poll()) != null) {
             IBlockState pstate = world.getBlockState(p);
             if (pstate.getBlock() != Blocks.AIR) {
                 player.interactionManager.tryHarvestBlock(p);
                 break;
             }
-        }
-        if (blockPositionsToBreak.isEmpty()) {
-            return false;
         }
         return true;
     }

@@ -50,30 +50,41 @@ public class TileCompressingFlower extends TileFunctionFlower {
             }
             for (EntityItem entity : items) {
                 ItemStack stack = entity.getItem();
-                Block block = CraftingUtils.itemToBlock.get(stack.getItem());
-                Item item = CraftingUtils.itemToItem.get(stack.getItem());
-                if ((block != null || item != null) && stack.getCount() >= 9) {
-                    int count = stack.getCount() / 9;
-                    stack.setCount(stack.getCount() % 9);
-                    entity.setItem(stack);
-                    EntityItem ei = new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, (block != null) ? new ItemStack(block, count) : new ItemStack(item, count));
-                    ei.motionX = ei.motionY = ei.motionZ = 0;
-                    moveItems.add(ei);
+                if (stack.getCount() >= 9) {
+                    ItemStack output = CraftingUtils.toBlock(stack);
+                    if (output != null) {
+                        int count = stack.getCount() / 9;
+                        if (count > 1) {
+                            output = output.copy();
+                            output.setCount(count);
+                        }
+
+                        stack.setCount(stack.getCount() % 9);
+                        entity.setItem(stack);
+                        EntityItem ei = new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, output);
+                        ei.motionX = ei.motionY = ei.motionZ = 0;
+                        moveItems.add(ei);
+                    }
                 }
             }
         } else {
             for (IItemHandler inventory : inventories) {
                 for (int i = 0; i < inventory.getSlots(); ++i) {
                     ItemStack stack = inventory.getStackInSlot(i);
-                    Block block = CraftingUtils.itemToBlock.get(stack.getItem());
-                    Item item = CraftingUtils.itemToItem.get(stack.getItem());
-                    if ((block != null || item != null) && stack.getCount() >= 9) {
-                        int count = stack.getCount() / 9;
-                        ItemStack move = inventory.extractItem(i, count * 9, false);
-                        if (!move.isEmpty()) {
-                            EntityItem ei = new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, (block != null) ? new ItemStack(block, count) : new ItemStack(item, count));
-                            ei.motionX = ei.motionY = ei.motionZ = 0;
-                            moveItems.add(ei);
+                    if (stack.getCount() >= 9) {
+                        ItemStack output = CraftingUtils.toBlock(stack);
+                        if (output != null) {
+                            int count = stack.getCount() / 9;
+                            if (count > 1) {
+                                output = output.copy();
+                                output.setCount(count);
+                            }
+                            ItemStack move = inventory.extractItem(i, count * 9, false);
+                            if (!move.isEmpty()) {
+                                EntityItem ei = new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, output);
+                                ei.motionX = ei.motionY = ei.motionZ = 0;
+                                moveItems.add(ei);
+                            }
                         }
                     }
                 }

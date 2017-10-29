@@ -24,7 +24,9 @@ public class GuiProxy implements IGuiHandler {
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         if (ID == Rucksack.GUI_ID) {
-            return new RucksackGui(new RucksackContainer(player.inventory, new RucksackStorage(player.getHeldItemMainhand())));
+            RucksackStorage storage = new RucksackStorage(player.getHeldItemMainhand());
+            RucksackContainer container = new RucksackContainer(player.inventory, storage);
+            return new RucksackGui(container, storage);
         }
         return null;
     }
