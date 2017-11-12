@@ -40,7 +40,4 @@ public class TileBreakingFlower extends TileFunctionFlower {
 
 		nextBlock();
 	}
-
-
-
 }

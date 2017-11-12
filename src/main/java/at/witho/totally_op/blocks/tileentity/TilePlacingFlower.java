@@ -1,21 +1,9 @@
 package at.witho.totally_op.blocks.tileentity;
 
-import at.witho.totally_op.blocks.PlacingFlower;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockCrops;
-import net.minecraft.block.BlockMelon;
-import net.minecraft.block.BlockPumpkin;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.List;
@@ -48,18 +36,11 @@ public class TilePlacingFlower extends TileFunctionFlower {
 		nextBlock();
 	}
 
-
     private ItemStack findItem(Block block) {
-        int r = 1;
-        for (BlockPos pos : BlockPos.getAllInBox(pos.add(-r, -r, -r), pos.add(r, r, r))) {
-            TileEntity e = world.getTileEntity(pos);
-            if (e != null) {
-                IItemHandler inventory = e.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-                if (inventory != null) {
-                    ItemStack place = extractItem(inventory, block);
-                    if (!place.isEmpty()) return place;
-                }
-            }
+        List<IItemHandler> inventories = backInventories();
+        for (IItemHandler inventory : inventories) {
+            ItemStack place = extractItem(inventory, block);
+            if (!place.isEmpty()) return place;
         }
         return ItemStack.EMPTY;
     }

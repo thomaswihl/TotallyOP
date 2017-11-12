@@ -22,8 +22,13 @@ import java.util.List;
 import java.util.Random;
 
 public class TileFarmingFlower extends TileFunctionFlower {
+    public static final int[] DEFAULT_GROW_PROBABILITY_CONFIG = {0, 2, 4, 8, 16, 32, 64 };
+    protected int[] growProbabilityConfig = DEFAULT_GROW_PROBABILITY_CONFIG;
+    private int growProbability = 0;
+
     public TileFarmingFlower() {
         super();
+        growProbabilityConfig = Config.intArray(Config.growProbability.getStringList());
     }
 
     @Override
@@ -79,7 +84,8 @@ public class TileFarmingFlower extends TileFunctionFlower {
             }
 		}
 		else {
-            if (world.rand.nextFloat() < fortuneTier / 48.0) {
+            growProbability = growProbabilityConfig[fortuneTier];
+            if (growProbability > 0 && world.rand.nextInt(1000) < growProbability) {
                 Block block = state.getBlock();
                 if (block instanceof IGrowable) {
                     IGrowable crop = (IGrowable) block;

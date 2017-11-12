@@ -26,14 +26,19 @@ public class CraftingUtils {
                 boolean failed = false;
                 for (int i = 1; i < 9; ++i) {
                     ItemStack[] stack = ingredients.get(i).getMatchingStacks();
-                    if (stack.length != 1 || prev.length != 1 || !stack[0].isItemEqual(prev[0])) {
+                    if (stack.length == 0 || prev.length == 0 || !stack[0].isItemEqual(prev[0])) {
                         failed = true;
                         break;
                     }
                     prev = stack;
                 }
                 if (!failed) {
-                    toBlockList.put(ingredients.get(0).getMatchingStacks()[0], irecipe.getRecipeOutput());
+                    for (int i = 0; i < prev.length; ++i) {
+                        ItemStack input = prev[i];
+                        ItemStack output = irecipe.getRecipeOutput();
+                        //TotallyOP.logger.log(Level.INFO, "Found BLOCK recipie: " + input + " -> " + output);
+                        toBlockList.put(input, output);
+                    }
                 }
             }
         }

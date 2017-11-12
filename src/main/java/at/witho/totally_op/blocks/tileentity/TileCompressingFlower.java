@@ -1,23 +1,11 @@
 package at.witho.totally_op.blocks.tileentity;
 
-import at.witho.totally_op.TotallyOP;
 import at.witho.totally_op.util.CraftingUtils;
-import com.google.common.collect.Lists;
-import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import org.apache.logging.log4j.Level;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,7 +21,7 @@ public class TileCompressingFlower extends TileFunctionFlower {
     public void update() {
         super.update();
         if (!shouldRun()) return;
-        List<IItemHandler> inventories = inputInventories();
+        List<IItemHandler> inventories = frontInventories();
         List<EntityItem> moveItems = new ArrayList<EntityItem>();
         BlockPos outputPos = pos.offset(facing, -1);
         if (inventories.isEmpty()) {
@@ -54,10 +42,8 @@ public class TileCompressingFlower extends TileFunctionFlower {
                     ItemStack output = CraftingUtils.toBlock(stack);
                     if (output != null) {
                         int count = stack.getCount() / 9;
-                        if (count > 1) {
-                            output = output.copy();
-                            output.setCount(count);
-                        }
+                        output = output.copy();
+                        output.setCount(count);
 
                         stack.setCount(stack.getCount() % 9);
                         entity.setItem(stack);
@@ -75,10 +61,8 @@ public class TileCompressingFlower extends TileFunctionFlower {
                         ItemStack output = CraftingUtils.toBlock(stack);
                         if (output != null) {
                             int count = stack.getCount() / 9;
-                            if (count > 1) {
-                                output = output.copy();
-                                output.setCount(count);
-                            }
+                            output = output.copy();
+                            output.setCount(count);
                             ItemStack move = inventory.extractItem(i, count * 9, false);
                             if (!move.isEmpty()) {
                                 EntityItem ei = new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, output);
@@ -97,15 +81,13 @@ public class TileCompressingFlower extends TileFunctionFlower {
         }
     }
 
-
-
     @Override
     protected void initLimits(int range) {
         super.initLimits(1);
     }
 
     private boolean findInventory(List<EntityItem> items) {
-        List<IItemHandler> inventories = outputInventories();
+        List<IItemHandler> inventories = backInventories();
         for (IItemHandler inventory : inventories) {
             if (addToInventory(inventory, items)) return true;
         }

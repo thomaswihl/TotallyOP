@@ -1,6 +1,7 @@
 package at.witho.totally_op.config;
 
 import at.witho.totally_op.blocks.FarmingFlower;
+import at.witho.totally_op.blocks.tileentity.TileFarmingFlower;
 import at.witho.totally_op.blocks.tileentity.TileFunctionFlower;
 import net.minecraft.block.Block;
 import net.minecraftforge.common.config.Property;
@@ -16,6 +17,7 @@ public class Config {
 
     public static float flowersPerChunk = 0.1f;
     public static Property fortuneMultiplier;
+    public static Property growProbability;
     public static Property efficiencyDelay;
     public static Property farmingRange;
     public static Block upgradeTierBlock;
@@ -49,7 +51,8 @@ public class Config {
         String blockName = cfg.getString("TierUpgradeBlock", CATEGORY_GENERAL, "minecraft:gold_block", "The block used to upgrade to the next tier.");
         upgradeTierBlock = Block.getBlockFromName(blockName);
         cfg.addCustomCategoryComment(CATEGORY_FARMING, "Farming configuration, all arrays mean: Index is tier number, so index 0 is tier 0 and index 6 is tier 6.");
-        fortuneMultiplier = cfg.get(CATEGORY_FARMING, "Fortune", TileFunctionFlower.DEFAULT_FORTUNE_CONFIG, "The amount the received items are multiplied for each fortune tier below the plant.");
+        fortuneMultiplier = cfg.get(CATEGORY_FARMING, "Fortune", TileFunctionFlower.DEFAULT_FORTUNE_CONFIG, "The amount the received items are multiplied for each fortune tier below the plant. 0 means never, 1000 means always.");
+        growProbability = cfg.get(CATEGORY_FARMING, "GrowProbability", TileFarmingFlower.DEFAULT_GROW_PROBABILITY_CONFIG, "The probability for executing a grow action on a plant when it can not be harvested.");
         efficiencyDelay = cfg.get(CATEGORY_FARMING, "Efficiency", TileFunctionFlower.DEFAULT_EFFICIENCY_CONFIG, "The number of ticks between operations for each efficiency tier below the plant.");
         farmingRange = cfg.get(CATEGORY_FARMING, "Range", TileFunctionFlower.DEFAULT_RANGE_CONFIG, "The number of blocks that are checked for farming in x and z direction, for sucking in all 3 directions, so 3 means a 3x3 area in front of it or a 3x3x3 cube. The sucking flower adds a border of 1 block.");
         xpForHarvesting = cfg.getInt("XpForHarvesting", CATEGORY_GENERAL, 0, 0, 10, "Specifies the XP amount for harvesting logs or bushes");

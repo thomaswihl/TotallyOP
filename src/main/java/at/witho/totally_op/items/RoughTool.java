@@ -11,7 +11,11 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.Vector3d;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -26,13 +30,11 @@ import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.*;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.MouseEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.common.MinecraftForge;
@@ -42,6 +44,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
+import org.lwjgl.opengl.GL11;
 
 import java.util.HashSet;
 import java.util.List;
@@ -80,6 +83,109 @@ public class RoughTool extends ItemTool {
                 event.setCanceled(true);
             }
         }
+    }
+
+//    @SubscribeEvent
+//    public void renderActiveArea(RenderWorldLastEvent ev) {
+//        EntityPlayerSP player = Minecraft.getMinecraft().player;
+//        Vec3d pos = player.getPositionVector();
+//        Vec3d look = player.getLookVec();
+//
+//        outlineBlock(Minecraft.getMinecraft().objectMouseOver.getBlockPos(), ev);
+//    }
+
+    private void outlineBlock(BlockPos pos, RenderWorldLastEvent ev) {
+        int sX = pos.getX();
+        int sY = pos.getY();
+        int sZ = pos.getZ();
+
+        Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
+
+        double d0 = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double)ev.getPartialTicks();
+        double d1 = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double)ev.getPartialTicks();
+        double d2 = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * (double)ev.getPartialTicks();
+        Tessellator tes = Tessellator.getInstance();
+        BufferBuilder bb = tes.getBuffer();
+        bb.setTranslation(-d0, -d1, -d2);
+        drawBoundingBox(tes, bb, sX, sY, sZ, sX + 1, sY + 1, sZ + 1, 1, 1, 1, 1);
+        //drawMask(bb, sX, sY, sZ, sX + 1, sY + 1, sZ + 1, 1, 1, 1, 1);
+        bb.setTranslation(0, 0, 0);
+    }
+
+    public static void drawBoundingBox(Tessellator tes, BufferBuilder bb, double minX, double minY, double minZ, double maxX, double maxY, double maxZ, float red, float green, float blue, float alpha)
+    {
+        // bottom
+        bb.begin(3, DefaultVertexFormats.POSITION_COLOR);
+        bb.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        bb.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        bb.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        bb.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        bb.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        // top
+        bb.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
+        bb.pos(maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();
+        bb.pos(maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
+        bb.pos(minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
+        bb.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
+        tes.draw();
+        // missing sides
+        bb.begin(3, DefaultVertexFormats.POSITION_COLOR);
+        bb.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        bb.pos(maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();
+        tes.draw();
+        bb.begin(3, DefaultVertexFormats.POSITION_COLOR);
+        bb.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        bb.pos(maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
+        tes.draw();
+        bb.begin(3, DefaultVertexFormats.POSITION_COLOR);
+        bb.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        bb.pos(minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
+        tes.draw();
+    }
+
+    public static void drawMask(BufferBuilder b, double minX, double minY, double minZ, double maxX, double maxY, double maxZ, float red, float green, float blue, float alpha)
+    {
+        //up
+        b.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        b.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        b.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        b.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        //b.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
+
+        //down
+        b.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
+        b.pos(minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
+        b.pos(maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
+        b.pos(maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();
+        //b.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
+
+        //north
+        b.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        b.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
+        b.pos(maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();
+        b.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        //b.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
+
+        //south
+        b.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        b.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        b.pos(maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
+        b.pos(minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
+        //b.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+
+        //east
+        b.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        b.pos(maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();
+        b.pos(maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
+        b.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        //b.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
+
+        //west
+        b.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        b.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        b.pos(minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
+        b.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
+        //b.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
     }
 
     public void changeDimension(ItemStack stack, EntityPlayer player, int amount) {

@@ -115,13 +115,13 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
 		}
 	}
 
-	protected List<IItemHandler> inputInventories() {
+	protected List<IItemHandler> frontInventories() {
         ArrayList<IItemHandler> list = new ArrayList<>();
 	    addInventory(list, pos.offset(facing));
 	    return list;
     }
 
-    protected List<IItemHandler> outputInventories() {
+    protected List<IItemHandler> backInventories() {
         ArrayList<IItemHandler> list = new ArrayList<>();
         addInventory(list, pos.offset(facing, -1));
         addInventory(list, pos.up());

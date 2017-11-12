@@ -1,16 +1,9 @@
 package at.witho.totally_op.blocks.tileentity;
 
-import at.witho.totally_op.blocks.SuckingFlower;
-import at.witho.totally_op.config.Config;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityHopper;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.Iterator;
@@ -37,7 +30,7 @@ public class TileSuckingFlower extends TileFunctionFlower {
             }
             if (items.isEmpty()) return;
         }
-        if (!findInventory(items)) {
+        if (!addToInventories(items)) {
             for (EntityItem item : items) {
                 BlockPos p = pos.offset(facing, -1);
                 item.setPosition(p.getX() + 0.5f, p.getY(), p.getZ() + 0.5f);
@@ -54,14 +47,10 @@ public class TileSuckingFlower extends TileFunctionFlower {
         ++maxZ;
     }
 
-    private boolean findInventory(List<EntityItem> items) {
-        int r = 1;
-        for (BlockPos pos : BlockPos.getAllInBox(pos.add(-r, -r, -r), pos.add(r, r, r))) {
-            TileEntity e = world.getTileEntity(pos);
-            if (e != null) {
-                IItemHandler inventory = e.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-                if (inventory != null && addToInventory(inventory, items)) return true;
-            }
+    private boolean addToInventories(List<EntityItem> items) {
+        List<IItemHandler> inventories = backInventories();
+        for (IItemHandler inventory : inventories) {
+            if (addToInventory(inventory, items)) return true;
         }
         return false;
     }
