@@ -30,6 +30,11 @@ public class RucksackStorage extends InventoryBasic implements IInventoryChanged
         filter = NonNullList.<ItemStack>withSize(pages * RucksackGui.slotWidth, ItemStack.EMPTY);
     }
 
+    public boolean isItemStack(ItemStack in) {
+        return invItem == in;
+    }
+
+
     @Override
     public void onInventoryChanged(IInventory invBasic) {
         writeToNBT(invItem.getTagCompound());

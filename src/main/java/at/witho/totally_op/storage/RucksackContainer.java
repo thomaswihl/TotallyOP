@@ -7,7 +7,9 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.SlotItemHandler;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 
 public class RucksackContainer extends Container {
@@ -15,7 +17,7 @@ public class RucksackContainer extends Container {
         for (int p = 0; p < RucksackStorage.pages; ++p) {
             for (int y = 0; y < RucksackGui.slotsY; y++) {
                 for (int x = 0; x < RucksackGui.slotsX; x++) {
-                    addSlotToContainer(new Slot(rucksack,
+                    addSlotToContainer(new RucksackSlot(rucksack,
                             x + y * RucksackGui.slotsX + p * RucksackGui.slotsX * RucksackGui.slotsY,
                             RucksackGui.firstItemX + x * RucksackGui.slotWidth,
                             RucksackGui.firstItemY + y * RucksackGui.slotHeight));

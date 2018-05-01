@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.Vector3d;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -33,7 +34,9 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.MouseEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.IShearable;
@@ -46,6 +49,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -62,6 +66,8 @@ public class RoughTool extends ItemTool {
 
     private boolean active = false;
 
+    private static int count = 0;
+
 
     public RoughTool() {
 		super(TotallyOP.peacefulDiamondMaterial, new HashSet<>());
@@ -77,7 +83,6 @@ public class RoughTool extends ItemTool {
             if (player.isSneaking()) {
                 ItemStack item = player.getHeldItemMainhand();
                 if (item.getItem() instanceof RoughTool) {
-                    TotallyOP.logger.log(Level.ERROR, "Sending packet");
                     PacketHandler.INSTANCE.sendToServer(new RoughToolChange((event.getDwheel() > 0) ? 1 : -1));
                 }
                 event.setCanceled(true);
@@ -85,107 +90,103 @@ public class RoughTool extends ItemTool {
         }
     }
 
-//    @SubscribeEvent
-//    public void renderActiveArea(RenderWorldLastEvent ev) {
-//        EntityPlayerSP player = Minecraft.getMinecraft().player;
-//        Vec3d pos = player.getPositionVector();
-//        Vec3d look = player.getLookVec();
-//
-//        outlineBlock(Minecraft.getMinecraft().objectMouseOver.getBlockPos(), ev);
-//    }
+    @SubscribeEvent
+    public void renderOutline(RenderWorldLastEvent ev) {
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        if (!(player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof RoughTool) &&
+                !(player.getHeldItem(EnumHand.OFF_HAND).getItem() instanceof RoughTool))
+            return;
+        BlockPos pos = Minecraft.getMinecraft().objectMouseOver.getBlockPos();
+        if (player.world.getBlockState(pos).getBlock() == Blocks.AIR) return;
 
-    private void outlineBlock(BlockPos pos, RenderWorldLastEvent ev) {
-        int sX = pos.getX();
-        int sY = pos.getY();
-        int sZ = pos.getZ();
+        GlStateManager.pushMatrix();
+        GlStateManager.disableTexture2D();
 
+        GL11.glPushAttrib(GL11.GL_LIGHTING_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+        GlStateManager.disableLighting();
+        GlStateManager.disableDepth();
+
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+        outlineBlock(pos, ev.getPartialTicks());
+
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GL11.glPopAttrib();
+        GlStateManager.popMatrix();
+    }
+
+    private void outlineBlock(BlockPos pos, double partialTicks) {
         Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
 
-        double d0 = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double)ev.getPartialTicks();
-        double d1 = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double)ev.getPartialTicks();
-        double d2 = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * (double)ev.getPartialTicks();
+        double d0 = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double)partialTicks;
+        double d1 = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double)partialTicks;
+        double d2 = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * (double)partialTicks;
         Tessellator tes = Tessellator.getInstance();
         BufferBuilder bb = tes.getBuffer();
         bb.setTranslation(-d0, -d1, -d2);
-        drawBoundingBox(tes, bb, sX, sY, sZ, sX + 1, sY + 1, sZ + 1, 1, 1, 1, 1);
+        AxisAlignedBB aabb = new AxisAlignedBB(pos);
+        Color color = new Color(255, 255, 255, 64);
+        renderRectangle(tes, bb, aabb, color);
         //drawMask(bb, sX, sY, sZ, sX + 1, sY + 1, sZ + 1, 1, 1, 1, 1);
         bb.setTranslation(0, 0, 0);
     }
 
-    public static void drawBoundingBox(Tessellator tes, BufferBuilder bb, double minX, double minY, double minZ, double maxX, double maxY, double maxZ, float red, float green, float blue, float alpha)
-    {
-        // bottom
-        bb.begin(3, DefaultVertexFormats.POSITION_COLOR);
-        bb.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
-        bb.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
-        bb.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();
-        bb.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
-        bb.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
-        // top
-        bb.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
-        bb.pos(maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();
-        bb.pos(maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
-        bb.pos(minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
-        bb.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
+    private void renderRectangle(Tessellator tes, BufferBuilder bb, AxisAlignedBB aabb, Color color) {
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(aabb.minX, aabb.minY, aabb.minZ);
+        GL11.glColor4ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue(), (byte) color.getAlpha());
+
+
+        double x = aabb.maxX - aabb.minX;
+        double y = aabb.maxY - aabb.minY;
+        double z = aabb.maxZ - aabb.minZ;
+
+        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+        bb.pos(x, y, 0).endVertex();
+        bb.pos(0, y, 0).endVertex();
+        bb.pos(0, y, z).endVertex();
+        bb.pos(x, y, z).endVertex();
         tes.draw();
-        // missing sides
-        bb.begin(3, DefaultVertexFormats.POSITION_COLOR);
-        bb.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
-        bb.pos(maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();
+        
+        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+        bb.pos(x, 0, z).endVertex();
+        bb.pos(0, 0, z).endVertex();
+        bb.pos(0, 0, 0).endVertex();
+        bb.pos(x, 0, 0).endVertex();
         tes.draw();
-        bb.begin(3, DefaultVertexFormats.POSITION_COLOR);
-        bb.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();
-        bb.pos(maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
+
+        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+        bb.pos(x, 0, 0).endVertex();
+        bb.pos(0, 0, 0).endVertex();
+        bb.pos(0, y, 0).endVertex();
+        bb.pos(x, y, 0).endVertex();
         tes.draw();
-        bb.begin(3, DefaultVertexFormats.POSITION_COLOR);
-        bb.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
-        bb.pos(minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
+
+        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+        bb.pos(x, y, z).endVertex();
+        bb.pos(0, y, z).endVertex();
+        bb.pos(0, 0, z).endVertex();
+        bb.pos(x, 0, z).endVertex();
         tes.draw();
-    }
 
-    public static void drawMask(BufferBuilder b, double minX, double minY, double minZ, double maxX, double maxY, double maxZ, float red, float green, float blue, float alpha)
-    {
-        //up
-        b.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
-        b.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
-        b.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();
-        b.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
-        //b.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+        bb.pos(0, y, 0).endVertex();
+        bb.pos(0, 0, 0).endVertex();
+        bb.pos(0, 0, z).endVertex();
+        bb.pos(0, y, z).endVertex();
+        tes.draw();
 
-        //down
-        b.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
-        b.pos(minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
-        b.pos(maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
-        b.pos(maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();
-        //b.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
+        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+        bb.pos(x, y, z).endVertex();
+        bb.pos(x, 0, z).endVertex();
+        bb.pos(x, 0, 0).endVertex();
+        bb.pos(x, y, 0).endVertex();
+        tes.draw();
 
-        //north
-        b.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
-        b.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
-        b.pos(maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();
-        b.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
-        //b.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
-
-        //south
-        b.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
-        b.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();
-        b.pos(maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
-        b.pos(minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
-        //b.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
-
-        //east
-        b.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
-        b.pos(maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();
-        b.pos(maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
-        b.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();
-        //b.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
-
-        //west
-        b.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
-        b.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
-        b.pos(minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
-        b.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
-        //b.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        GL11.glColor4ub((byte) 255, (byte) 255, (byte) 255, (byte) 255);
+        GlStateManager.popMatrix();
     }
 
     public void changeDimension(ItemStack stack, EntityPlayer player, int amount) {
@@ -333,6 +334,8 @@ public class RoughTool extends ItemTool {
     @Override
     public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
     {
+        ++count;
+        if (count > 50) count = 0;
         if (!worldIn.isRemote && magnetActive > 0) {
             --magnetActive;
             double x = entityIn.posX;

@@ -84,7 +84,7 @@ public class TileFarmingFlower extends TileFunctionFlower {
             }
 		}
 		else {
-            growProbability = growProbabilityConfig[fortuneTier];
+            growProbability = growProbabilityConfig[efficiencyTier];
             if (growProbability > 0 && world.rand.nextInt(1000) < growProbability) {
                 Block block = state.getBlock();
                 if (block instanceof IGrowable) {
