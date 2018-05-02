@@ -45,7 +45,11 @@ public class VeinMiner {
         while ((p = blockPositionsToBreak.poll()) != null) {
             IBlockState pstate = world.getBlockState(p);
             if (pstate.getBlock() != Blocks.AIR) {
-                player.interactionManager.tryHarvestBlock(p);
+                if (player != null) player.interactionManager.tryHarvestBlock(p);
+                else {
+                    world.destroyBlock(p, true);
+                    addBlock(p);
+                }
                 break;
             }
         }
