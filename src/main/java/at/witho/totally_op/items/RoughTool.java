@@ -221,9 +221,9 @@ public class RoughTool extends ItemTool {
     }
 
 	@Override
-	public float getStrVsBlock(ItemStack stack, IBlockState blockState)
+	public float getDestroySpeed(ItemStack stack, IBlockState blockState)
 	{
-		return canHarvestBlock(blockState, stack) ? efficiencyOnProperMaterial : 1.0F;
+		return canHarvestBlock(blockState, stack) ? efficiency : 1.0F;
 	}
 
 	@Override

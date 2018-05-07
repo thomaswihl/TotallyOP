@@ -8,10 +8,12 @@ import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
+import invtweaks.api.container.ChestContainer;
 
 import javax.annotation.Nullable;
 import java.awt.*;
 
+@ChestContainer
 public class RucksackContainer extends Container {
     public RucksackContainer(InventoryPlayer inventory, RucksackStorage rucksack) {
         for (int p = 0; p < RucksackStorage.pages; ++p) {
@@ -77,4 +79,10 @@ public class RucksackContainer extends Container {
     public boolean canInteractWith(EntityPlayer playerIn) {
         return true;
     }
+
+    @ChestContainer.RowSizeCallback
+    public int getRowSize() { return RucksackGui.slotsX; }
+    @ChestContainer.IsLargeCallback
+    boolean isLargeChest()  { return true; }
+
 }

@@ -116,9 +116,9 @@ public class PeacefulTool extends ItemTool {
 //	}
 
 	@Override
-	public float getStrVsBlock(ItemStack stack, IBlockState blockState)
+	public float getDestroySpeed(ItemStack stack, IBlockState blockState)
 	{
-		return blockState.getBlock() != Blocks.BEDROCK ? efficiencyOnProperMaterial : 1.0F;
+		return blockState.getBlock() != Blocks.BEDROCK ? efficiency : 1.0F;
 	}
 
 	@Override
