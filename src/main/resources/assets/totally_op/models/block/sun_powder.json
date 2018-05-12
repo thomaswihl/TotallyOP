@@ -1,0 +1,15 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "face": "totally_op:blocks/invisible"
+  },
+  "elements": [
+    {
+      "from": [ 0, 0, 0 ],
+      "to": [ 0, 0, 0 ],
+      "faces": {
+        "west":  { "texture": "face", "uv": [  0,  0, 16, 16 ] }
+      }
+    }
+  ]
+}

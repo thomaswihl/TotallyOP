@@ -1,0 +1,17 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "totally_op:sun_powder",
+    "textures": {
+      "all": "totally_op:blocks/invisible"
+    }
+  },
+  "variants": {
+    "facing=up": { "model": "totally_op:sun_powder", "y": 0 },
+    "facing=down": { "model": "totally_op:sun_powder", "y": 0 },
+    "facing=north": { "model": "totally_op:sun_powder", "y": 0 },
+    "facing=east": { "model": "totally_op:sun_powder", "y": 0 },
+    "facing=south": { "model": "totally_op:sun_powder", "y": 0 },
+    "facing=west": { "model": "totally_op:sun_powder", "y": 0 }
+  }
+}

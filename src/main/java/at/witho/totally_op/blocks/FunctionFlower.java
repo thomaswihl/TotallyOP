@@ -64,6 +64,7 @@ public abstract class FunctionFlower extends BlockBush implements ITileEntityPro
         }
     }
 
+
     public static boolean isPowered(int meta) {
         return (meta & 4) != 0;
     }

@@ -19,6 +19,7 @@ public class ModBlocks {
     public static final TierableBlock fortune = null;
     public static final TierableBlock efficiency = null;
     public static final TierableBlock range = null;
+    public static final SunPowder sun_powder = null;
 
     @SideOnly(Side.CLIENT)
     public static void initModels() {
@@ -33,6 +34,7 @@ public class ModBlocks {
         fortune.initModel();
         efficiency.initModel();
         range.initModel();
+        sun_powder.initModel();
     }
 
 }

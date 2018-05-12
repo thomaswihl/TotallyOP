@@ -64,6 +64,13 @@ public class RoughTool extends ItemTool {
             Blocks.COBBLESTONE, Blocks.STONE, Blocks.DIRT, Blocks.GRASS, Blocks.GRAVEL, Blocks.SANDSTONE, Blocks.SAND, Blocks.CONCRETE,
             Blocks.NETHERRACK, Blocks.SOUL_SAND, Blocks.END_STONE);
 
+    private class ParameterSet {
+        public int xstart = 0, xstop = 0, ystart = 0, ystop = 0, zstart = 0, zstop = 0;
+        public int radius = 0;
+        public boolean round = false;
+        public BlockPos startPos = null;
+    }
+
     private boolean active = false;
 
     private static int count = 0;
@@ -93,11 +100,14 @@ public class RoughTool extends ItemTool {
     @SubscribeEvent
     public void renderOutline(RenderWorldLastEvent ev) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        if (!(player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof RoughTool) &&
-                !(player.getHeldItem(EnumHand.OFF_HAND).getItem() instanceof RoughTool))
-            return;
+        ItemStack itemstack = player.getHeldItem(EnumHand.MAIN_HAND);
+        if (!(itemstack.getItem() instanceof RoughTool)) {
+            itemstack = player.getHeldItem(EnumHand.OFF_HAND);
+            if (!(itemstack.getItem() instanceof RoughTool)) return;
+        }
         BlockPos pos = Minecraft.getMinecraft().objectMouseOver.getBlockPos();
-        if (player.world.getBlockState(pos).getBlock() == Blocks.AIR) return;
+        IBlockState state = player.world.getBlockState(pos);
+        if (state == null || state.getBlock() == Blocks.AIR) return;
 
         GlStateManager.pushMatrix();
         GlStateManager.disableTexture2D();
@@ -109,7 +119,16 @@ public class RoughTool extends ItemTool {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        outlineBlock(pos, ev.getPartialTicks());
+        ParameterSet p = getParameters(itemstack, pos, player);
+        for (int x = p.xstart; x <= p.xstop; x++) {
+            for (int y = p.ystart; y <= p.ystop; y++) {
+                for (int z = p.zstart; z <= p.zstop; z++) {
+                    if (p.round && (x*x + y*y + z*z > p.radius)) continue;
+                    BlockPos bp = p.startPos.add(x, y, z);
+                    outlineBlock(bp, ev.getPartialTicks());
+                }
+            }
+        }
 
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
@@ -239,87 +258,20 @@ public class RoughTool extends ItemTool {
         SoundType sound = null;
         World world = player.world;
         if (!player.world.isRemote) {
-            int width = getDimension(itemstack);
-            boolean round = (width & 1) == 0;
-            width >>= 1;
             active = true;
-
-            EnumFacing facing = EnumFacing.getHorizontal(MathHelper.floor((double)(player.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3);
-
-            int angle = Math.round(player.rotationPitch / 22.5f);
-
-            boolean vertical = angle > 2 || angle < -2;
-            int xstart = 0, ystart = 0, zstart = 0;
-            int xstop = 0, ystop = 0, zstop = 0;
-            BlockPos startPos = null;
-            if (!vertical) {
-                BlockPos preceding = pos.offset(facing, -1);
-                boolean found = false;
-                for (int i = 0; i < 2 * width + 2; ++i) {
-                    if (world.getBlockState(preceding).isOpaqueCube()) {
-                        found = true;
-                        break;
-                    }
-                    preceding = preceding.down();
-                }
-                if (found) {
-                    startPos = preceding.offset(facing);
-                    // So preceding is already on a solid block, so 1 too low, consider this when moving up
-                    switch (angle) {
-                        case -2:
-                            startPos = startPos.up(width + 2);
-                            break;
-                        case -1: {
-                            BlockPos posStep = preceding.offset(facing, -1);
-                            boolean stepBefore = world.getBlockState(posStep).isOpaqueCube();
-                            startPos = startPos.up(width + (stepBefore ? 2 : 1));
-                        }   break;
-                        case 0:
-                            startPos = startPos.up(width + 1);
-                            break;
-                        case 1: {
-                            BlockPos posStep = preceding.offset(facing, -1).up();
-                            boolean stepBefore = world.getBlockState(posStep).isOpaqueCube();
-                            startPos = startPos.up(width + (stepBefore ? 1 : 0));
-                        }   break;
-                        case 2:
-                            startPos = startPos.up(width);
-                            break;
-                    }
-
-                }
-
-            }
-            if (startPos == null) startPos = new BlockPos(pos);
-            if (!vertical) {
-                ystart = -width;
-                ystop = width;
-                if (facing.getAxis() == EnumFacing.Axis.X) {
-                    zstart = -width;
-                    zstop = width;
-                } else {
-                    xstart = -width;
-                    xstop = width;
-                }
-            } else {
-                xstart = -width;
-                xstop = width;
-                zstart = -width;
-                zstop = width;
-            }
-            int radius = (int)((width + 0.5f)*(width + 0.5f) + 0.5f);
-            for (int x = xstart; x <= xstop; x++) {
-                for (int y = ystart; y <= ystop; y++) {
-                    for (int z = zstart; z <= zstop; z++) {
-                        if (round && (x*x + y*y + z*z > radius)) continue;
-                        BlockPos p = startPos.add(x, y, z);
-                        IBlockState thisState = player.world.getBlockState(p);
+            ParameterSet p = getParameters(itemstack, pos, player);
+            for (int x = p.xstart; x <= p.xstop; x++) {
+                for (int y = p.ystart; y <= p.ystop; y++) {
+                    for (int z = p.zstart; z <= p.zstop; z++) {
+                        if (p.round && (x*x + y*y + z*z > p.radius)) continue;
+                        BlockPos bp = p.startPos.add(x, y, z);
+                        IBlockState thisState = player.world.getBlockState(bp);
                         Block thisBlock = thisState.getBlock();
-                        if (sound == null) sound = thisBlock.getSoundType(thisState, world, p, player);
+                        if (sound == null) sound = thisBlock.getSoundType(thisState, world, bp, player);
                         if (thisBlock == Blocks.AIR) continue;
-                        if (DELETE_BLOCKS.contains(thisBlock)) player.world.setBlockToAir(p);
+                        if (DELETE_BLOCKS.contains(thisBlock)) player.world.setBlockToAir(bp);
                         else if (canHarvestBlock(thisState, itemstack)) {
-                            ((EntityPlayerMP) player).interactionManager.tryHarvestBlock(p);
+                            ((EntityPlayerMP) player).interactionManager.tryHarvestBlock(bp);
                         }
                     }
                 }
@@ -329,6 +281,76 @@ public class RoughTool extends ItemTool {
         }
         if (sound != null) world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), sound.getBreakSound(), SoundCategory.BLOCKS, sound.volume, sound.pitch);
         return false;
+    }
+
+    private ParameterSet getParameters(ItemStack itemstack, BlockPos pos, EntityPlayer player) {
+        int width = getDimension(itemstack);
+        ParameterSet p = new ParameterSet();
+        p.round = (width & 1) == 0;
+        width >>= 1;
+
+        EnumFacing facing = EnumFacing.getHorizontal(MathHelper.floor((double)(player.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3);
+
+        int angle = Math.round(player.rotationPitch / 22.5f);
+
+        boolean vertical = angle > 2 || angle < -2;
+        if (!vertical) {
+            BlockPos preceding = pos.offset(facing, -1);
+            boolean found = false;
+            for (int i = 0; i < 2 * width + 2; ++i) {
+                if (player.world.getBlockState(preceding).isOpaqueCube()) {
+                    found = true;
+                    break;
+                }
+                preceding = preceding.down();
+            }
+            if (found) {
+                p.startPos = preceding.offset(facing);
+                // So preceding is already on a solid block, so 1 too low, consider this when moving up
+                switch (angle) {
+                    case -2:
+                        p.startPos = p.startPos.up(width + 2);
+                        break;
+                    case -1: {
+                        BlockPos posStep = preceding.offset(facing, -1);
+                        boolean stepBefore = player.world.getBlockState(posStep).isOpaqueCube();
+                        p.startPos = p.startPos.up(width + (stepBefore ? 2 : 1));
+                    }   break;
+                    case 0:
+                        p.startPos = p.startPos.up(width + 1);
+                        break;
+                    case 1: {
+                        BlockPos posStep = preceding.offset(facing, -1).up();
+                        boolean stepBefore = player.world.getBlockState(posStep).isOpaqueCube();
+                        p.startPos = p.startPos.up(width + (stepBefore ? 1 : 0));
+                    }   break;
+                    case 2:
+                        p.startPos = p.startPos.up(width);
+                        break;
+                }
+
+            }
+
+        }
+        if (p.startPos == null) p.startPos = new BlockPos(pos);
+        if (!vertical) {
+            p.ystart = -width;
+            p.ystop = width;
+            if (facing.getAxis() == EnumFacing.Axis.X) {
+                p.zstart = -width;
+                p.zstop = width;
+            } else {
+                p.xstart = -width;
+                p.xstop = width;
+            }
+        } else {
+            p.xstart = -width;
+            p.xstop = width;
+            p.zstart = -width;
+            p.zstop = width;
+        }
+        p.radius = (int)((width + 0.5f)*(width + 0.5f) + 0.5f);
+        return p;
     }
 
     @Override

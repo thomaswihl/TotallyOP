@@ -69,6 +69,7 @@ public class CommonProxy {
         event.getRegistry().register(new TierableBlock(TierableBlock.FORTUNE));
         event.getRegistry().register(new TierableBlock(TierableBlock.EFFICIENCY));
         event.getRegistry().register(new TierableBlock(TierableBlock.RANGE));
+        event.getRegistry().register(new SunPowder());
     	GameRegistry.registerTileEntity(TileFarmingFlower.class, TotallyOP.MODID + "_farming_flower");
         GameRegistry.registerTileEntity(TileSuckingFlower.class, TotallyOP.MODID + "_sucking_flower");
         GameRegistry.registerTileEntity(TilePlacingFlower.class, TotallyOP.MODID + "_placing_flower");
@@ -90,6 +91,7 @@ public class CommonProxy {
         event.getRegistry().register(new ItemBlock(ModBlocks.fortune).setRegistryName(ModBlocks.fortune.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.efficiency).setRegistryName(ModBlocks.efficiency.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.range).setRegistryName(ModBlocks.range.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.sun_powder).setRegistryName(ModBlocks.sun_powder.getRegistryName()));
     	event.getRegistry().register(new PeacefulTool(TotallyOP.peacefulWoodMaterial, "peaceful_wood_tool", 2, 1));
     	event.getRegistry().register(new PeacefulTool(TotallyOP.peacefulIronMaterial, "peaceful_iron_tool", 4, 2));
     	event.getRegistry().register(new PeacefulTool(TotallyOP.peacefulDiamondMaterial, "peaceful_diamond_tool", 8, 3));
