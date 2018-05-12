@@ -56,8 +56,14 @@ public class SunPowder extends Block {
     }
 
 
-    @Deprecated
+    @Override
     public boolean isFullCube(IBlockState state)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state)
     {
         return false;
     }
