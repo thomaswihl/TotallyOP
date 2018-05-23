@@ -35,6 +35,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
 import org.omg.CORBA.PRIVATE_MEMBER;
 
 public class PeacefulTool extends ItemTool {
@@ -175,7 +176,8 @@ public class PeacefulTool extends ItemTool {
     private VeinMiner createVeinMiner(ItemStack stack, World world, EntityPlayerMP player, Block block) {
         NBTTagCompound comp = stack.getTagCompound();
         VeinMiner veinMiner = new VeinMiner(world, player, block);
-        if (player.rotationPitch < 10) veinMiner.setHorizontalPlane(true);
+        TotallyOP.logger.log(Level.ERROR, "rot = " + player.rotationPitch);
+        if (player.rotationPitch < -85 || player.rotationPitch > 85) veinMiner.setHorizontalPlane(true);
         veinMiners.put(nextId, veinMiner);
         if (comp == null) {
             comp = new NBTTagCompound();

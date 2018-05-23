@@ -15,6 +15,9 @@
     }
   },
   "result": {
-    "item": "totally_op:wings"
+    "item": "totally_op:wings",
+    "nbt": {
+      "ench": [{"id":0,"lvl":4}]
+    }
   }
 }

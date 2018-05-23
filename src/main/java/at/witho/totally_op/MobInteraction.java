@@ -2,9 +2,8 @@ package at.witho.totally_op;
 
 import at.witho.totally_op.blocks.PeacefulFlower;
 import at.witho.totally_op.entity.TotallyOpDamage;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.*;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -14,6 +13,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -39,7 +39,12 @@ public class MobInteraction {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void playerInteract(PlayerInteractEvent.EntityInteractSpecific e) {
 	    Entity ent = e.getTarget();
-        if (ent != null && ent instanceof EntityLiving) {
+	    if (ent == null) return;
+	    if (ent instanceof MultiPartEntityPart) {
+            IEntityMultiPart mp = ((MultiPartEntityPart) ent).parent;
+            if (mp instanceof EntityLiving) ent = (EntityLiving)mp;
+        }
+        if (ent instanceof EntityLiving) {
             ItemStack stack = e.getItemStack();
             if (!stack.isEmpty() && stack.isItemEqual(new ItemStack(ModBlocks.peaceful_flower))) {
                 EntityLiving entity = (EntityLiving)ent;
@@ -48,9 +53,10 @@ public class MobInteraction {
                     e.getWorld().spawnParticle(EnumParticleTypes.CRIT_MAGIC, pos.getX(), pos.getY(), pos.getZ(), 0.0D, 1.0D, 0.0D);
                 } else {
                     TotallyOpDamage damage = new TotallyOpDamage(e.getEntityPlayer());
-                    entity.attackEntityFrom(damage, 0);
-                    entity.setHealth(0);
-                    entity.onDeath(damage);
+                    entity.attackEntityFrom(damage, 20);
+//                    entity.setHealth(0);
+//                    entity.onDeath(damage);
+                    entity.onKillCommand();
                     stack.setCount(stack.getCount() - 1);
                 }
             }

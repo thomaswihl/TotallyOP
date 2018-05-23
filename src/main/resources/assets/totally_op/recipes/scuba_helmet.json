@@ -14,7 +14,7 @@
   "result": {
     "item": "totally_op:scuba_helmet",
     "nbt": {
-      "ench": [{"id":5,"lvl":3},{"id":6,"lvl":1}]
+      "ench": [{"id":0,"lvl":4},{"id":5,"lvl":3},{"id":6,"lvl":1}]
     }
   }
 }

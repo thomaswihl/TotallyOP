@@ -31,7 +31,7 @@ public class VeinMiner {
         int y2 = 2;
         if (horizontalPlane) {
             y1 = 0;
-            y2 = 0;
+            y2 = 1;
         }
         for (int x = -1; x < 2; ++x) {
             for (int y = y1; y < y2; ++y) {

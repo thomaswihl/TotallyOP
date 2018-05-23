@@ -14,7 +14,7 @@
   "result": {
     "item": "totally_op:rubber_boots",
     "nbt": {
-      "ench": [{"id":2,"lvl":4},{"id":8,"lvl":3}]
+      "ench": [{"id":0,"lvl":4},{"id":2,"lvl":4},{"id":8,"lvl":3}]
     }
   }
 }
