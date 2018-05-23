@@ -16,6 +16,7 @@ public class VeinMiner {
     private Block block = null;
     private EntityPlayerMP player = null;
     private World world = null;
+    private boolean horizontalPlane = false;
 
     public VeinMiner(World world, EntityPlayerMP player, Block block) {
         this.world = world;
@@ -23,9 +24,17 @@ public class VeinMiner {
         this.block = block;
     }
 
+    public void setHorizontalPlane(boolean plane) { horizontalPlane = plane; }
+
     public void addBlock(BlockPos pos) {
+        int y1 = -1;
+        int y2 = 2;
+        if (horizontalPlane) {
+            y1 = 0;
+            y2 = 0;
+        }
         for (int x = -1; x < 2; ++x) {
-            for (int y = -1; y < 2; ++y) {
+            for (int y = y1; y < y2; ++y) {
                 for (int z = -1; z < 2; ++z) {
                     if (x != 0 || y != 0 || z != 0) {
                         BlockPos p = pos.add(x, y, z);

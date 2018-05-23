@@ -109,12 +109,6 @@ public class PeacefulTool extends ItemTool {
 		return new ActionResult<ItemStack>(EnumActionResult.PASS, stack);
 	}
 
-//	@Override
-//	public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
-//		magnetActive = MAGNET_ACTIVE_TIME;
-//		return super.onEntitySwing(entityLiving, stack);
-//	}
-
 	@Override
 	public float getDestroySpeed(ItemStack stack, IBlockState blockState)
 	{
@@ -181,6 +175,7 @@ public class PeacefulTool extends ItemTool {
     private VeinMiner createVeinMiner(ItemStack stack, World world, EntityPlayerMP player, Block block) {
         NBTTagCompound comp = stack.getTagCompound();
         VeinMiner veinMiner = new VeinMiner(world, player, block);
+        if (player.rotationPitch < 10) veinMiner.setHorizontalPlane(true);
         veinMiners.put(nextId, veinMiner);
         if (comp == null) {
             comp = new NBTTagCompound();
