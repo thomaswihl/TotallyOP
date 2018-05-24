@@ -1,6 +1,7 @@
 package at.witho.totally_op.blocks.tileentity;
 
 import at.witho.totally_op.util.VeinMiner;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -21,13 +22,19 @@ public class TileCuttingFlower extends TileFunctionFlower {
             return;
         }
         if (veinMiner != null) {
-            if (!veinMiner.harvestBlock()) veinMiner = null;
+            for (int i = 1 << efficiencyTier; i > 0; --i) {
+                if (!veinMiner.harvestBlock()) {
+                    veinMiner = null;
+                    return;
+                }
+            }
             return;
         }
 
         IBlockState state = world.getBlockState(currentPos);
-        if (state.getBlock() != Blocks.AIR) {
-            veinMiner = new VeinMiner(this.getWorld(), null, state.getBlock());
+        Block block = state.getBlock();
+        if (state.isFullBlock()) {
+            veinMiner = new VeinMiner(this.getWorld(), null, block);
             veinMiner.addBlock(currentPos);
         }
         nextBlock();

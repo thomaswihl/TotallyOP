@@ -33,8 +33,8 @@ public class VeinMiner {
             y1 = 0;
             y2 = 1;
         }
-        for (int x = -1; x < 2; ++x) {
-            for (int y = y1; y < y2; ++y) {
+        for (int y = y1; y < y2; ++y) {
+            for (int x = -1; x < 2; ++x) {
                 for (int z = -1; z < 2; ++z) {
                     if (x != 0 || y != 0 || z != 0) {
                         BlockPos p = pos.add(x, y, z);
