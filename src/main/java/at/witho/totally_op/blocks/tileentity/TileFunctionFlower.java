@@ -6,6 +6,7 @@ import at.witho.totally_op.blocks.TierableBlock;
 import at.witho.totally_op.config.Config;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -138,6 +139,22 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
             if (inventory != null) list.add(inventory);
         }
     }
+
+    protected boolean addToInventory(IItemHandler inventory, List<EntityItem> items) {
+        for (int i = 0; i < inventory.getSlots(); ++i) {
+            boolean allDone = true;
+            for (EntityItem item : items) {
+                ItemStack itemStack = item.getItem();
+                if (itemStack.isEmpty()) continue;
+                ItemStack remain = inventory.insertItem(i, itemStack.copy(), false);
+                itemStack.setCount(remain.getCount());
+                if (remain.getCount() != 0) allDone = false;
+            }
+            if (allDone) return true;
+        }
+        return false;
+    }
+
 
     protected void checkForModifiers() {
         BlockPos p = getPos();

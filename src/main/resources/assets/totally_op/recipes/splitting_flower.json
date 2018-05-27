@@ -11,10 +11,10 @@
       "item": "totally_op:peaceful_flower"
     },
     "c": {
-      "item": "minecraft:piston"
+      "item": "minecraft:crafting_table"
     }
   },
   "result": {
-    "item": "totally_op:compressing_flower"
+    "item": "totally_op:splitting_flower"
   }
 }

@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "totally_op:splitting_flower", "y": 90 },
+        "facing=east": { "model": "totally_op:splitting_flower", "y": 180 },
+        "facing=south": { "model": "totally_op:splitting_flower", "y": 270 },
+        "facing=west": { "model": "totally_op:splitting_flower", "y": 0 }
+    }
+}

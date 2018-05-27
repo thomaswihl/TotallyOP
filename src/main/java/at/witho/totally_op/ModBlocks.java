@@ -15,6 +15,7 @@ public class ModBlocks {
     public static final PlacingFlower placing_flower = null;
     public static final BreakingFlower breaking_flower = null;
     public static final CompressingFlower compressing_flower = null;
+    public static final SplittingFlower splitting_flower = null;
     public static final CuttingFlower cutting_flower = null;
     public static final TierableBlock fortune = null;
     public static final TierableBlock efficiency = null;
@@ -30,6 +31,7 @@ public class ModBlocks {
         placing_flower.initModel();
         breaking_flower.initModel();
         compressing_flower.initModel();
+        splitting_flower.initModel();
         cutting_flower.initModel();
         fortune.initModel();
         efficiency.initModel();

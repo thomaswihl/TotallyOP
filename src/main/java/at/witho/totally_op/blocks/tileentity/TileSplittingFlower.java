@@ -11,11 +11,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class TileCompressingFlower extends TileFunctionFlower {
+public class TileSplittingFlower extends TileFunctionFlower {
     private int lastSlot = 0;
     private int lastInventory = 0;
 
-    public TileCompressingFlower() {
+    public TileSplittingFlower() {
         super();
     }
 
@@ -41,9 +41,9 @@ public class TileCompressingFlower extends TileFunctionFlower {
             for (EntityItem entity : items) {
                 ItemStack stack = entity.getItem();
                 int count = 9;
-                ItemStack output = CraftingUtils.toBlock9(stack);
+                ItemStack output = CraftingUtils.toItem9(stack);
                 if (output == null) {
-                    output = CraftingUtils.toBlock4(stack);
+                    output = CraftingUtils.toItem4(stack);
                     count = 4;
                 }
                 if (output != null) {
@@ -71,9 +71,9 @@ public class TileCompressingFlower extends TileFunctionFlower {
                     if (inputItem == null && thisItem != null && thisItem.getCount() > 0) {
                         inputItem = thisItem.copy();
                         inputMultiple = 9;
-                        outputItem = CraftingUtils.toBlock9(inputItem);
+                        outputItem = CraftingUtils.toItem9(inputItem);
                         if (outputItem == null) {
-                            outputItem = CraftingUtils.toBlock4(inputItem);
+                            outputItem = CraftingUtils.toItem4(inputItem);
                             inputMultiple = 4;
                             if (outputItem == null) inputItem = null;
                         }
@@ -84,25 +84,15 @@ public class TileCompressingFlower extends TileFunctionFlower {
                         inputAmount += move.getCount();
                     }
                 }
-                if (inputMultiple > 0 && inputAmount >= inputMultiple) {
-                    int c = inputAmount / inputMultiple;
+                if (inputMultiple > 0 && inputAmount > 0) {
+                    int c = inputAmount * inputMultiple;
                     outputItem = outputItem.copy();
                     outputItem.setCount(c);
                     EntityItem ei = new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, outputItem);
                     ei.motionX = ei.motionY = ei.motionZ = 0;
                     moveItems.add(ei);
-                    inputItem.setCount(inputAmount % inputMultiple);
-                    inventory.insertItem(lastSlot, inputItem, false);
                 } else {
-                    if (inputAmount > 0) {
-                        // We just found a few, put them back and try the next slot
-                        inputItem.setCount(inputAmount % inputMultiple);
-                        inventory.insertItem(lastSlot, inputItem, false);
-                        lastSlot++;
-                    } else {
-                        // We found nothing, go to next inventory
-                        lastSlot = inventory.getSlots();
-                    }
+                    lastSlot = inventory.getSlots();
 
                     if (lastSlot >= inventory.getSlots()) {
                         lastSlot = 0;

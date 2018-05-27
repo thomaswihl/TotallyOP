@@ -65,6 +65,7 @@ public class CommonProxy {
         event.getRegistry().register(new PlacingFlower());
         event.getRegistry().register(new BreakingFlower());
         event.getRegistry().register(new CompressingFlower());
+        event.getRegistry().register(new SplittingFlower());
         event.getRegistry().register(new CuttingFlower());
         event.getRegistry().register(new TierableBlock(TierableBlock.FORTUNE));
         event.getRegistry().register(new TierableBlock(TierableBlock.EFFICIENCY));
@@ -75,6 +76,7 @@ public class CommonProxy {
         GameRegistry.registerTileEntity(TilePlacingFlower.class, TotallyOP.MODID + "_placing_flower");
         GameRegistry.registerTileEntity(TileBreakingFlower.class, TotallyOP.MODID + "_breaking_flower");
         GameRegistry.registerTileEntity(TileCompressingFlower.class, TotallyOP.MODID + "_compressing_flower");
+        GameRegistry.registerTileEntity(TileSplittingFlower.class, TotallyOP.MODID + "_splitting_flower");
         GameRegistry.registerTileEntity(TileCuttingFlower.class, TotallyOP.MODID + "_cutting_flower");
     }
 
@@ -87,6 +89,7 @@ public class CommonProxy {
         event.getRegistry().register(new ItemBlock(ModBlocks.placing_flower).setRegistryName(ModBlocks.placing_flower.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.breaking_flower).setRegistryName(ModBlocks.breaking_flower.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.compressing_flower).setRegistryName(ModBlocks.compressing_flower.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.splitting_flower).setRegistryName(ModBlocks.splitting_flower.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.cutting_flower).setRegistryName(ModBlocks.cutting_flower.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.fortune).setRegistryName(ModBlocks.fortune.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.efficiency).setRegistryName(ModBlocks.efficiency.getRegistryName()));

@@ -55,18 +55,4 @@ public class TileSuckingFlower extends TileFunctionFlower {
         return false;
     }
 
-    private boolean addToInventory(IItemHandler inventory, List<EntityItem> items) {
-        for (int i = 0; i < inventory.getSlots(); ++i) {
-            boolean allDone = true;
-            for (EntityItem item : items) {
-                ItemStack itemStack = item.getItem();
-                if (itemStack.isEmpty()) continue;
-                ItemStack remain = inventory.insertItem(i, itemStack.copy(), false);
-                itemStack.setCount(remain.getCount());
-                if (remain.getCount() != 0) allDone = false;
-            }
-            if (allDone) return true;
-        }
-        return false;
-    }
 }
