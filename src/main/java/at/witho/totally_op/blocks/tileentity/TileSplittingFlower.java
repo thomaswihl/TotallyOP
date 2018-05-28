@@ -48,7 +48,7 @@ public class TileSplittingFlower extends TileFunctionFlower {
                 }
                 if (output != null) {
                     if (stack.getCount() >= count) {
-                        int c = stack.getCount() / count;
+                        int c = stack.getCount() * count;
                         output = output.copy();
                         output.setCount(c);
 
