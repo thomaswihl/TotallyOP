@@ -26,16 +26,8 @@ public class TileBreakingFlower extends TileFunctionFlower {
         }
 
 		IBlockState state = world.getBlockState(currentPos);
-        if (state.getBlock() != Blocks.AIR) {
-            boolean doBreak = true;
-            if (!filter.isEmpty()) {
-                Block filterBlock = Block.getBlockFromItem(filter.getItem());
-                IBlockState filterState = filterBlock.getStateFromMeta(filter.getMetadata());
-                doBreak = !(state.equals(filterState) ^ filterIsWhitelist);
-            }
-            if (doBreak) {
-                world.destroyBlock(currentPos, true);
-            }
+        if (state.getBlock() != Blocks.AIR && matchesFilter(state)) {
+            world.destroyBlock(currentPos, true);
         }
 
 		nextBlock();

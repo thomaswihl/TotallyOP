@@ -33,7 +33,7 @@ public class TileCuttingFlower extends TileFunctionFlower {
 
         IBlockState state = world.getBlockState(currentPos);
         Block block = state.getBlock();
-        if (state.isFullBlock()) {
+        if (state.isFullBlock() && matchesFilter(state)) {
             veinMiner = new VeinMiner(this.getWorld(), null, block);
             veinMiner.addBlock(currentPos);
         }

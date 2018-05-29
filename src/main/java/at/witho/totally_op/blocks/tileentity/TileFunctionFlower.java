@@ -1,6 +1,5 @@
 package at.witho.totally_op.blocks.tileentity;
 
-import at.witho.totally_op.blocks.FarmingFlower;
 import at.witho.totally_op.blocks.FunctionFlower;
 import at.witho.totally_op.blocks.TierableBlock;
 import at.witho.totally_op.config.Config;
@@ -12,12 +11,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public abstract class TileFunctionFlower extends TileEntity implements ITickable {
@@ -155,6 +156,29 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
         return false;
     }
 
+    protected boolean matchesFilter(IBlockState state) {
+        if (!filter.isEmpty()) {
+            Block filterBlock = Block.getBlockFromItem(filter.getItem());
+            IBlockState filterState = filterBlock.getStateFromMeta(filter.getMetadata());
+            return !(state.equals(filterState) ^ filterIsWhitelist);
+        }
+        return true;
+    }
+
+    protected List<EntityItem> filteredInputItems() {
+	    double y = pos.getY();
+        List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class,
+                new AxisAlignedBB(minX, y - rangeConfig[rangeTier], minZ, maxX + 1, y + rangeConfig[rangeTier] + 1, maxZ + 1));
+        if (items.isEmpty()) return items;
+        if (!filter.isEmpty()) {
+            for (Iterator<EntityItem> iter = items.iterator(); iter.hasNext();) {
+                EntityItem item = iter.next();
+                boolean match = item.getItem().isItemEqual(filter);
+                if (filterIsWhitelist != match) iter.remove();
+            }
+        }
+	    return items;
+    }
 
     protected void checkForModifiers() {
         BlockPos p = getPos();

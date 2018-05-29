@@ -27,18 +27,7 @@ public class TileCompressingFlower extends TileFunctionFlower {
         List<EntityItem> moveItems = new ArrayList<EntityItem>();
         BlockPos outputPos = pos.offset(facing, -1);
         if (inventories.isEmpty()) {
-            double y = pos.getY();
-            List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class,
-                    new AxisAlignedBB(minX, y, minZ, maxX + 1, y + 1, maxZ + 1));
-            if (items.isEmpty()) return;
-            if (!filter.isEmpty()) {
-                for (Iterator<EntityItem> iter = items.iterator(); iter.hasNext(); ) {
-                    EntityItem item = iter.next();
-                    boolean match = item.getItem().isItemEqual(filter);
-                    if (filterIsWhitelist != match) iter.remove();
-                }
-            }
-            for (EntityItem entity : items) {
+            for (EntityItem entity : filteredInputItems()) {
                 ItemStack stack = entity.getItem();
                 int count = 9;
                 ItemStack output = CraftingUtils.toBlock9(stack);
