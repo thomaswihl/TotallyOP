@@ -105,7 +105,10 @@ public class RoughTool extends ItemTool {
             itemstack = player.getHeldItem(EnumHand.OFF_HAND);
             if (!(itemstack.getItem() instanceof RoughTool)) return;
         }
-        BlockPos pos = Minecraft.getMinecraft().objectMouseOver.getBlockPos();
+        RayTraceResult result = Minecraft.getMinecraft().objectMouseOver;
+        if (result == null) return;
+        BlockPos pos = result.getBlockPos();
+        if (pos == null) return;
         IBlockState state = player.world.getBlockState(pos);
         if (state == null || state.getBlock() == Blocks.AIR) return;
 

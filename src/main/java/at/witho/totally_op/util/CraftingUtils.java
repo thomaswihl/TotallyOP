@@ -32,6 +32,12 @@ public class CraftingUtils {
                     count++;
                 }
             }
+            if (!failed && count == 4) {
+                if (!irecipe.canFit(2, 2) || irecipe.getRecipeOutput().getCount() != 1) {
+                    TotallyOP.logger.log(Level.ERROR, "4x4 failed for: " + irecipe.getRecipeOutput());
+                    failed = true;
+                }
+            }
             if (!failed && item != null && (count == 4 || count == 9)) {
                 for (int i = 0; i < item.length; ++i) {
                     ItemStack input = item[i];
