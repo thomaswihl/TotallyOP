@@ -11,9 +11,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class TileCompressingFlower extends TileFunctionFlower {
-    private int lastSlot = 0;
-    private int lastInventory = 0;
+public class TileCompressingFlower extends TileFunctionFlower implements TileFunctionFlower.Transform {
 
     public TileCompressingFlower() {
         super();
@@ -23,90 +21,7 @@ public class TileCompressingFlower extends TileFunctionFlower {
     public void update() {
         super.update();
         if (!shouldRun()) return;
-        List<IItemHandler> inventories = frontInventories();
-        List<EntityItem> moveItems = new ArrayList<EntityItem>();
-        BlockPos outputPos = pos.offset(facing, -1);
-        if (inventories.isEmpty()) {
-            for (EntityItem entity : filteredInputItems()) {
-                ItemStack stack = entity.getItem();
-                int count = 9;
-                ItemStack output = CraftingUtils.toBlock9(stack);
-                if (output == null) {
-                    output = CraftingUtils.toBlock4(stack);
-                    count = 4;
-                }
-                if (output != null) {
-                    if (stack.getCount() >= count) {
-                        int c = stack.getCount() / count;
-                        output = output.copy();
-                        output.setCount(c);
-
-                        stack.setCount(stack.getCount() % count);
-                        entity.setItem(stack);
-                        EntityItem ei = new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, output);
-                        ei.motionX = ei.motionY = ei.motionZ = 0;
-                        moveItems.add(ei);
-                    }
-                }
-            }
-        } else {
-            for (IItemHandler inventory : inventories) {
-                ItemStack inputItem = null;
-                ItemStack outputItem = null;
-                int inputMultiple = 0;
-                int inputAmount = 0;
-                for (int i = lastSlot; i < inventory.getSlots(); ++i) {
-                    ItemStack thisItem = inventory.getStackInSlot(i);
-                    if (inputItem == null && thisItem != null && thisItem.getCount() > 0) {
-                        inputItem = thisItem.copy();
-                        inputMultiple = 9;
-                        outputItem = CraftingUtils.toBlock9(inputItem);
-                        if (outputItem == null) {
-                            outputItem = CraftingUtils.toBlock4(inputItem);
-                            inputMultiple = 4;
-                            if (outputItem == null) inputItem = null;
-                        }
-                        if (inputItem != null) lastSlot = i;
-                    }
-                    if (outputItem != null && thisItem.isItemEqual(inputItem)) {
-                        ItemStack move = inventory.extractItem(i, thisItem.getCount(), false);
-                        inputAmount += move.getCount();
-                    }
-                }
-                if (inputMultiple > 0 && inputAmount >= inputMultiple) {
-                    int c = inputAmount / inputMultiple;
-                    outputItem = outputItem.copy();
-                    outputItem.setCount(c);
-                    EntityItem ei = new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, outputItem);
-                    ei.motionX = ei.motionY = ei.motionZ = 0;
-                    moveItems.add(ei);
-                    inputItem.setCount(inputAmount % inputMultiple);
-                    inventory.insertItem(lastSlot, inputItem, false);
-                } else {
-                    if (inputAmount > 0) {
-                        // We just found a few, put them back and try the next slot
-                        inputItem.setCount(inputAmount % inputMultiple);
-                        inventory.insertItem(lastSlot, inputItem, false);
-                        lastSlot++;
-                    } else {
-                        // We found nothing, go to next inventory
-                        lastSlot = inventory.getSlots();
-                    }
-
-                    if (lastSlot >= inventory.getSlots()) {
-                        lastSlot = 0;
-                        lastInventory++;
-                        if (lastInventory >= inventories.size()) lastInventory = 0;
-                    }
-                }
-
-            }
-        }
-        if (!findInventory(moveItems)) {
-            for (EntityItem item : moveItems) {
-                world.spawnEntity(item);
-            }
-        }
+        transformItems(this);
     }
 
     @Override
@@ -114,12 +29,18 @@ public class TileCompressingFlower extends TileFunctionFlower {
         super.initLimits(1);
     }
 
-    private boolean findInventory(List<EntityItem> items) {
-        List<IItemHandler> inventories = backInventories();
-        for (IItemHandler inventory : inventories) {
-            if (addToInventory(inventory, items)) return true;
-        }
-        return false;
+    @Override
+    public ItemStack transform9(ItemStack from) {
+        return CraftingUtils.toBlock9(from);
     }
 
+    @Override
+    public ItemStack transform4(ItemStack from) {
+        return CraftingUtils.toBlock4(from);
+    }
+
+    @Override
+    public int outputCount(int inputCount, int factor) {
+        return inputCount / factor;
+    }
 }
