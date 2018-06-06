@@ -254,12 +254,18 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
                     }
                 }
                 if (inputMultiple > 0 && inputAmount > 0) {
-                    int c = inputAmount * inputMultiple;
-                    outputItem = outputItem.copy();
-                    outputItem.setCount(c);
-                    EntityItem ei = new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, outputItem);
-                    ei.motionX = ei.motionY = ei.motionZ = 0;
-                    moveItems.add(ei);
+                    int outputCount = transform.outputCount(inputAmount, inputMultiple);
+                    if (outputCount > 0) {
+                        outputItem = outputItem.copy();
+                        outputItem.setCount(outputCount);
+                        EntityItem ei = new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, outputItem);
+                        ei.motionX = ei.motionY = ei.motionZ = 0;
+                        moveItems.add(ei);
+                    }
+                    if (outputCount < inputAmount) {
+                        inputItem.setCount(inputAmount % inputMultiple);
+                        inventory.insertItem(lastSlot, inputItem, false);
+                    }
                 } else {
                     lastSlot = inventory.getSlots();
 

@@ -1,5 +1,6 @@
 package at.witho.totally_op.blocks.tileentity;
 
+import at.witho.totally_op.Helper;
 import at.witho.totally_op.util.VeinMiner;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -8,26 +9,23 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class TileCuttingFlower extends TileFunctionFlower {
+public class TileCuttingFlower extends TileFunctionFlower implements VeinMiner.ShouldBreakBlock {
     VeinMiner veinMiner = null;
 
     public TileCuttingFlower() { super(); }
 
     public void update() {
         super.update();
+        if (veinMiner != null) {
+            if (!veinMiner.harvestBlock()) {
+                veinMiner = null;
+            }
+            return;
+        }
         if (!shouldRun()) return;
         if (currentPos == null) {
             checkForModifiers();
             resetPos();
-            return;
-        }
-        if (veinMiner != null) {
-            for (int i = 1 << efficiencyTier; i > 0; --i) {
-                if (!veinMiner.harvestBlock()) {
-                    veinMiner = null;
-                    return;
-                }
-            }
             return;
         }
 
@@ -35,9 +33,19 @@ public class TileCuttingFlower extends TileFunctionFlower {
         Block block = state.getBlock();
         if (state.isFullBlock() && matchesFilter(state)) {
             veinMiner = new VeinMiner(this.getWorld(), null, block);
+            veinMiner.setFortune(fortune);
+            veinMiner.setShouldBreakBlock(this);
             veinMiner.addBlock(currentPos);
         }
         nextBlock();
+    }
+
+    @Override
+    public boolean test(Block block) {
+        for (ItemStack item : OreDictionary.getOres("treeLeaves")) {
+            if (Helper.isSameBlock(block, Block.getBlockFromItem(item.getItem()))) return true;
+        }
+        return false;
     }
 }
 
