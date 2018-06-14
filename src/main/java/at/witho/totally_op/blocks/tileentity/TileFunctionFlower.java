@@ -220,27 +220,26 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
                     EntityItem ei = new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, output);
                     ei.motionX = ei.motionY = ei.motionZ = 0;
                     moveItems.add(ei);
+                    entity.setItem(input);
                 }
             }
         } else {
             for (IItemHandler inventory : inventories) {
-                for (int i = lastSlot; i < inventory.getSlots(); ++i) {
+                for (int i = 0; i < inventory.getSlots(); ++i) {
                     if (transform.canTransform(inventory.getStackInSlot(i))) {
                         ItemStack input = extractAll(inventory, inventory.getStackInSlot(i));
                         ItemStack output = transform.transform(input);
                         if (input.getCount() != 0) {
                             ItemStack remain = inventory.insertItem(i, input, false);
-                            moveItems.add(new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, input));
+                            moveItems.add(new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, remain));
                         }
                         if (output.getCount() != 0) {
                             moveItems.add(new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, output));
+                            break;
                         }
-                        lastSlot = i;
-                        break;
                     }
                 }
             }
-            lastSlot++;
         }
         if (!findInventory(moveItems)) {
             for (EntityItem item : moveItems) {

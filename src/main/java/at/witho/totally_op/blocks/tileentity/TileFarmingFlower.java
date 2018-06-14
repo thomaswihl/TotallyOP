@@ -21,6 +21,8 @@ import org.apache.logging.log4j.Level;
 import java.util.List;
 import java.util.Random;
 
+import static sun.security.krb5.Confounder.intValue;
+
 public class TileFarmingFlower extends TileFunctionFlower {
     public static final int[] DEFAULT_GROW_PROBABILITY_CONFIG = {0, 2, 4, 8, 16, 32, 64 };
     protected int[] growProbabilityConfig = DEFAULT_GROW_PROBABILITY_CONFIG;
@@ -79,6 +81,14 @@ public class TileFarmingFlower extends TileFunctionFlower {
                     if (item instanceof IPlantable) {
                         IPlantable seed = (IPlantable) item;
                         world.setBlockState(currentPos, seed.getPlant(world, currentPos), 3);
+                    } else {
+                        Block b = Block.getBlockFromItem(item);
+                        if (b instanceof BlockBush) {
+                            BlockBush bush = (BlockBush)b;
+                            if (bush.canPlaceBlockAt(world, currentPos)) {
+                                world.setBlockState(currentPos, bush.getDefaultState(), 3);
+                            }
+                        }
                     }
                 }
             }
@@ -90,6 +100,12 @@ public class TileFarmingFlower extends TileFunctionFlower {
                 if (block instanceof IGrowable) {
                     IGrowable crop = (IGrowable) block;
                     crop.grow(world, world.rand, currentPos, state);
+                } else if (block == Blocks.NETHER_WART) {
+                    int i = state.getValue(BlockNetherWart.AGE).intValue();
+                    if (i < 3) {
+                        IBlockState newState = state.withProperty(BlockNetherWart.AGE, Integer.valueOf(i + 1));
+                        world.setBlockState(currentPos, newState, 2);
+                    }
                 }
             }
         }
@@ -136,6 +152,13 @@ public class TileFarmingFlower extends TileFunctionFlower {
                 HarvestInfo info = new HarvestInfo();
                 info.harvestPos = pos.down();
                 info.ignoreFortune = true;
+                return info;
+            }
+        } else if (block.equals(Blocks.NETHER_WART)) {
+            BlockNetherWart nw = (BlockNetherWart)block;
+            if (state.getValue(BlockNetherWart.AGE).intValue() >= 3) {
+                HarvestInfo info = new HarvestInfo();
+                info.seed = new ItemStack(block.getItemDropped(state, world.rand, 0));
                 return info;
             }
         }
