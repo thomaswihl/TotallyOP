@@ -128,7 +128,7 @@ public class RoughTool extends ItemTool {
                 for (int z = p.zstart; z <= p.zstop; z++) {
                     if (p.round && (x*x + y*y + z*z > p.radius)) continue;
                     BlockPos bp = p.startPos.add(x, y, z);
-                    outlineBlock(bp, ev.getPartialTicks());
+                    outlineBlock(bp, ev.getPartialTicks(), p.xstart == p.xstop, p.ystart == p.ystop, p.zstart == p.zstop);
                 }
             }
         }
@@ -139,7 +139,7 @@ public class RoughTool extends ItemTool {
         GlStateManager.popMatrix();
     }
 
-    private void outlineBlock(BlockPos pos, double partialTicks) {
+    private void outlineBlock(BlockPos pos, double partialTicks, boolean renderX, boolean renderY, boolean renderZ) {
         Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
 
         double d0 = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double)partialTicks;
@@ -149,13 +149,13 @@ public class RoughTool extends ItemTool {
         BufferBuilder bb = tes.getBuffer();
         bb.setTranslation(-d0, -d1, -d2);
         AxisAlignedBB aabb = new AxisAlignedBB(pos);
-        Color color = new Color(255, 255, 255, 64);
-        renderRectangle(tes, bb, aabb, color);
+        Color color = new Color(255, 255, 255, 32);
+        renderRectangle(tes, bb, aabb, color, renderX, renderY, renderZ);
         //drawMask(bb, sX, sY, sZ, sX + 1, sY + 1, sZ + 1, 1, 1, 1, 1);
         bb.setTranslation(0, 0, 0);
     }
 
-    private void renderRectangle(Tessellator tes, BufferBuilder bb, AxisAlignedBB aabb, Color color) {
+    private void renderRectangle(Tessellator tes, BufferBuilder bb, AxisAlignedBB aabb, Color color, boolean renderX, boolean renderY, boolean renderZ) {
         GlStateManager.pushMatrix();
         GlStateManager.translate(aabb.minX, aabb.minY, aabb.minZ);
         GL11.glColor4ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue(), (byte) color.getAlpha());
@@ -165,47 +165,95 @@ public class RoughTool extends ItemTool {
         double y = aabb.maxY - aabb.minY;
         double z = aabb.maxZ - aabb.minZ;
 
-        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-        bb.pos(x, y, 0).endVertex();
-        bb.pos(0, y, 0).endVertex();
-        bb.pos(0, y, z).endVertex();
-        bb.pos(x, y, z).endVertex();
-        tes.draw();
-        
-        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-        bb.pos(x, 0, z).endVertex();
-        bb.pos(0, 0, z).endVertex();
-        bb.pos(0, 0, 0).endVertex();
-        bb.pos(x, 0, 0).endVertex();
-        tes.draw();
+        if (renderY) {
+            // TOP
+            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+            bb.pos(x, y, 0).endVertex();
+            bb.pos(0, y, 0).endVertex();
+            bb.pos(0, y, z).endVertex();
+            bb.pos(x, y, z).endVertex();
+            tes.draw();
+            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+            bb.pos(x, y, 0).endVertex();
+            bb.pos(x, y, z).endVertex();
+            bb.pos(0, y, z).endVertex();
+            bb.pos(0, y, 0).endVertex();
+            tes.draw();
 
-        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-        bb.pos(x, 0, 0).endVertex();
-        bb.pos(0, 0, 0).endVertex();
-        bb.pos(0, y, 0).endVertex();
-        bb.pos(x, y, 0).endVertex();
-        tes.draw();
+            // BOTTOM
+            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+            bb.pos(x, 0, z).endVertex();
+            bb.pos(0, 0, z).endVertex();
+            bb.pos(0, 0, 0).endVertex();
+            bb.pos(x, 0, 0).endVertex();
+            tes.draw();
+            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+            bb.pos(x, 0, z).endVertex();
+            bb.pos(x, 0, 0).endVertex();
+            bb.pos(0, 0, 0).endVertex();
+            bb.pos(0, 0, z).endVertex();
+            tes.draw();
+        }
 
-        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-        bb.pos(x, y, z).endVertex();
-        bb.pos(0, y, z).endVertex();
-        bb.pos(0, 0, z).endVertex();
-        bb.pos(x, 0, z).endVertex();
-        tes.draw();
+        if (renderZ) {
+            // LEFT
+            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+            bb.pos(x, 0, 0).endVertex();
+            bb.pos(0, 0, 0).endVertex();
+            bb.pos(0, y, 0).endVertex();
+            bb.pos(x, y, 0).endVertex();
+            tes.draw();
+            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+            bb.pos(x, 0, 0).endVertex();
+            bb.pos(x, y, 0).endVertex();
+            bb.pos(0, y, 0).endVertex();
+            bb.pos(0, 0, 0).endVertex();
+            tes.draw();
 
-        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-        bb.pos(0, y, 0).endVertex();
-        bb.pos(0, 0, 0).endVertex();
-        bb.pos(0, 0, z).endVertex();
-        bb.pos(0, y, z).endVertex();
-        tes.draw();
+            // RIGHT
+            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+            bb.pos(x, y, z).endVertex();
+            bb.pos(0, y, z).endVertex();
+            bb.pos(0, 0, z).endVertex();
+            bb.pos(x, 0, z).endVertex();
+            tes.draw();
+            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+            bb.pos(x, y, z).endVertex();
+            bb.pos(x, 0, z).endVertex();
+            bb.pos(0, 0, z).endVertex();
+            bb.pos(0, y, z).endVertex();
+            tes.draw();
+        }
 
-        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-        bb.pos(x, y, z).endVertex();
-        bb.pos(x, 0, z).endVertex();
-        bb.pos(x, 0, 0).endVertex();
-        bb.pos(x, y, 0).endVertex();
-        tes.draw();
+        if (renderX) {
+            // FRONT
+            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+            bb.pos(0, y, 0).endVertex();
+            bb.pos(0, 0, 0).endVertex();
+            bb.pos(0, 0, z).endVertex();
+            bb.pos(0, y, z).endVertex();
+            tes.draw();
+            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+            bb.pos(0, y, 0).endVertex();
+            bb.pos(0, y, z).endVertex();
+            bb.pos(0, 0, z).endVertex();
+            bb.pos(0, 0, 0).endVertex();
+            tes.draw();
+
+            // BACK
+            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+            bb.pos(x, y, z).endVertex();
+            bb.pos(x, 0, z).endVertex();
+            bb.pos(x, 0, 0).endVertex();
+            bb.pos(x, y, 0).endVertex();
+            tes.draw();
+            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+            bb.pos(x, y, z).endVertex();
+            bb.pos(x, y, 0).endVertex();
+            bb.pos(x, 0, 0).endVertex();
+            bb.pos(x, 0, z).endVertex();
+            tes.draw();
+        }
 
         GL11.glColor4ub((byte) 255, (byte) 255, (byte) 255, (byte) 255);
         GlStateManager.popMatrix();
