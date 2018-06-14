@@ -30,17 +30,13 @@ public class TileCompressingFlower extends TileFunctionFlower implements TileFun
     }
 
     @Override
-    public ItemStack transform9(ItemStack from) {
-        return CraftingUtils.toBlock9(from);
+    public ItemStack transform(ItemStack from) {
+        return CraftingUtils.toBlock(from);
     }
 
     @Override
-    public ItemStack transform4(ItemStack from) {
-        return CraftingUtils.toBlock4(from);
+    public boolean canTransform(ItemStack from) {
+        return CraftingUtils.canToBlock(from);
     }
 
-    @Override
-    public int outputCount(int inputCount, int factor) {
-        return inputCount / factor;
-    }
 }

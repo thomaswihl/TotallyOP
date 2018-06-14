@@ -30,17 +30,13 @@ public class TileSplittingFlower extends TileFunctionFlower implements TileFunct
     }
 
     @Override
-    public ItemStack transform9(ItemStack from) {
-        return CraftingUtils.toItem9(from);
+    public ItemStack transform(ItemStack from) {
+        return CraftingUtils.toItem(from);
     }
 
     @Override
-    public ItemStack transform4(ItemStack from) {
-        return CraftingUtils.toItem4(from);
+    public boolean canTransform(ItemStack from) {
+        return CraftingUtils.canToItem(from);
     }
 
-    @Override
-    public int outputCount(int inputCount, int factor) {
-        return inputCount * factor;
-    }
 }

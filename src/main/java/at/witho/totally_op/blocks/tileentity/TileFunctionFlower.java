@@ -193,9 +193,19 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
     }
 
     interface Transform {
-        ItemStack transform9(ItemStack from);
-        ItemStack transform4(ItemStack from);
-        int outputCount(int inputCount, int factor);
+        ItemStack transform(ItemStack from);
+        boolean canTransform(ItemStack from);
+    }
+
+    protected ItemStack extractAll(IItemHandler inventory, ItemStack stack) {
+	    ItemStack all = stack.copy();
+	    all.setCount(0);
+        for (int i = 0; i < inventory.getSlots(); ++i) {
+            if (inventory.getStackInSlot(i).isItemEqual(stack)) {
+                all.setCount(all.getCount() + inventory.extractItem(i, 64, false).getCount());
+            }
+        }
+        return all;
     }
 
     protected void transformItems(Transform transform) {
@@ -204,79 +214,33 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
         BlockPos outputPos = pos.offset(facing, -1);
         if (inventories.isEmpty()) {
             for (EntityItem entity : filteredInputItems()) {
-                ItemStack stack = entity.getItem();
-                int count = 9;
-                ItemStack output = transform.transform9(stack);
-                if (output == null) {
-                    output = transform.transform4(stack);
-                    count = 4;
-                }
+                ItemStack input = entity.getItem();
+                ItemStack output = transform.transform(input);
                 if (output != null) {
-                    int outputCount = transform.outputCount(stack.getCount(), count);
-                    if (outputCount > 0) {
-                        output = output.copy();
-                        output.setCount(outputCount);
-
-                        if (outputCount < stack.getCount()) {
-                            stack.setCount(stack.getCount() % count);
-                            entity.setItem(stack);
-                            EntityItem ei = new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, output);
-                            ei.motionX = ei.motionY = ei.motionZ = 0;
-                            moveItems.add(ei);
-                        } else {
-                            stack.setCount(0);
-                        }
-                    }
+                    EntityItem ei = new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, output);
+                    ei.motionX = ei.motionY = ei.motionZ = 0;
+                    moveItems.add(ei);
                 }
             }
         } else {
             for (IItemHandler inventory : inventories) {
-                ItemStack inputItem = null;
-                ItemStack outputItem = null;
-                int inputMultiple = 0;
-                int inputAmount = 0;
                 for (int i = lastSlot; i < inventory.getSlots(); ++i) {
-                    ItemStack thisItem = inventory.getStackInSlot(i);
-                    if (inputItem == null && thisItem != null && thisItem.getCount() > 0) {
-                        inputItem = thisItem.copy();
-                        inputMultiple = 9;
-                        outputItem = transform.transform9(inputItem);
-                        if (outputItem == null) {
-                            outputItem = transform.transform4(inputItem);
-                            inputMultiple = 4;
-                            if (outputItem == null) inputItem = null;
+                    if (transform.canTransform(inventory.getStackInSlot(i))) {
+                        ItemStack input = extractAll(inventory, inventory.getStackInSlot(i));
+                        ItemStack output = transform.transform(input);
+                        if (input.getCount() != 0) {
+                            ItemStack remain = inventory.insertItem(i, input, false);
+                            moveItems.add(new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, input));
                         }
-                        if (inputItem != null) lastSlot = i;
-                    }
-                    if (outputItem != null && thisItem.isItemEqual(inputItem)) {
-                        ItemStack move = inventory.extractItem(i, thisItem.getCount(), false);
-                        inputAmount += move.getCount();
-                    }
-                }
-                if (inputMultiple > 0 && inputAmount > 0) {
-                    int outputCount = transform.outputCount(inputAmount, inputMultiple);
-                    if (outputCount > 0) {
-                        outputItem = outputItem.copy();
-                        outputItem.setCount(outputCount);
-                        EntityItem ei = new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, outputItem);
-                        ei.motionX = ei.motionY = ei.motionZ = 0;
-                        moveItems.add(ei);
-                    }
-                    if (outputCount < inputAmount) {
-                        inputItem.setCount(inputAmount % inputMultiple);
-                        inventory.insertItem(lastSlot, inputItem, false);
-                    }
-                } else {
-                    lastSlot = inventory.getSlots();
-
-                    if (lastSlot >= inventory.getSlots()) {
-                        lastSlot = 0;
-                        lastInventory++;
-                        if (lastInventory >= inventories.size()) lastInventory = 0;
+                        if (output.getCount() != 0) {
+                            moveItems.add(new EntityItem(world, outputPos.getX() + 0.5, outputPos.getY(), outputPos.getZ() + 0.5, output));
+                        }
+                        lastSlot = i;
+                        break;
                     }
                 }
-
             }
+            lastSlot++;
         }
         if (!findInventory(moveItems)) {
             for (EntityItem item : moveItems) {
@@ -290,7 +254,7 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
         fortuneTier = 0;
         efficiencyTier = 0;
         rangeTier = 0;
-        for (int i = 0; i < 4; ++i) {
+        for (int i = 0; i < 6; ++i) {
             p = p.down();
             IBlockState state = world.getBlockState(p);
             Block block = state.getBlock();

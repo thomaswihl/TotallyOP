@@ -9,7 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class TileCuttingFlower extends TileFunctionFlower implements VeinMiner.ShouldBreakBlock {
+public class TileCuttingFlower extends TileFunctionFlower implements VeinMiner.ShouldAddBlock {
     VeinMiner veinMiner = null;
 
     public TileCuttingFlower() { super(); }
@@ -34,14 +34,21 @@ public class TileCuttingFlower extends TileFunctionFlower implements VeinMiner.S
         if (state.isFullBlock() && matchesFilter(state)) {
             veinMiner = new VeinMiner(this.getWorld(), null, block);
             veinMiner.setFortune(fortune);
-            veinMiner.setShouldBreakBlock(this);
+            veinMiner.setShouldAddBlock(this);
             veinMiner.addBlock(currentPos);
         }
         nextBlock();
     }
 
     @Override
-    public boolean test(Block block) {
+    public boolean testIsSimilar(Block block) {
+        for (ItemStack item : OreDictionary.getOres("logWood")) {
+            if (Helper.isSameBlock(block, Block.getBlockFromItem(item.getItem()))) return true;
+        }
+        return false;
+    }
+    @Override
+    public boolean testIsExtra(Block block) {
         for (ItemStack item : OreDictionary.getOres("treeLeaves")) {
             if (Helper.isSameBlock(block, Block.getBlockFromItem(item.getItem()))) return true;
         }

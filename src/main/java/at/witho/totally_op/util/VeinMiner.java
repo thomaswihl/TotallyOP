@@ -18,27 +18,38 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class VeinMiner {
     private ConcurrentLinkedQueue<BlockPos> blockPositionsToBreak = new ConcurrentLinkedQueue<BlockPos>();
-    private Block block = null;
+    private List<Block> blocks = new ArrayList<>();
     private List<Block> extraBlocks = new ArrayList<>();
     private EntityPlayerMP player = null;
     private World world = null;
     private boolean horizontalPlane = false;
     private int fortune = 0;
 
-    public interface ShouldBreakBlock {
-        boolean test(Block block);
+    public interface ShouldAddBlock {
+        boolean testIsSimilar(Block block);
+        boolean testIsExtra(Block block);
     }
-    private ShouldBreakBlock shouldBreakBlock = null;
+    private ShouldAddBlock shouldAddBlock = null;
 
     public VeinMiner(World world, EntityPlayerMP player, Block block) {
         this.world = world;
         this.player = player;
-        this.block = block;
+        this.blocks.add(block);
     }
 
     public void setHorizontalPlane(boolean plane) { horizontalPlane = plane; }
-    public void setShouldBreakBlock(ShouldBreakBlock sbb) { shouldBreakBlock = sbb; }
+    public void setShouldAddBlock(ShouldAddBlock sbb) { shouldAddBlock = sbb; }
     public void setFortune(int f) { fortune = f; }
+
+    private boolean findAndAdd(Block b, List<Block> list, BlockPos p) {
+        for (Block block : list) {
+            if (Helper.isSameBlock(b, block)) {
+                blockPositionsToBreak.add(p);
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void addBlock(BlockPos pos) {
         int y1 = -1;
@@ -54,18 +65,12 @@ public class VeinMiner {
                         BlockPos p = pos.add(x, y, z);
                         IBlockState pstate = world.getBlockState(p);
                         Block b = pstate.getBlock();
-                        if (Helper.isSameBlock(b, block)) blockPositionsToBreak.add(p);
-                        else {
-                            boolean found = false;
-                            for (Block extra : extraBlocks) {
-                                if (Helper.isSameBlock(b, extra)) {
-                                    blockPositionsToBreak.add(p);
-                                    found = true;
-                                    break;
+                        if (!findAndAdd(b, blocks, p)) {
+                            if (!findAndAdd(b, extraBlocks, p)) {
+                                if (shouldAddBlock != null) {
+                                    if (shouldAddBlock.testIsSimilar(b)) blocks.add(b);
+                                    else if (shouldAddBlock.testIsExtra(b)) extraBlocks.add(b);
                                 }
-                            }
-                            if (!found && shouldBreakBlock != null && shouldBreakBlock.test(b)) {
-                                extraBlocks.add(b);
                             }
                         }
                     }
@@ -88,7 +93,12 @@ public class VeinMiner {
                     world.playEvent(2001, p, Block.getStateId(pstate));
                     List<ItemStack> drops = b.getDrops(world, p, pstate, 0);
                     for (ItemStack stack : drops) {
-                        if (!Helper.isSameBlock(b, block)) stack.setCount(stack.getCount() * fortune);
+                        for (Block block : extraBlocks) {
+                            if (Helper.isSameBlock(b, block)) {
+                                stack.setCount(stack.getCount() * fortune);
+                                break;
+                            }
+                        }
                         world.spawnEntity(new EntityItem(world, p.getX(), p.getY(), p.getZ(), stack));
                     }
                     world.setBlockState(p, Blocks.AIR.getDefaultState(), 3);

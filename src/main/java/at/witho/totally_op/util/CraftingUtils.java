@@ -50,29 +50,56 @@ public class CraftingUtils {
         }
     }
 
-    public static ItemStack toBlock9(ItemStack input) {
+    private static ItemStack reduce(ItemStack input, ItemStack output, int factor) {
+        output.setCount(input.getCount() / factor);
+        input.setCount(input.getCount() % factor);
+        return output;
+    }
+
+    private static ItemStack multiply(ItemStack input, ItemStack output, int factor) {
+        output.setCount(input.getCount() * factor);
+        input.setCount(0);
+        return output;
+    }
+
+    public static ItemStack toBlock(ItemStack input) {
         for (Map.Entry<ItemStack, ItemStack> set : toBlock9.entrySet()) {
-            if (set.getKey().isItemEqual(input)) return set.getValue();
+            if (set.getKey().isItemEqual(input)) return reduce(input, set.getValue().copy(), 9);
         }
-        return null;
-    }
-    public static ItemStack toBlock4(ItemStack input) {
         for (Map.Entry<ItemStack, ItemStack> set : toBlock4.entrySet()) {
-            if (set.getKey().isItemEqual(input)) return set.getValue();
+            if (set.getKey().isItemEqual(input)) return reduce(input, set.getValue().copy(), 4);
         }
         return null;
     }
-    public static ItemStack toItem9(ItemStack input) {
+
+    public static ItemStack toItem(ItemStack input) {
         for (Map.Entry<ItemStack, ItemStack> set : toBlock9.entrySet()) {
-            if (set.getValue().isItemEqual(input)) return set.getKey();
+            if (set.getValue().isItemEqual(input)) return multiply(input, set.getKey().copy(), 9);
+        }
+        for (Map.Entry<ItemStack, ItemStack> set : toBlock4.entrySet()) {
+            if (set.getValue().isItemEqual(input)) return multiply(input, set.getKey().copy(), 4);
         }
         return null;
     }
-    public static ItemStack toItem4(ItemStack input) {
-        for (Map.Entry<ItemStack, ItemStack> set : toBlock4.entrySet()) {
-            if (set.getValue().isItemEqual(input)) return set.getKey();
+
+    public static boolean canToBlock(ItemStack input) {
+        for (ItemStack stack : toBlock9.keySet()) {
+            if (stack.isItemEqual(input)) return true;
         }
-        return null;
+        for (ItemStack stack : toBlock4.keySet()) {
+            if (stack.isItemEqual(input)) return true;
+        }
+        return false;
+    }
+
+    public static boolean canToItem(ItemStack input) {
+        for (ItemStack stack : toBlock9.values()) {
+            if (stack.isItemEqual(input)) return true;
+        }
+        for (ItemStack stack : toBlock4.values()) {
+            if (stack.isItemEqual(input)) return true;
+        }
+        return false;
     }
 
 }
