@@ -1,4 +1,4 @@
-package at.witho.totally_op.gui;
+package at.witho.totally_op.storage;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 
 public class FilterSlot extends Slot {
-    public FilterSlot(IInventory inventoryIn, int index, int xPosition, int yPosition) {
+    public FilterSlot(RucksackStorage inventoryIn, int index, int xPosition, int yPosition) {
         super(inventoryIn, index, xPosition, yPosition);
     }
 

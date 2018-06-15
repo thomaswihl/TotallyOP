@@ -2,8 +2,10 @@ package at.witho.totally_op.items;
 
 import at.witho.totally_op.TotallyOP;
 import at.witho.totally_op.storage.RucksackStorage;
+import at.witho.totally_op.util.CraftingUtils;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.SoundEvents;
@@ -11,10 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
@@ -73,6 +72,26 @@ public class Rucksack extends Item {
         return new ActionResult<ItemStack>(EnumActionResult.PASS, stack);
     }
 
+    boolean matches(ItemStack stack, NonNullList<ItemStack> list, boolean whitelist) {
+        for (ItemStack item : list) {
+            if (item.isItemEqual(stack)) return whitelist;
+        }
+        return !whitelist;
+    }
+
+    ItemStack compressAndAdd(RucksackStorage storage, ItemStack insert, EntityPlayer player) {
+        if (!CraftingUtils.canToBlock(insert)) return insert;
+        for (int i = 0; i < storage.getSizeInventory(); ++i) {
+            if (storage.getStackInSlot(i).isItemEqual(insert)) {
+                insert.setCount(insert.getCount() + storage.removeStackFromSlot(i).getCount());
+            }
+        }
+        ItemStack output = CraftingUtils.toBlock(insert);
+        ItemStack remain = storage.addItem(output);
+        if (remain.getCount() != 0) player.world.spawnEntity(new EntityItem(player.world, player.posX, player.posY, player.posZ, remain));
+        return insert;
+    }
+
     @SubscribeEvent
     public void onItemPickup(EntityItemPickupEvent event) {
         if (event.isCanceled()) return;
@@ -81,7 +100,18 @@ public class Rucksack extends Item {
         for (ItemStack rucksack : rucksackList) {
             RucksackStorage storage = new RucksackStorage(rucksack);
             ItemStack insert = event.getItem().getItem();
-            ItemStack remain = storage.addItem(insert);
+            if (matches(insert, storage.filterTrash, storage.whitelistTrash)) {
+                if (event.isCancelable()) event.setCanceled(true);
+                return;
+            }
+            ItemStack remain = ItemStack.EMPTY;
+            if (matches(insert, storage.filterCompress, storage.whitelistCompress)) {
+                remain = compressAndAdd(storage, insert, player);
+                if (remain.getCount() != 0) remain = storage.addItem(remain);
+            }
+            else {
+                remain = storage.addItem(insert);
+            }
             if (remain.getCount() != insert.getCount()) {
                 insert.setCount(remain.getCount());
                 World world = player.world;

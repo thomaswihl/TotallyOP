@@ -15,9 +15,13 @@ public class RucksackStorage extends InventoryBasic implements IInventoryChanged
     public enum Page { Smeltables, Gems, Other, Tools };
     public static final int pages = 1;//Page.values().length;
     public static final int INVENTORY_SIZE = RucksackGui.slotsX * RucksackGui.slotsY * pages;
-    public final NonNullList<ItemStack> filter;
+    public final NonNullList<ItemStack> filterTrash;
+    public final NonNullList<ItemStack> filterCompress;
+    public boolean whitelistTrash = true;
+    public boolean whitelistCompress = true;
 
     private ItemStack invItem;
+
 
     public RucksackStorage(ItemStack stack) {
         super("Rucksack", false, INVENTORY_SIZE);
@@ -27,7 +31,8 @@ public class RucksackStorage extends InventoryBasic implements IInventoryChanged
         }
         readFromNBT(invItem.getTagCompound());
         addInventoryChangeListener(this);
-        filter = NonNullList.<ItemStack>withSize(pages * RucksackGui.slotWidth, ItemStack.EMPTY);
+        filterTrash = NonNullList.<ItemStack>withSize(pages * RucksackGui.slotsX, ItemStack.EMPTY);
+        filterCompress = NonNullList.<ItemStack>withSize(pages * RucksackGui.slotsY, ItemStack.EMPTY);
     }
 
     public boolean isItemStack(ItemStack in) {
@@ -51,17 +56,32 @@ public class RucksackStorage extends InventoryBasic implements IInventoryChanged
     public void readFromNBT(NBTTagCompound compound)
     {
         NBTTagList items = compound.getTagList("ItemInventory", compound.getId());
-
         for (int i = 0; i < items.tagCount(); ++i)
         {
             NBTTagCompound item = items.getCompoundTagAt(i);
             int slot = item.getInteger("Slot");
-
-            // Just double-checking that the saved slot index is within our inventory array bounds
-            if (slot >= 0 && slot < getSizeInventory()) {
-                setInventorySlotContents(slot, new ItemStack(item));
-            }
+            if (slot >= 0 && slot < getSizeInventory()) setInventorySlotContents(slot, new ItemStack(item));
         }
+
+        items = compound.getTagList("TrashInventory", compound.getId());
+        for (int i = 0; i < items.tagCount(); ++i)
+        {
+            NBTTagCompound item = items.getCompoundTagAt(i);
+            int slot = item.getInteger("Slot");
+            if (slot >= 0 && slot < filterTrash.size()) filterTrash.set(slot, new ItemStack(item));
+        }
+
+        items = compound.getTagList("CompressInventory", compound.getId());
+        for (int i = 0; i < items.tagCount(); ++i)
+        {
+            NBTTagCompound item = items.getCompoundTagAt(i);
+            int slot = item.getInteger("Slot");
+            if (slot >= 0 && slot < filterCompress.size()) filterCompress.set(slot, new ItemStack(item));
+        }
+
+        if (compound.hasKey("whitelistTrash")) whitelistTrash = compound.getBoolean("whitelistTrash");
+        if (compound.hasKey("whitelistCompress")) whitelistCompress = compound.getBoolean("whitelistCompress");
+
     }
 
     /**
@@ -69,25 +89,47 @@ public class RucksackStorage extends InventoryBasic implements IInventoryChanged
      */
     public void writeToNBT(NBTTagCompound compound)
     {
-        // Create a new NBT Tag List to store itemstacks as NBT Tags
         NBTTagList items = new NBTTagList();
-
         for (int i = 0; i < getSizeInventory(); ++i)
         {
-            // Only write stacks that contain items
             if (!getStackInSlot(i).isEmpty())
             {
-                // Make a new NBT Tag Compound to write the itemstack and slot index to
                 NBTTagCompound item = new NBTTagCompound();
                 item.setInteger("Slot", i);
-                // Writes the itemstack in slot(i) to the Tag Compound we just made
                 getStackInSlot(i).writeToNBT(item);
-
-                // add the tag compound to our tag list
                 items.appendTag(item);
             }
         }
-        // Add the TagList to the ItemStack's Tag Compound with the name "ItemInventory"
         compound.setTag("ItemInventory", items);
+
+        items = new NBTTagList();
+        for (int i = 0; i < filterTrash.size(); ++i)
+        {
+            if (!filterTrash.get(i).isEmpty())
+            {
+                NBTTagCompound item = new NBTTagCompound();
+                item.setInteger("Slot", i);
+                filterTrash.get(i).writeToNBT(item);
+                items.appendTag(item);
+            }
+        }
+        compound.setTag("TrashInventory", items);
+
+        items = new NBTTagList();
+        for (int i = 0; i < filterCompress.size(); ++i)
+        {
+            if (!filterCompress.get(i).isEmpty())
+            {
+                NBTTagCompound item = new NBTTagCompound();
+                item.setInteger("Slot", i);
+                filterCompress.get(i).writeToNBT(item);
+                items.appendTag(item);
+            }
+        }
+        compound.setTag("CompressInventory", items);
+
+        compound.setBoolean("whitelistTrash", whitelistTrash);
+        compound.setBoolean("whitelistCompress", whitelistCompress);
+
     }
 }

@@ -21,7 +21,6 @@ import org.apache.logging.log4j.Level;
 import java.util.List;
 import java.util.Random;
 
-import static sun.security.krb5.Confounder.intValue;
 
 public class TileFarmingFlower extends TileFunctionFlower {
     public static final int[] DEFAULT_GROW_PROBABILITY_CONFIG = {0, 2, 4, 8, 16, 32, 64 };

@@ -4,27 +4,33 @@ import at.witho.totally_op.gui.RucksackGui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 import invtweaks.api.container.ChestContainer;
 
-import javax.annotation.Nullable;
-import java.awt.*;
-
 @ChestContainer
 public class RucksackContainer extends Container {
     public RucksackContainer(InventoryPlayer inventory, RucksackStorage rucksack) {
-        for (int p = 0; p < RucksackStorage.pages; ++p) {
-            for (int y = 0; y < RucksackGui.slotsY; y++) {
-                for (int x = 0; x < RucksackGui.slotsX; x++) {
-                    addSlotToContainer(new RucksackSlot(rucksack,
-                            x + y * RucksackGui.slotsX + p * RucksackGui.slotsX * RucksackGui.slotsY,
-                            RucksackGui.firstItemX + x * RucksackGui.slotWidth,
-                            RucksackGui.firstItemY + y * RucksackGui.slotHeight));
-                }
+        for (int y = 0; y < RucksackGui.slotsY; y++) {
+            for (int x = 0; x < RucksackGui.slotsX; x++) {
+                addSlotToContainer(new RucksackSlot(rucksack,
+                        x + y * RucksackGui.slotsX,
+                        RucksackGui.firstItemX + x * RucksackGui.slotWidth,
+                        RucksackGui.firstItemY + y * RucksackGui.slotHeight));
             }
+        }
+        for (int i = 0; i < RucksackGui.slotsX; i++) {
+            addSlotToContainer(new FilterSlot(rucksack,
+                    i,
+                    RucksackGui.trashX + i * RucksackGui.slotWidth,
+                    RucksackGui.trashY));
+        }
+        for (int i = 0; i < RucksackGui.slotsY; i++) {
+            addSlotToContainer(new FilterSlot(rucksack,
+                    i,
+                    RucksackGui.compressX,
+                    RucksackGui.compressY + i * RucksackGui.slotHeight));
         }
         addSlotToContainer(new Slot(inventory,
                 40,
