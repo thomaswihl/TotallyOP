@@ -34,8 +34,6 @@ import java.util.Random;
 
 public class Rucksack extends Item {
     public static final int GUI_ID = 1;
-    public static final int INV_SIZE = 9 * 9;
-    private ItemStack[] inventory = new ItemStack[INV_SIZE];
 
     public Rucksack() {
         String name = "rucksack";

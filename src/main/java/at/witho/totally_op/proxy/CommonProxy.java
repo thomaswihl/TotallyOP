@@ -65,6 +65,7 @@ public class CommonProxy {
         event.getRegistry().register(new PlacingFlower());
         event.getRegistry().register(new BreakingFlower());
         event.getRegistry().register(new CompressingFlower());
+        event.getRegistry().register(new FishingFlower());
         event.getRegistry().register(new SplittingFlower());
         event.getRegistry().register(new CuttingFlower());
         event.getRegistry().register(new TierableBlock(TierableBlock.FORTUNE));
@@ -78,6 +79,7 @@ public class CommonProxy {
         GameRegistry.registerTileEntity(TileCompressingFlower.class, TotallyOP.MODID + "_compressing_flower");
         GameRegistry.registerTileEntity(TileSplittingFlower.class, TotallyOP.MODID + "_splitting_flower");
         GameRegistry.registerTileEntity(TileCuttingFlower.class, TotallyOP.MODID + "_cutting_flower");
+        GameRegistry.registerTileEntity(TileFishingFlower.class, TotallyOP.MODID + "_fishing_flower");
     }
 
     @SubscribeEvent
@@ -86,6 +88,7 @@ public class CommonProxy {
         event.getRegistry().register(new ItemBlock(ModBlocks.peaceful_double_flower).setRegistryName(ModBlocks.peaceful_double_flower.getRegistryName()));
     	event.getRegistry().register(new ItemBlock(ModBlocks.farming_flower).setRegistryName(ModBlocks.farming_flower.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.sucking_flower).setRegistryName(ModBlocks.sucking_flower.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.fishing_flower).setRegistryName(ModBlocks.fishing_flower.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.placing_flower).setRegistryName(ModBlocks.placing_flower.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.breaking_flower).setRegistryName(ModBlocks.breaking_flower.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.compressing_flower).setRegistryName(ModBlocks.compressing_flower.getRegistryName()));

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "totally_op",
+  "pattern": [
+    " f ",
+    "fcf",
+    " f "
+  ],
+  "key": {
+    "f": {
+      "item": "totally_op:peaceful_flower"
+    },
+    "c": {
+      "item": "minecraft:fishing_rod"
+    }
+  },
+  "result": {
+    "item": "totally_op:fishing_flower"
+  }
+}

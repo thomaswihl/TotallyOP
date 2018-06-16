@@ -8,6 +8,7 @@ tile.totally_op.placing_flower.name=Placing Flower
 tile.totally_op.compressing_flower.name=Compressing Flower
 tile.totally_op.splitting_flower.name=Splitting Flower
 tile.totally_op.cutting_flower.name=Cutting Flower
+tile.totally_op.fishing_flower.name=Fishing Flower
 tile.totally_op.fortune.name=Fortunate Block
 tile.totally_op.efficiency.name=Efficient Block
 tile.totally_op.range.name=Expanding Block

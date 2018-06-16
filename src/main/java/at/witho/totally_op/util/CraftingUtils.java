@@ -34,7 +34,6 @@ public class CraftingUtils {
             }
             if (!failed && count == 4) {
                 if (!irecipe.canFit(2, 2) || irecipe.getRecipeOutput().getCount() != 1) {
-                    TotallyOP.logger.log(Level.ERROR, "4x4 failed for: " + irecipe.getRecipeOutput());
                     failed = true;
                 }
             }

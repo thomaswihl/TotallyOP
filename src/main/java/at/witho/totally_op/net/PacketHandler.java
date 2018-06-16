@@ -12,5 +12,6 @@ public class PacketHandler {
     public static void init() {
         int id = 0;
         INSTANCE.registerMessage(RoughToolChange.RoughToolChangeHandler.class, RoughToolChange.class, id++, Side.SERVER);
+        INSTANCE.registerMessage(WhitelistChange.WhitelistChangeHandler.class, WhitelistChange.class, id++, Side.SERVER);
     }
 }

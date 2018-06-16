@@ -11,7 +11,10 @@ import invtweaks.api.container.ChestContainer;
 
 @ChestContainer
 public class RucksackContainer extends Container {
+    public RucksackStorage rucksack;
+
     public RucksackContainer(InventoryPlayer inventory, RucksackStorage rucksack) {
+        this.rucksack = rucksack;
         for (int y = 0; y < RucksackGui.slotsY; y++) {
             for (int x = 0; x < RucksackGui.slotsX; x++) {
                 addSlotToContainer(new RucksackSlot(rucksack,
@@ -21,13 +24,13 @@ public class RucksackContainer extends Container {
             }
         }
         for (int i = 0; i < RucksackGui.slotsX; i++) {
-            addSlotToContainer(new FilterSlot(rucksack,
+            addSlotToContainer(new FilterSlot(rucksack, rucksack.filterTrash,
                     i,
                     RucksackGui.trashX + i * RucksackGui.slotWidth,
                     RucksackGui.trashY));
         }
         for (int i = 0; i < RucksackGui.slotsY; i++) {
-            addSlotToContainer(new FilterSlot(rucksack,
+            addSlotToContainer(new FilterSlot(rucksack, rucksack.filterCompress,
                     i,
                     RucksackGui.compressX,
                     RucksackGui.compressY + i * RucksackGui.slotHeight));

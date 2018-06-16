@@ -1,19 +1,11 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "minecraft:crafting_shapeless",
   "group": "totally_op",
-  "pattern": [
-    " f ",
-    "fcf",
-    " f "
-  ],
-  "key": {
-    "f": {
-      "item": "totally_op:peaceful_flower"
-    },
-    "c": {
-      "item": "minecraft:crafting_table"
+  "ingredients": [
+    {
+      "item": "totally_op:compressing_flower"
     }
-  },
+  ],
   "result": {
     "item": "totally_op:splitting_flower"
   }

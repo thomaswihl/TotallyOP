@@ -144,7 +144,7 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
         }
     }
 
-    protected boolean addToInventory(IItemHandler inventory, List<EntityItem> items) {
+    protected boolean addEntityToInventory(IItemHandler inventory, List<EntityItem> items) {
         for (int i = 0; i < inventory.getSlots(); ++i) {
             boolean allDone = true;
             for (EntityItem item : items) {
@@ -159,10 +159,24 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
         return false;
     }
 
+    protected boolean addItemToInventory(IItemHandler inventory, List<ItemStack> items) {
+        for (int i = 0; i < inventory.getSlots(); ++i) {
+            boolean allDone = true;
+            for (ItemStack itemStack : items) {
+                if (itemStack.isEmpty()) continue;
+                ItemStack remain = inventory.insertItem(i, itemStack.copy(), false);
+                itemStack.setCount(remain.getCount());
+                if (remain.getCount() != 0) allDone = false;
+            }
+            if (allDone) return true;
+        }
+        return false;
+    }
+
     private boolean findInventory(List<EntityItem> items) {
         List<IItemHandler> inventories = backInventories();
         for (IItemHandler inventory : inventories) {
-            if (addToInventory(inventory, items)) return true;
+            if (addEntityToInventory(inventory, items)) return true;
         }
         return false;
     }

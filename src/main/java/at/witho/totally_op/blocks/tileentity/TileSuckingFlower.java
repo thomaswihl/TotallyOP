@@ -1,12 +1,9 @@
 package at.witho.totally_op.blocks.tileentity;
 
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class TileSuckingFlower extends TileFunctionFlower {
@@ -41,7 +38,7 @@ public class TileSuckingFlower extends TileFunctionFlower {
     private boolean addToInventories(List<EntityItem> items) {
         List<IItemHandler> inventories = backInventories();
         for (IItemHandler inventory : inventories) {
-            if (addToInventory(inventory, items)) return true;
+            if (addEntityToInventory(inventory, items)) return true;
         }
         return false;
     }

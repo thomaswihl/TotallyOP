@@ -1,6 +1,9 @@
 package at.witho.totally_op.gui;
 
 import at.witho.totally_op.TotallyOP;
+import at.witho.totally_op.net.PacketHandler;
+import at.witho.totally_op.net.RoughToolChange;
+import at.witho.totally_op.net.WhitelistChange;
 import at.witho.totally_op.storage.RucksackContainer;
 import at.witho.totally_op.storage.RucksackStorage;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -39,7 +42,7 @@ public class RucksackGui extends GuiContainer {
     private static final int whitelistButtonDim = slotWidth / 2;
     private static final int whitelistTrashButtonX = trashX + slotsX * slotWidth - whitelistButtonDim;
     private static final int whitelistTrashButtonY = trashY - whitelistButtonDim - whitelistBorder;
-    private static final int whitelistCompressButtonX = compressX + (slotWidth - whitelistButtonDim) / 2;
+    private static final int whitelistCompressButtonX = compressX + (slotWidth - whitelistButtonDim);
     private static final int whitelistCompressButtonY = compressY - whitelistButtonDim - whitelistBorder;
     private RucksackContainer container = null;
     private RucksackStorage storage = null;
@@ -56,18 +59,14 @@ public class RucksackGui extends GuiContainer {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         if (mouseButton == 0) {
-            if (isPointInRegion(
-                whitelistTrashButtonX + guiLeft,
-                whitelistTrashButtonY + guiTop,
-                whitelistTrashButtonX + whitelistButtonDim + guiLeft,
-                whitelistTrashButtonY + whitelistButtonDim + guiTop,
-                mouseX, mouseY)) storage.whitelistTrash = !storage.whitelistTrash;
-            if (isPointInRegion(
-                    whitelistCompressButtonX + guiLeft,
-                    whitelistCompressButtonY + guiTop,
-                    whitelistCompressButtonX + whitelistButtonDim + guiLeft,
-                    whitelistCompressButtonY + whitelistButtonDim + guiTop,
-                    mouseX, mouseY)) storage.whitelistCompress = !storage.whitelistCompress;
+            if (isPointInRegion(whitelistTrashButtonX, whitelistTrashButtonY, whitelistButtonDim, whitelistButtonDim, mouseX, mouseY)) {
+                storage.whitelistTrash = !storage.whitelistTrash;
+                PacketHandler.INSTANCE.sendToServer(new WhitelistChange(WhitelistChange.Which.Trash, storage.whitelistTrash));
+            }
+            if (isPointInRegion(whitelistCompressButtonX, whitelistCompressButtonY, whitelistButtonDim, whitelistButtonDim, mouseX, mouseY)) {
+                storage.whitelistCompress = !storage.whitelistCompress;
+                PacketHandler.INSTANCE.sendToServer(new WhitelistChange(WhitelistChange.Which.Compress, storage.whitelistCompress));
+            }
         }
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
@@ -97,11 +96,12 @@ public class RucksackGui extends GuiContainer {
         drawRect(x1, y1, x1 + whitelistBorder, y2, color);
         drawRect(x2, y1, x2 + whitelistBorder, y2 + whitelistBorder, color);
 
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         x1 = guiLeft + compressX - whitelistBorder - slotBorder;
         x2 = guiLeft + compressX + slotWidth - 1;
         y1 = guiTop + compressY - whitelistBorder - slotBorder;
-        y2 = guiTop + compressY + slotsX * slotHeight - 1;
-        color = storage.whitelistTrash ? 0xffffffff : 0xff000000;
+        y2 = guiTop + compressY + slotsY * slotHeight - 1;
+        color = storage.whitelistCompress ? 0xffffffff : 0xff000000;
         drawTexturedModalRect(x2 - whitelistButtonDim + whitelistBorder, y1 - whitelistButtonDim, storage.whitelistCompress ? 0 : slotWidth, rucksackGuiHeight, whitelistButtonDim, whitelistButtonDim);
         drawRect(x1, y1, x2, y1 + whitelistBorder, color);
         drawRect(x1, y2, x2, y2 + whitelistBorder, color);

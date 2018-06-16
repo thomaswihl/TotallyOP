@@ -1,5 +1,6 @@
 package at.witho.totally_op.storage;
 
+import at.witho.totally_op.TotallyOP;
 import at.witho.totally_op.gui.RucksackGui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -10,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
+import org.apache.logging.log4j.Level;
 
 public class RucksackStorage extends InventoryBasic implements IInventoryChangedListener {
     public enum Page { Smeltables, Gems, Other, Tools };
@@ -29,10 +31,10 @@ public class RucksackStorage extends InventoryBasic implements IInventoryChanged
         if (!stack.hasTagCompound()) {
             stack.setTagCompound(new NBTTagCompound());
         }
-        readFromNBT(invItem.getTagCompound());
-        addInventoryChangeListener(this);
         filterTrash = NonNullList.<ItemStack>withSize(pages * RucksackGui.slotsX, ItemStack.EMPTY);
         filterCompress = NonNullList.<ItemStack>withSize(pages * RucksackGui.slotsY, ItemStack.EMPTY);
+        readFromNBT(invItem.getTagCompound());
+        addInventoryChangeListener(this);
     }
 
     public boolean isItemStack(ItemStack in) {
@@ -79,8 +81,12 @@ public class RucksackStorage extends InventoryBasic implements IInventoryChanged
             if (slot >= 0 && slot < filterCompress.size()) filterCompress.set(slot, new ItemStack(item));
         }
 
-        if (compound.hasKey("whitelistTrash")) whitelistTrash = compound.getBoolean("whitelistTrash");
-        if (compound.hasKey("whitelistCompress")) whitelistCompress = compound.getBoolean("whitelistCompress");
+        if (compound.hasKey("whitelistTrash")) {
+            whitelistTrash = compound.getBoolean("whitelistTrash");
+        }
+        if (compound.hasKey("whitelistCompress")) {
+            whitelistCompress = compound.getBoolean("whitelistCompress");
+        }
 
     }
 
