@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "totally_op",
+  "ingredients": [
+    {
+      "item": "totally_op:splitting_flower"
+    }
+  ],
+  "result": {
+    "item": "totally_op:compressing_flower"
+  }
+}
