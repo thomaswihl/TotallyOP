@@ -12,12 +12,27 @@ import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class VeinMiner {
-    private ConcurrentLinkedQueue<BlockPos> blockPositionsToBreak = new ConcurrentLinkedQueue<BlockPos>();
+    class PosInfo {
+        public BlockPos pos;
+        public byte fromX, fromY, fromZ;
+        public PosInfo(BlockPos pos, byte fromX, byte fromY, byte fromZ) {
+            this.pos = pos;
+            this.fromX = fromX;
+            this.fromY = fromY;
+            this.fromZ = fromZ;
+        }
+        public PosInfo(BlockPos pos) {
+            this.pos = pos;
+            fromX = fromY = fromZ = 0;
+        }
+    }
+    private ArrayDeque<PosInfo> blockPositionsToBreak = new ArrayDeque<PosInfo>();
     private List<Block> blocks = new ArrayList<>();
     private List<Block> extraBlocks = new ArrayList<>();
     private EntityPlayerMP player = null;
@@ -41,10 +56,10 @@ public class VeinMiner {
     public void setShouldAddBlock(ShouldAddBlock sbb) { shouldAddBlock = sbb; }
     public void setFortune(int f) { fortune = f; }
 
-    private boolean findAndAdd(Block b, List<Block> list, BlockPos p) {
+    private boolean findAndAdd(Block b, List<Block> list, PosInfo pi) {
         for (Block block : list) {
             if (Helper.isSameBlock(b, block)) {
-                blockPositionsToBreak.add(p);
+                blockPositionsToBreak.add(pi);
                 return true;
             }
         }
@@ -52,21 +67,44 @@ public class VeinMiner {
     }
 
     public void addBlock(BlockPos pos) {
-        int y1 = -1;
-        int y2 = 2;
+        addBlock(new PosInfo(pos));
+    }
+
+    protected void addBlock(PosInfo piFrom) {
+        byte x1 = -1;
+        byte x2 = 1;
+        byte y1 = -1;
+        byte y2 = 1;
+        byte z1 = -1;
+        byte z2 = 1;
+        if (piFrom.fromX != 0 && piFrom.fromY == 0 && piFrom.fromZ == 0) {
+            x1 = x2 = (byte)-piFrom.fromX;
+        }
+        if (piFrom.fromX == 0 && piFrom.fromY != 0 && piFrom.fromZ == 0) {
+            y1 = y2 = (byte)-piFrom.fromY;
+        }
+        if (piFrom.fromX == 0 && piFrom.fromY == 0 && piFrom.fromZ != 0) {
+            z1 = z2 = (byte)-piFrom.fromZ;
+        }
         if (horizontalPlane) {
             y1 = 0;
-            y2 = 1;
+            y2 = 0;
         }
-        for (int y = y1; y < y2; ++y) {
-            for (int x = -1; x < 2; ++x) {
-                for (int z = -1; z < 2; ++z) {
+        BlockPos pos = piFrom.pos;
+        PosInfo pi = new PosInfo(pos);
+        for (byte y = y1; y <= y2; ++y) {
+            for (byte x = x1; x <= x2; ++x) {
+                for (byte z = z1; z <= z2; ++z) {
                     if (x != 0 || y != 0 || z != 0) {
                         BlockPos p = pos.add(x, y, z);
                         IBlockState pstate = world.getBlockState(p);
                         Block b = pstate.getBlock();
-                        if (!findAndAdd(b, blocks, p)) {
-                            if (!findAndAdd(b, extraBlocks, p)) {
+                        pi.pos = p;
+                        pi.fromX = x;
+                        pi.fromY = y;
+                        pi.fromZ = z;
+                        if (!findAndAdd(b, blocks, pi)) {
+                            if (!findAndAdd(b, extraBlocks, pi)) {
                                 if (shouldAddBlock != null) {
                                     if (shouldAddBlock.testIsSimilar(b)) blocks.add(b);
                                     else if (shouldAddBlock.testIsExtra(b)) extraBlocks.add(b);
@@ -80,11 +118,12 @@ public class VeinMiner {
     }
 
     public boolean harvestBlock() {
-        BlockPos p;
+        PosInfo pi;
         if (blockPositionsToBreak.isEmpty()) {
             return false;
         }
-        while ((p = blockPositionsToBreak.poll()) != null) {
+        while ((pi = blockPositionsToBreak.poll()) != null) {
+            BlockPos p = pi.pos;
             IBlockState pstate = world.getBlockState(p);
             if (pstate.getBlock() != Blocks.AIR) {
                 if (player != null) player.interactionManager.tryHarvestBlock(p);
@@ -103,7 +142,7 @@ public class VeinMiner {
                     }
                     world.setBlockState(p, Blocks.AIR.getDefaultState(), 3);
 
-                    addBlock(p);
+                    addBlock(pi);
                 }
                 break;
             }
