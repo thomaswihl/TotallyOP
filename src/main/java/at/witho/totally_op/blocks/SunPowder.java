@@ -8,6 +8,7 @@ import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -84,6 +85,12 @@ public class SunPowder extends Block {
     {
         if (meta >= EnumFacing.VALUES.length) meta = 0;
         return this.getDefaultState().withProperty(FACING, EnumFacing.VALUES[meta]);
+    }
+
+    // Prevent fenvce from connecting
+    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face)
+    {
+        return BlockFaceShape.UNDEFINED;
     }
 
     @Override

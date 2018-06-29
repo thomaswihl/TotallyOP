@@ -99,6 +99,7 @@ public class Rucksack extends Item {
             RucksackStorage storage = new RucksackStorage(rucksack);
             ItemStack insert = event.getItem().getItem();
             if (matches(insert, storage.filterTrash, storage.whitelistTrash)) {
+                insert.setCount(0);
                 if (event.isCancelable()) event.setCanceled(true);
                 return;
             }

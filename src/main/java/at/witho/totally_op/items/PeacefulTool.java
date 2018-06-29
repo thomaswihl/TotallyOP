@@ -1,9 +1,7 @@
 package at.witho.totally_op.items;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
-import at.witho.totally_op.Helper;
 import at.witho.totally_op.TotallyOP;
 import at.witho.totally_op.util.VeinMiner;
 import net.minecraft.block.Block;
@@ -17,7 +15,6 @@ import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
@@ -35,8 +32,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.Level;
-import org.omg.CORBA.PRIVATE_MEMBER;
 
 public class PeacefulTool extends ItemTool {
     private static final String VEIN_MINE_INFO = "VeinMineId";
@@ -176,7 +171,6 @@ public class PeacefulTool extends ItemTool {
     private VeinMiner createVeinMiner(ItemStack stack, World world, EntityPlayerMP player, Block block) {
         NBTTagCompound comp = stack.getTagCompound();
         VeinMiner veinMiner = new VeinMiner(world, player, block);
-        TotallyOP.logger.log(Level.ERROR, "rot = " + player.rotationPitch);
         if (player.rotationPitch < -85 || player.rotationPitch > 85) veinMiner.setHorizontalPlane(true);
         veinMiners.put(nextId, veinMiner);
         if (comp == null) {
@@ -207,7 +201,7 @@ public class PeacefulTool extends ItemTool {
 			//TotallyOP.logger.log(Level.ERROR, "btb = " + blockToBreak + ", block = " + state.getBlock());
 			if (player.isSneaking()) {
 				if (veinMiner == null && cooldown == 0) veinMiner = createVeinMiner(stack, worldIn, player, state.getBlock());
-				if (veinMiner != null) veinMiner.addBlock(pos);
+				if (veinMiner != null) veinMiner.addSurroundings(pos);
 			}
 			else if (veinMiner != null) {
 			    removeVeinMiner(stack);

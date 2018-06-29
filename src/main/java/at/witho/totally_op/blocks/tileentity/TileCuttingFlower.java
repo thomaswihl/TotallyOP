@@ -4,9 +4,7 @@ import at.witho.totally_op.Helper;
 import at.witho.totally_op.util.VeinMiner;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class TileCuttingFlower extends TileFunctionFlower implements VeinMiner.ShouldAddBlock {
@@ -35,7 +33,7 @@ public class TileCuttingFlower extends TileFunctionFlower implements VeinMiner.S
             veinMiner = new VeinMiner(this.getWorld(), null, block);
             veinMiner.setFortune(fortune);
             veinMiner.setShouldAddBlock(this);
-            veinMiner.addBlock(currentPos);
+            veinMiner.addToBreak(currentPos);
         }
         nextBlock();
     }

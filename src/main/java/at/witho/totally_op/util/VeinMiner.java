@@ -1,21 +1,20 @@
 package at.witho.totally_op.util;
 
 import at.witho.totally_op.Helper;
+import at.witho.totally_op.TotallyOP;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.Level;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class VeinMiner {
     class PosInfo {
@@ -31,6 +30,15 @@ public class VeinMiner {
             this.pos = pos;
             fromX = fromY = fromZ = 0;
         }
+        public PosInfo(PosInfo other) {
+            this.pos = other.pos;
+            this.fromX = other.fromX;
+            this.fromY = other.fromY;
+            this.fromZ = other.fromZ;
+        }
+        public String toString() {
+            return "PosInfo{" + pos.toString() + ", from{" + fromX + ", " + fromY + ", " + fromZ + "}}";
+        }
     }
     private ArrayDeque<PosInfo> blockPositionsToBreak = new ArrayDeque<PosInfo>();
     private List<Block> blocks = new ArrayList<>();
@@ -39,6 +47,7 @@ public class VeinMiner {
     private World world = null;
     private boolean horizontalPlane = false;
     private int fortune = 0;
+    private int checks = 0;
 
     public interface ShouldAddBlock {
         boolean testIsSimilar(Block block);
@@ -59,55 +68,62 @@ public class VeinMiner {
     private boolean findAndAdd(Block b, List<Block> list, PosInfo pi) {
         for (Block block : list) {
             if (Helper.isSameBlock(b, block)) {
-                blockPositionsToBreak.add(pi);
+                // Need to clone PosInfo when needed as it is modified outside
+                blockPositionsToBreak.add(new PosInfo(pi));
                 return true;
             }
         }
         return false;
     }
 
-    public void addBlock(BlockPos pos) {
-        addBlock(new PosInfo(pos));
+    public void addToBreak(BlockPos pos) {
+        blockPositionsToBreak.add(new PosInfo(pos));
     }
 
-    protected void addBlock(PosInfo piFrom) {
+    public void addSurroundings(BlockPos pos) {
+        addSurroundings(new PosInfo(pos));
+    }
+
+    protected void addSurroundings(PosInfo piFrom) {
         byte x1 = -1;
         byte x2 = 1;
         byte y1 = -1;
         byte y2 = 1;
         byte z1 = -1;
         byte z2 = 1;
-        if (piFrom.fromX != 0 && piFrom.fromY == 0 && piFrom.fromZ == 0) {
-            x1 = x2 = (byte)-piFrom.fromX;
-        }
-        if (piFrom.fromX == 0 && piFrom.fromY != 0 && piFrom.fromZ == 0) {
-            y1 = y2 = (byte)-piFrom.fromY;
-        }
-        if (piFrom.fromX == 0 && piFrom.fromY == 0 && piFrom.fromZ != 0) {
-            z1 = z2 = (byte)-piFrom.fromZ;
-        }
         if (horizontalPlane) {
             y1 = 0;
             y2 = 0;
         }
+        byte xp = piFrom.fromX;
+        byte yp = piFrom.fromY;
+        byte zp = piFrom.fromZ;
+        if (xp == 0) xp = 2;
+        if (yp == 0) yp = 2;
+        if (zp == 0) zp = 2;
+        boolean all = false;
+        if (xp == 2 && yp == 2 && zp == 2) all = true;
         BlockPos pos = piFrom.pos;
         PosInfo pi = new PosInfo(pos);
         for (byte y = y1; y <= y2; ++y) {
             for (byte x = x1; x <= x2; ++x) {
                 for (byte z = z1; z <= z2; ++z) {
                     if (x != 0 || y != 0 || z != 0) {
-                        BlockPos p = pos.add(x, y, z);
-                        IBlockState pstate = world.getBlockState(p);
-                        Block b = pstate.getBlock();
-                        pi.pos = p;
-                        pi.fromX = x;
-                        pi.fromY = y;
-                        pi.fromZ = z;
-                        if (!findAndAdd(b, blocks, pi)) {
-                            if (!findAndAdd(b, extraBlocks, pi)) {
-                                if (shouldAddBlock != null) {
-                                    if (shouldAddBlock.testIsSimilar(b)) blocks.add(b);
-                                    else if (shouldAddBlock.testIsExtra(b)) extraBlocks.add(b);
+                        if (all || x == xp || y == yp || z == zp) {
+                            BlockPos p = pos.add(x, y, z);
+                            IBlockState pstate = world.getBlockState(p);
+                            Block b = pstate.getBlock();
+                            pi.pos = p;
+                            pi.fromX = x;
+                            pi.fromY = y;
+                            pi.fromZ = z;
+                            ++checks;
+                            if (!findAndAdd(b, blocks, pi)) {
+                                if (!findAndAdd(b, extraBlocks, pi)) {
+                                    if (shouldAddBlock != null) {
+                                        if (shouldAddBlock.testIsSimilar(b)) blocks.add(b);
+                                        else if (shouldAddBlock.testIsExtra(b)) extraBlocks.add(b);
+                                    }
                                 }
                             }
                         }
@@ -142,7 +158,7 @@ public class VeinMiner {
                     }
                     world.setBlockState(p, Blocks.AIR.getDefaultState(), 3);
 
-                    addBlock(pi);
+                    addSurroundings(pi);
                 }
                 break;
             }
