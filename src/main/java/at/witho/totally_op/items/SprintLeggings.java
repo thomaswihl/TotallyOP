@@ -46,6 +46,7 @@ public class SprintLeggings extends ItemArmor {
     }
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public void livingUpdateEvent(LivingEvent.LivingUpdateEvent event) {
         ++counter;
         if (counter < 20) return;

@@ -1,6 +1,8 @@
 package at.witho.totally_op.storage;
 
+import at.witho.totally_op.TotallyOP;
 import at.witho.totally_op.gui.RucksackGui;
+import jline.internal.Log;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -8,6 +10,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 import invtweaks.api.container.ChestContainer;
+import org.apache.logging.log4j.Level;
 
 @ChestContainer
 public class RucksackContainer extends Container {
@@ -53,6 +56,7 @@ public class RucksackContainer extends Container {
     {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.inventorySlots.get(index);
+        TotallyOP.logger.log(Level.ERROR, "transferStackInSlot: " + index,toString() + ", " + slot,toString());
 
         if (slot != null && slot.getHasStack())
         {
@@ -61,7 +65,8 @@ public class RucksackContainer extends Container {
 
             if (index < RucksackGui.slotsY * RucksackGui.slotsX)
             {
-                if (!this.mergeItemStack(itemstack1, RucksackGui.slotsY * RucksackGui.slotsX, this.inventorySlots.size(), true))
+                // Leave trash, compress and off hand alone
+                if (!this.mergeItemStack(itemstack1, RucksackGui.slotsY * RucksackGui.slotsX + RucksackGui.slotsX + RucksackGui.slotsY + 1, this.inventorySlots.size(), true))
                 {
                     return ItemStack.EMPTY;
                 }

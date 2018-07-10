@@ -84,6 +84,7 @@ public class RoughTool extends ItemTool {
 	}
 
 	@SubscribeEvent
+    @SideOnly(Side.CLIENT)
     void mouseEvent(MouseEvent event) {
         if (event.getDwheel() != 0) {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
@@ -98,6 +99,7 @@ public class RoughTool extends ItemTool {
     }
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public void renderOutline(RenderWorldLastEvent ev) {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         ItemStack itemstack = player.getHeldItem(EnumHand.MAIN_HAND);
@@ -139,6 +141,7 @@ public class RoughTool extends ItemTool {
         GlStateManager.popMatrix();
     }
 
+    @SideOnly(Side.CLIENT)
     private void outlineBlock(BlockPos pos, double partialTicks, boolean renderX, boolean renderY, boolean renderZ) {
         Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
 
@@ -155,6 +158,7 @@ public class RoughTool extends ItemTool {
         bb.setTranslation(0, 0, 0);
     }
 
+    @SideOnly(Side.CLIENT)
     private void renderRectangle(Tessellator tes, BufferBuilder bb, AxisAlignedBB aabb, Color color, boolean renderX, boolean renderY, boolean renderZ) {
         GlStateManager.pushMatrix();
         GlStateManager.translate(aabb.minX, aabb.minY, aabb.minZ);

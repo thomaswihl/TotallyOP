@@ -1,11 +1,15 @@
 package at.witho.totally_op.storage;
 
+import at.witho.totally_op.TotallyOP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.SlotItemHandler;
+import org.apache.logging.log4j.Level;
+
+import javax.annotation.Nonnull;
 
 public class FilterSlot extends Slot {
     RucksackStorage rucksack;
@@ -19,6 +23,21 @@ public class FilterSlot extends Slot {
     }
 
     @Override
+    public boolean isItemValid(@Nonnull ItemStack stack) {
+        ItemStack filter = stack.copy();
+        filter.setCount(1);
+        list.set(index, filter);
+        rucksack.markDirty();
+        return false;
+    }
+
+    @Override
+    public boolean getHasStack()
+    {
+        return true;
+    }
+
+    @Override
     public ItemStack getStack()
     {
         return list.get(index);
@@ -27,8 +46,6 @@ public class FilterSlot extends Slot {
     @Override
     public void putStack(ItemStack stack)
     {
-        list.set(index, stack);
-        rucksack.markDirty();
     }
 
     @Override
@@ -59,7 +76,7 @@ public class FilterSlot extends Slot {
     @Override
     public boolean isSameInventory(Slot other)
     {
-        return false;
+        return true;
     }
 
 }
