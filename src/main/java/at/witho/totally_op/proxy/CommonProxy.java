@@ -110,6 +110,7 @@ public class CommonProxy {
         event.getRegistry().register(new SprintLeggings());
         event.getRegistry().register(new Rucksack());
         event.getRegistry().register(new Wings());
+        event.getRegistry().register(new DiamondFragment());
     }
 
     @SubscribeEvent

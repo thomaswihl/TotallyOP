@@ -1,0 +1,20 @@
+{
+  "type": "forge:ore_shaped",
+  "group": "totally_op",
+  "pattern": [
+    "ddd",
+    "dfd",
+    "ddd"
+  ],
+  "key": {
+    "d": {
+      "item": "totally_op:diamond_fragment"
+    },
+    "f": {
+      "item": "totally_op:peaceful_flower"
+    }
+  },
+  "result": {
+    "item": "minecraft:diamond"
+  }
+}

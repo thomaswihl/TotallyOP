@@ -1,11 +1,9 @@
 package at.witho.totally_op.blocks;
 
 import at.witho.totally_op.ModBlocks;
+import at.witho.totally_op.ModItems;
 import at.witho.totally_op.TotallyOP;
-import net.minecraft.block.BlockBush;
-import net.minecraft.block.BlockDoublePlant;
-import net.minecraft.block.IGrowable;
-import net.minecraft.block.SoundType;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -14,6 +12,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -21,6 +20,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
 import org.apache.logging.log4j.Level;
 
 import java.util.Random;
@@ -48,13 +48,24 @@ public class PeacefulFlower extends BlockBush implements IGrowable {
         IBlockState below = worldIn.getBlockState(pos.down());
         if (below.getBlock() == Blocks.COBBLESTONE) return;
         ItemStack smeltingResult = FurnaceRecipes.instance().getSmeltingResult(new ItemStack(below.getBlock(), 1, below.getBlock().getMetaFromState(below)));
+        ItemStack result = null;
         if (!smeltingResult.isEmpty()) {
-            ItemStack stack = smeltingResult.copy();
-            stack.setCount(stack.getCount() * 9);
+            result = smeltingResult.copy();
+            result.setCount(result.getCount() * 9);
+        } else {
+            NonNullList<ItemStack> coalBlocks = OreDictionary.getOres("blockCoal");
+            for (ItemStack input : coalBlocks)
+            {
+                if (Block.getBlockFromItem(input.getItem()) == below.getBlock()) {
+                    result = new ItemStack(ModItems.diamond_fragment);
+                    break;
+                }
+            }
+        }
+        if (result != null && !result.isEmpty()) {
             worldIn.setBlockState(pos.down(), Blocks.COBBLESTONE.getDefaultState());
             worldIn.setBlockToAir(pos);
-            worldIn.spawnEntity(new EntityItem(worldIn, pos.getX(), pos.getY(), pos.getZ(), stack));
-            TotallyOP.logger.log(Level.ERROR, "tick@" + pos + stack);
+            worldIn.spawnEntity(new EntityItem(worldIn, pos.getX(), pos.getY(), pos.getZ(), result));
         }
     }
 

@@ -56,7 +56,6 @@ public class RucksackContainer extends Container {
     {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.inventorySlots.get(index);
-        TotallyOP.logger.log(Level.ERROR, "transferStackInSlot: " + index,toString() + ", " + slot,toString());
 
         if (slot != null && slot.getHasStack())
         {
