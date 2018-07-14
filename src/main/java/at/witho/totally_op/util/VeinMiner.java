@@ -121,8 +121,14 @@ public class VeinMiner {
                             if (!findAndAdd(b, blocks, pi)) {
                                 if (!findAndAdd(b, extraBlocks, pi)) {
                                     if (shouldAddBlock != null) {
-                                        if (shouldAddBlock.testIsSimilar(b)) blocks.add(b);
-                                        else if (shouldAddBlock.testIsExtra(b)) extraBlocks.add(b);
+                                        if (shouldAddBlock.testIsSimilar(b)) {
+                                            blocks.add(b);
+                                            findAndAdd(b, blocks, pi);
+                                        }
+                                        else if (shouldAddBlock.testIsExtra(b)) {
+                                            extraBlocks.add(b);
+                                            findAndAdd(b, extraBlocks, pi);
+                                        }
                                     }
                                 }
                             }
@@ -156,7 +162,7 @@ public class VeinMiner {
                         }
                         world.spawnEntity(new EntityItem(world, p.getX(), p.getY(), p.getZ(), stack));
                     }
-                    world.setBlockState(p, Blocks.AIR.getDefaultState(), 3);
+                    world.setBlockState(p, Blocks.AIR.getDefaultState(), 2);
 
                     addSurroundings(pi);
                 }

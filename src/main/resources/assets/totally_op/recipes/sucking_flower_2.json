@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "totally_op",
+  "ingredients": [
+    {
+      "item": "totally_op:fluid_sucking_flower"
+    }
+  ],
+  "result": {
+    "item": "totally_op:sucking_flower"
+  }
+}

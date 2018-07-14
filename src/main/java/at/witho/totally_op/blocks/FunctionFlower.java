@@ -32,7 +32,7 @@ public abstract class FunctionFlower extends BlockBush implements ITileEntityPro
 
 
     FunctionFlower(String name) {
-		super(Material.PLANTS, Material.PLANTS.getMaterialMapColor());
+		super(TotallyOP.flowerMaterial, TotallyOP.flowerMaterial.getMaterialMapColor());
 		this.setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(POWERED, false));
 		setUnlocalizedName(TotallyOP.MODID + "." + name);
 		setRegistryName(name);

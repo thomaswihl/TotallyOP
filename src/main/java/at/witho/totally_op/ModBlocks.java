@@ -12,6 +12,7 @@ public class ModBlocks {
     public static final PeacefulDoubleFlower peaceful_double_flower = null;
     public static final FarmingFlower farming_flower = null;
     public static final SuckingFlower sucking_flower = null;
+    public static final FluidSuckingFlower fluid_sucking_flower = null;
     public static final PlacingFlower placing_flower = null;
     public static final BreakingFlower breaking_flower = null;
     public static final CompressingFlower compressing_flower = null;
@@ -29,6 +30,7 @@ public class ModBlocks {
         peaceful_double_flower.initModel();
         farming_flower.initModel();
         sucking_flower.initModel();
+        fluid_sucking_flower.initModel();
         placing_flower.initModel();
         breaking_flower.initModel();
         compressing_flower.initModel();

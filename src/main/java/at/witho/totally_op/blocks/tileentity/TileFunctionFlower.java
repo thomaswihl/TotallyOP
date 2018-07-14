@@ -14,6 +14,8 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -134,6 +136,24 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
         addInventory(list, pos.down());
         addInventory(list, pos.offset(facing.rotateYCCW()));
         return list;
+    }
+
+    protected List<IFluidHandler> backFluidInventories() {
+        ArrayList<IFluidHandler> list = new ArrayList<>();
+        addFluidInventory(list, pos.offset(facing, -1));
+        addFluidInventory(list, pos.up());
+        addFluidInventory(list, pos.offset(facing.rotateY()));
+        addFluidInventory(list, pos.down());
+        addFluidInventory(list, pos.offset(facing.rotateYCCW()));
+        return list;
+    }
+
+    protected void addFluidInventory(List<IFluidHandler> list, BlockPos pos) {
+        TileEntity e = world.getTileEntity(pos);
+        if (e != null) {
+            IFluidHandler inventory = e.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+            if (inventory != null) list.add(inventory);
+        }
     }
 
     protected void addInventory(List<IItemHandler> list, BlockPos pos) {

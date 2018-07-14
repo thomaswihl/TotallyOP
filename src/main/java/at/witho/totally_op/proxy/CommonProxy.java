@@ -62,6 +62,7 @@ public class CommonProxy {
         event.getRegistry().register(new PeacefulDoubleFlower());
     	event.getRegistry().register(new FarmingFlower());
         event.getRegistry().register(new SuckingFlower());
+        event.getRegistry().register(new FluidSuckingFlower());
         event.getRegistry().register(new PlacingFlower());
         event.getRegistry().register(new BreakingFlower());
         event.getRegistry().register(new CompressingFlower());
@@ -74,6 +75,7 @@ public class CommonProxy {
         event.getRegistry().register(new SunPowder());
     	GameRegistry.registerTileEntity(TileFarmingFlower.class, TotallyOP.MODID + "_farming_flower");
         GameRegistry.registerTileEntity(TileSuckingFlower.class, TotallyOP.MODID + "_sucking_flower");
+        GameRegistry.registerTileEntity(TileFluidSuckingFlower.class, TotallyOP.MODID + "_fluid_sucking_flower");
         GameRegistry.registerTileEntity(TilePlacingFlower.class, TotallyOP.MODID + "_placing_flower");
         GameRegistry.registerTileEntity(TileBreakingFlower.class, TotallyOP.MODID + "_breaking_flower");
         GameRegistry.registerTileEntity(TileCompressingFlower.class, TotallyOP.MODID + "_compressing_flower");
@@ -88,6 +90,7 @@ public class CommonProxy {
         event.getRegistry().register(new ItemBlock(ModBlocks.peaceful_double_flower).setRegistryName(ModBlocks.peaceful_double_flower.getRegistryName()));
     	event.getRegistry().register(new ItemBlock(ModBlocks.farming_flower).setRegistryName(ModBlocks.farming_flower.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.sucking_flower).setRegistryName(ModBlocks.sucking_flower.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.fluid_sucking_flower).setRegistryName(ModBlocks.fluid_sucking_flower.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.fishing_flower).setRegistryName(ModBlocks.fishing_flower.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.placing_flower).setRegistryName(ModBlocks.placing_flower.getRegistryName()));
         event.getRegistry().register(new ItemBlock(ModBlocks.breaking_flower).setRegistryName(ModBlocks.breaking_flower.getRegistryName()));
