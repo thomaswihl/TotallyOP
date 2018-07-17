@@ -69,9 +69,9 @@ public class CommonProxy {
         event.getRegistry().register(new FishingFlower());
         event.getRegistry().register(new SplittingFlower());
         event.getRegistry().register(new CuttingFlower());
-        event.getRegistry().register(new TierableBlock(TierableBlock.FORTUNE));
-        event.getRegistry().register(new TierableBlock(TierableBlock.EFFICIENCY));
-        event.getRegistry().register(new TierableBlock(TierableBlock.RANGE));
+        event.getRegistry().register(new TierableBlock(TierableBlock.Type.Fortune));
+        event.getRegistry().register(new TierableBlock(TierableBlock.Type.Efficency));
+        event.getRegistry().register(new TierableBlock(TierableBlock.Type.Range));
         event.getRegistry().register(new SunPowder());
     	GameRegistry.registerTileEntity(TileFarmingFlower.class, TotallyOP.MODID + "_farming_flower");
         GameRegistry.registerTileEntity(TileSuckingFlower.class, TotallyOP.MODID + "_sucking_flower");

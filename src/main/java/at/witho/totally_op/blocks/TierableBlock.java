@@ -23,13 +23,30 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TierableBlock extends Block {
+    public enum Type { Fortune, Efficency, Range };
     public static final String FORTUNE = "fortune";
     public static final String EFFICIENCY = "efficiency";
     public static final String RANGE = "range";
     public static final PropertyInteger TIER = PropertyInteger.create("tier", 0, 6);
+    private ItemStack upgradeTierBlock = null;
 
-    public TierableBlock(String name) {
+    public TierableBlock(Type type) {
         super(Material.ROCK, Material.ROCK.getMaterialMapColor());
+        String name = "Unknown";
+        switch (type) {
+            case Fortune:
+                name = FORTUNE;
+                upgradeTierBlock = new ItemStack(Config.fortunateUpgradeTierBlock);
+                break;
+            case Efficency:
+                name = EFFICIENCY;
+                upgradeTierBlock = new ItemStack(Config.efficiencyUpgradeTierBlock);
+                break;
+            case Range:
+                name = RANGE;
+                upgradeTierBlock = new ItemStack(Config.rangeUpgradeTierBlock);
+                break;
+        }
         this.setDefaultState(blockState.getBaseState().withProperty(TIER, 0));
         setUnlocalizedName(TotallyOP.MODID + "." + name);
         setRegistryName(name);
@@ -67,7 +84,7 @@ public class TierableBlock extends Block {
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = playerIn.getHeldItem(hand);
         if (stack == null || stack.isEmpty()) return false;
-        if (stack.isItemEqual(new ItemStack(Config.upgradeTierBlock))) {
+        if (stack.isItemEqual(upgradeTierBlock)) {
             int tier = getTier(state);
             if (tier < 6) {
                 if (!worldIn.isRemote) {
@@ -87,7 +104,8 @@ public class TierableBlock extends Block {
         if (worldIn.isRemote) return;
         int tier = getTier(state);
         if (tier != 0) {
-            ItemStack stack = new ItemStack(Config.upgradeTierBlock, tier);
+            ItemStack stack = upgradeTierBlock.copy();
+            stack.setCount(tier);
             worldIn.spawnEntity(new EntityItem(worldIn, pos.getX(), pos.getY(), pos.getZ(), stack));
         }
     }

@@ -20,7 +20,9 @@ public class Config {
     public static Property growProbability;
     public static Property efficiencyDelay;
     public static Property farmingRange;
-    public static Block upgradeTierBlock;
+    public static Block fortunateUpgradeTierBlock;
+    public static Block efficiencyUpgradeTierBlock;
+    public static Block rangeUpgradeTierBlock;
     public static int xpForHarvesting = 1;
 
     public static void readConfig() {
@@ -48,8 +50,12 @@ public class Config {
     private static void initGeneralConfig(Configuration cfg) {
         cfg.addCustomCategoryComment(CATEGORY_GENERAL, "General configuration");
         flowersPerChunk = cfg.getFloat("FlowersPerChunk", CATEGORY_GENERAL, 0.1f, 0, 10, "Specifies the number of flowers per chunk, so 0.1 means one flower every 10 chunks, 10 means 10 flowers in each chunk");
-        String blockName = cfg.getString("TierUpgradeBlock", CATEGORY_GENERAL, "minecraft:gold_block", "The block used to upgrade to the next tier.");
-        upgradeTierBlock = Block.getBlockFromName(blockName);
+        String blockName = cfg.getString("FortunateTierUpgradeBlock", CATEGORY_GENERAL, "minecraft:lapis_block", "The block used to upgrade fortunate to the next tier.");
+        fortunateUpgradeTierBlock = Block.getBlockFromName(blockName);
+        blockName = cfg.getString("EfficiencyTierUpgradeBlock", CATEGORY_GENERAL, "minecraft:redstone_block", "The block used to upgrade efficiency to the next tier.");
+        efficiencyUpgradeTierBlock = Block.getBlockFromName(blockName);
+        blockName = cfg.getString("RangeTierUpgradeBlock", CATEGORY_GENERAL, "minecraft:coal_block", "The block used to upgrade range to the next tier.");
+        rangeUpgradeTierBlock = Block.getBlockFromName(blockName);
         cfg.addCustomCategoryComment(CATEGORY_FARMING, "Farming configuration, all arrays mean: Index is tier number, so index 0 is tier 0 and index 6 is tier 6.");
         fortuneMultiplier = cfg.get(CATEGORY_FARMING, "Fortune", TileFunctionFlower.DEFAULT_FORTUNE_CONFIG, "The amount the received items are multiplied for each fortune tier below the plant. 0 means never, 1000 means always.");
         growProbability = cfg.get(CATEGORY_FARMING, "GrowProbability", TileFarmingFlower.DEFAULT_GROW_PROBABILITY_CONFIG, "The probability for executing a grow action on a plant when it can not be harvested.");

@@ -2,6 +2,7 @@ package at.witho.totally_op.storage;
 
 import at.witho.totally_op.TotallyOP;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -25,7 +26,8 @@ public class FilterSlot extends Slot {
     @Override
     public boolean isItemValid(@Nonnull ItemStack stack) {
         ItemStack filter = stack.copy();
-        filter.setCount(1);
+        if (filter.getItem() == Items.AIR) filter = ItemStack.EMPTY;
+        else filter.setCount(1);
         list.set(index, filter);
         rucksack.markDirty();
         return false;
