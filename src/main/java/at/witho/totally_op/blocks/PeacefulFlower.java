@@ -9,6 +9,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -41,25 +42,33 @@ public class PeacefulFlower extends BlockBush implements IGrowable {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
+    private boolean isOre(Block block, String name) {
+        NonNullList<ItemStack> blocks = OreDictionary.getOres(name);
+        for (ItemStack input : blocks)
+        {
+            if (Block.getBlockFromItem(input.getItem()) == block) return true;
+        }
+        return false;
+    }
+
     @Override
     public void randomTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
     {
         super.randomTick(worldIn, pos, state, rand);
         IBlockState below = worldIn.getBlockState(pos.down());
-        if (below.getBlock() == Blocks.COBBLESTONE) return;
-        ItemStack smeltingResult = FurnaceRecipes.instance().getSmeltingResult(new ItemStack(below.getBlock(), 1, below.getBlock().getMetaFromState(below)));
+        Block block = below.getBlock();
+        if (block == Blocks.COBBLESTONE) return;
+        ItemStack smeltingResult = FurnaceRecipes.instance().getSmeltingResult(new ItemStack(block, 1, block.getMetaFromState(below)));
         ItemStack result = null;
         if (!smeltingResult.isEmpty()) {
             result = smeltingResult.copy();
             result.setCount(result.getCount() * 9);
         } else {
-            NonNullList<ItemStack> coalBlocks = OreDictionary.getOres("blockCoal");
-            for (ItemStack input : coalBlocks)
-            {
-                if (Block.getBlockFromItem(input.getItem()) == below.getBlock()) {
-                    result = new ItemStack(ModItems.diamond_fragment);
-                    break;
-                }
+            if (isOre(block, "blockCoal") || isOre(block, "blockCharcoal")) {
+                result = new ItemStack(ModItems.diamond_fragment);
+            }
+            else if (isOre(block, "blockLead")) {
+                result = new ItemStack(Items.GOLD_INGOT);
             }
         }
         if (result != null && !result.isEmpty()) {
