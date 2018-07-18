@@ -48,6 +48,7 @@ public class VeinMiner {
     private boolean horizontalPlane = false;
     private int fortune = 0;
     private int checks = 0;
+    private int metadata = -1;
 
     public interface ShouldAddBlock {
         boolean testIsSimilar(Block block);
@@ -61,16 +62,25 @@ public class VeinMiner {
         this.blocks.add(block);
     }
 
+    public VeinMiner(World world, EntityPlayerMP player, Block block, int metadata) {
+        this.world = world;
+        this.player = player;
+        this.blocks.add(block);
+        this.metadata = metadata;
+    }
+
     public void setHorizontalPlane(boolean plane) { horizontalPlane = plane; }
     public void setShouldAddBlock(ShouldAddBlock sbb) { shouldAddBlock = sbb; }
     public void setFortune(int f) { fortune = f; }
 
-    private boolean findAndAdd(Block b, List<Block> list, PosInfo pi) {
+    private boolean findAndAdd(Block b, int meta, List<Block> list, PosInfo pi) {
         for (Block block : list) {
             if (Helper.isSameBlock(b, block)) {
-                // Need to clone PosInfo when needed as it is modified outside
-                blockPositionsToBreak.add(new PosInfo(pi));
-                return true;
+                if (metadata == -1 || metadata == meta) {
+                    // Need to clone PosInfo when needed as it is modified outside
+                    blockPositionsToBreak.add(new PosInfo(pi));
+                    return true;
+                }
             }
         }
         return false;
@@ -113,21 +123,22 @@ public class VeinMiner {
                             BlockPos p = pos.add(x, y, z);
                             IBlockState pstate = world.getBlockState(p);
                             Block b = pstate.getBlock();
+                            int meta = b.getMetaFromState(pstate);
                             pi.pos = p;
                             pi.fromX = x;
                             pi.fromY = y;
                             pi.fromZ = z;
                             ++checks;
-                            if (!findAndAdd(b, blocks, pi)) {
-                                if (!findAndAdd(b, extraBlocks, pi)) {
+                            if (!findAndAdd(b, meta, blocks, pi)) {
+                                if (!findAndAdd(b, meta, extraBlocks, pi)) {
                                     if (shouldAddBlock != null) {
                                         if (shouldAddBlock.testIsSimilar(b)) {
                                             blocks.add(b);
-                                            findAndAdd(b, blocks, pi);
+                                            findAndAdd(b, meta, blocks, pi);
                                         }
                                         else if (shouldAddBlock.testIsExtra(b)) {
                                             extraBlocks.add(b);
-                                            findAndAdd(b, extraBlocks, pi);
+                                            findAndAdd(b, meta, extraBlocks, pi);
                                         }
                                     }
                                 }
@@ -162,7 +173,7 @@ public class VeinMiner {
                         }
                         world.spawnEntity(new EntityItem(world, p.getX(), p.getY(), p.getZ(), stack));
                     }
-                    world.setBlockState(p, Blocks.AIR.getDefaultState(), 2);
+                    world.setBlockState(p, Blocks.AIR.getDefaultState(), 3);
 
                     addSurroundings(pi);
                 }

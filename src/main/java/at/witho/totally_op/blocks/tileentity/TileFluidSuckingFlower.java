@@ -30,12 +30,18 @@ public class TileFluidSuckingFlower extends TileFunctionFlower {
 
     @Override
 	public void update() {
+        if (!shouldRun()) return;
+        if (currentPos == null) {
+            checkForModifiers();
+            resetPos();
+            return;
+        }
         if (veinMiner != null) {
-            if (fluidStack.amount < 10000) {
+            if (fluidStack.amount < Fluid.BUCKET_VOLUME * 10) {
                 if (!veinMiner.harvestBlock()) {
                     veinMiner = null;
                 } else {
-                    fluidStack.amount += 1000;
+                    fluidStack.amount += Fluid.BUCKET_VOLUME;
                     List<IFluidHandler> inventories = backFluidInventories();
                     for (IFluidHandler inventory : inventories) {
                         int amount = inventory.fill(fluidStack, true);
@@ -46,20 +52,14 @@ public class TileFluidSuckingFlower extends TileFunctionFlower {
             }
             return;
         }
-        if (!shouldRun()) return;
-        if (currentPos == null) {
-            checkForModifiers();
-            resetPos();
-            return;
-        }
 
         IBlockState state = world.getBlockState(currentPos);
         Block block = state.getBlock();
         if (state.getMaterial().isLiquid() && matchesFilter(state)) {
             Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
-            if (fluid != null) {
-                fluidStack = new FluidStack(fluid, 1000);
-                veinMiner = new VeinMiner(this.getWorld(), null, block);
+            if (fluid != null && block.getMetaFromState(state) == 0) {
+                fluidStack = new FluidStack(fluid, Fluid.BUCKET_VOLUME);
+                veinMiner = new VeinMiner(this.getWorld(), null, block, 0);
                 veinMiner.addToBreak(currentPos);
             }
         }
