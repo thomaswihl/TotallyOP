@@ -18,6 +18,9 @@ public class WorldGen {
 		flowerGen += Config.flowersPerChunk;
 		int tries = (int)(flowerGen * 2 + 0.9f);
 		while (flowerGen >= 1 && tries > 0) {
+			/* see http://www.minecraftforge.net/forum/topic/60721-1121-how-would-i-prevent-cascading-worldgen-lag-during-worldgen/
+			 * if you are wondering about the +8
+			 */
 			int x = event.getPos().getX() + event.getRand().nextInt(16) + 8;
 			int y = event.getPos().getY();
 			int z = event.getPos().getZ() + event.getRand().nextInt(16) + 8;

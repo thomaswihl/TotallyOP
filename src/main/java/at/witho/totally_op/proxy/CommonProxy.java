@@ -2,10 +2,7 @@ package at.witho.totally_op.proxy;
 
 import java.io.File;
 
-import at.witho.totally_op.MobInteraction;
-import at.witho.totally_op.ModBlocks;
-import at.witho.totally_op.TotallyOP;
-import at.witho.totally_op.WorldGen;
+import at.witho.totally_op.*;
 import at.witho.totally_op.blocks.*;
 import at.witho.totally_op.blocks.tileentity.*;
 import at.witho.totally_op.config.Config;
@@ -13,10 +10,14 @@ import at.witho.totally_op.entity.Car;
 import at.witho.totally_op.items.*;
 import at.witho.totally_op.net.PacketHandler;
 import at.witho.totally_op.net.RoughToolChange;
+import at.witho.totally_op.util.AnvilHelper;
 import at.witho.totally_op.util.HarvestHelper;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -31,6 +32,7 @@ import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.oredict.OreDictionary;
 
 @Mod.EventBusSubscriber
 public class CommonProxy {
@@ -46,6 +48,7 @@ public class CommonProxy {
     public void init(FMLInitializationEvent e) {
     	MinecraftForge.TERRAIN_GEN_BUS.register(WorldGen.class);
 		MinecraftForge.EVENT_BUS.register(MobInteraction.class);
+        MinecraftForge.EVENT_BUS.register(AnvilHelper.class);
 		if (Config.xpForHarvesting > 0) MinecraftForge.EVENT_BUS.register(HarvestHelper.class);
         NetworkRegistry.INSTANCE.registerGuiHandler(TotallyOP.instance, new GuiProxy());
     }
@@ -114,6 +117,31 @@ public class CommonProxy {
         event.getRegistry().register(new Rucksack());
         event.getRegistry().register(new Wings());
         event.getRegistry().register(new DiamondFragment());
+        String[] dyes =
+                {
+                        "Black",
+                        "Red",
+                        "Green",
+                        "Brown",
+                        "Blue",
+                        "Purple",
+                        "Cyan",
+                        "LightGray",
+                        "Gray",
+                        "Pink",
+                        "Lime",
+                        "Yellow",
+                        "LightBlue",
+                        "Magenta",
+                        "Orange",
+                        "White"
+                };
+
+        ItemStack dye = new ItemStack(ModBlocks.peaceful_flower);
+        for(int i = 0; i < 16; i++)
+        {
+            OreDictionary.registerOre("dye" + dyes[i], dye);
+        }
     }
 
     @SubscribeEvent
