@@ -36,7 +36,7 @@ public class FilterSlot extends Slot {
     @Override
     public boolean getHasStack()
     {
-        return true;
+        return !list.get(index).isEmpty();
     }
 
     @Override

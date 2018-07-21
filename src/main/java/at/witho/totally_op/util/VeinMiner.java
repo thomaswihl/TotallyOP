@@ -159,7 +159,10 @@ public class VeinMiner {
             BlockPos p = pi.pos;
             IBlockState pstate = world.getBlockState(p);
             if (pstate.getBlock() != Blocks.AIR) {
-                if (player != null) player.interactionManager.tryHarvestBlock(p);
+                if (player != null) {
+                    if (pstate.getMaterial().isLiquid()) continue;
+                    player.interactionManager.tryHarvestBlock(p);
+                }
                 else {
                     Block b = pstate.getBlock();
                     world.playEvent(2001, p, Block.getStateId(pstate));
