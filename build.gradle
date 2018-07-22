@@ -27,7 +27,11 @@ minecraft {
 }
 
 dependencies {
-    // deobfCompile files("libs/InventoryTweaks-1.63-api.jar")
+    //deobfCompile files("tmp/AutoRegLib-1.3-17.jar",
+    //    "tmp/Baubles-1.12-1.5.2.jar",
+    //    "tmp/Botania+r1.10-353.jar",
+    //    "tmp/jei_1.12.1-4.7.8.91.jar",
+    //    "tmp/Quark-r1.4-123.jar")
 
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html

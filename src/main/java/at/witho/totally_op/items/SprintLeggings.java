@@ -36,7 +36,7 @@ public class SprintLeggings extends ItemArmor {
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type)
     {
-        return String.format("%s:textures/models/armor/armor_layer_1.png", TotallyOP.MODID);
+        return String.format("%s:textures/models/armor/armor_layer_2.png", TotallyOP.MODID);
     }
 
     public static ItemStack getLeggingsFromPlayer(EntityPlayer player) {
