@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "totally_op",
+  "ingredients": [
+    {
+      "item": "totally_op:peaceful_flower"
+    },
+    {
+      "item": "minecraft:vine"
+    }
+  ],
+  "result": {
+    "item": "totally_op:steady_vine"
+  }
+}

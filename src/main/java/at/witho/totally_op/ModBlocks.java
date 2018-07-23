@@ -1,6 +1,8 @@
 package at.witho.totally_op;
 
 import at.witho.totally_op.blocks.*;
+import net.minecraft.block.BlockVine;
+import net.minecraft.block.SoundType;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -23,6 +25,7 @@ public class ModBlocks {
     public static final TierableBlock efficiency = null;
     public static final TierableBlock range = null;
     public static final SunPowder sun_powder = null;
+    //public static final SteadyVine steady_vine = null;
 
     @SideOnly(Side.CLIENT)
     public static void initModels() {
@@ -41,6 +44,7 @@ public class ModBlocks {
         efficiency.initModel();
         range.initModel();
         sun_powder.initModel();
+        //steady_vine.initModel();
     }
 
 }

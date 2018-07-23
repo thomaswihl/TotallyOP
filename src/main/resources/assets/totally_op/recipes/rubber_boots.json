@@ -1,12 +1,16 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "forge:ore_shaped",
   "group": "totally_op",
   "pattern": [
     "   ",
-    "f f",
+    "w w",
     "f f"
   ],
   "key": {
+    "w": {
+      "item": "minecraft:wool",
+      "data": 32767
+    },
     "f": {
       "item": "totally_op:peaceful_flower"
     }

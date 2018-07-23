@@ -27,7 +27,7 @@ public class TotallyOP
     public static final ToolMaterial peacefulIronMaterial = EnumHelper.addToolMaterial("PEACEFUL_IRON", 3, 8000, 100F, -40F, 30);
     public static final ToolMaterial peacefulDiamondMaterial = EnumHelper.addToolMaterial("PEACEFUL_IRON", 3, -1, 1000F, -40F, 30);
     public static final ItemArmor.ArmorMaterial armorMaterial = EnumHelper.addArmorMaterial("PEACEFUL_RUBBER", "rubber_boots", -1, new int[]{3, 6, 8, 3}, 40, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 2.0f);
-    public static final Material flowerMaterial = new MaterialLogic(MapColor.FOLIAGE);
+    public static final Material flowerMaterial = new Material(MapColor.FOLIAGE);
 
     @SidedProxy(clientSide = "at.witho.totally_op.proxy.ClientProxy", serverSide = "at.witho.totally_op.proxy.ServerProxy")
     public static CommonProxy proxy;
