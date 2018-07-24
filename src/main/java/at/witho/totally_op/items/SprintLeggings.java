@@ -48,14 +48,15 @@ public class SprintLeggings extends ItemArmor {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void livingUpdateEvent(LivingEvent.LivingUpdateEvent event) {
-        ++counter;
-        if (counter < 20) return;
-        counter = 0;
         if (event.getEntityLiving() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer)event.getEntityLiving();
             ItemStack leggings = getLeggingsFromPlayer(player);
-            float speed = leggings.isEmpty() ? 0.1f : 0.3f;
-            player.capabilities.setPlayerWalkSpeed(speed);
+            if (leggings.isEmpty()) {
+                player.capabilities.setPlayerWalkSpeed(0.1f);
+            } else {
+                if (player.isSprinting()) player.capabilities.setPlayerWalkSpeed(0.4f);
+                else player.capabilities.setPlayerWalkSpeed(0.25f);
+            }
         }
     }
 
