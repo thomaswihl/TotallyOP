@@ -5,12 +5,20 @@ import at.witho.totally_op.TotallyOP;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.*;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
+import scala.tools.nsc.backend.icode.Primitives;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -47,7 +55,6 @@ public class VeinMiner {
     private World world = null;
     private boolean horizontalPlane = false;
     private int fortune = 0;
-    private int checks = 0;
     private int metadata = -1;
 
     public interface ShouldAddBlock {
@@ -68,6 +75,14 @@ public class VeinMiner {
         this.blocks.add(block);
         this.metadata = metadata;
     }
+
+    public  VeinMiner(World world, EntityPlayerMP player, NBTTagCompound comp) {
+        this.world = world;
+        this.player = player;
+        readFromNBT(comp);
+    }
+
+    public void setWorld(World worldIn) { world = worldIn; }
 
     public void setHorizontalPlane(boolean plane) { horizontalPlane = plane; }
     public void setShouldAddBlock(ShouldAddBlock sbb) { shouldAddBlock = sbb; }
@@ -128,7 +143,6 @@ public class VeinMiner {
                             pi.fromX = x;
                             pi.fromY = y;
                             pi.fromZ = z;
-                            ++checks;
                             if (!findAndAdd(b, meta, blocks, pi)) {
                                 if (!findAndAdd(b, meta, extraBlocks, pi)) {
                                     if (shouldAddBlock != null) {
@@ -165,7 +179,25 @@ public class VeinMiner {
                 }
                 else {
                     Block b = pstate.getBlock();
-                    world.playEvent(2001, p, Block.getStateId(pstate));
+                    if (metadata != -1 && metadata != b.getMetaFromState(pstate)) continue;
+                    boolean found = false;
+                    for (Block block : blocks) {
+                        if (Helper.isSameBlock(b, block)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        for (Block block : extraBlocks) {
+                            if (Helper.isSameBlock(b, block)) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!found) continue;
+                    if (pstate.getMaterial().isLiquid()) world.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.ITEM_BUCKET_FILL, SoundCategory.BLOCKS, 1, 1);
+                    else world.playSound(null, p.getX(), p.getY(), p.getZ(), b.getSoundType(pstate, world, p, null).getBreakSound(), SoundCategory.BLOCKS, 1, 1);
                     List<ItemStack> drops = b.getDrops(world, p, pstate, 0);
                     for (ItemStack stack : drops) {
                         for (Block block : extraBlocks) {
@@ -185,4 +217,77 @@ public class VeinMiner {
         }
         return true;
     }
+
+    private void readFromNBT(NBTTagCompound compound)
+    {
+        NBTTagList list = compound.getTagList("blocks", 8);
+        for (NBTBase entry : list)
+        {
+            NBTTagString s = (NBTTagString)entry;
+            Block b = Block.getBlockFromName(s.getString());
+            if (b != null) blocks.add(b);
+        }
+
+        list = compound.getTagList("extraBlocks", 8);
+        for (NBTBase entry : list)
+        {
+            NBTTagString s = (NBTTagString)entry;
+            Block b = Block.getBlockFromName(s.getString());
+            if (b != null) blocks.add(b);
+        }
+
+        list = compound.getTagList("blockPositionsToBreak", 11);
+        for (NBTBase entry : list)
+        {
+            NBTTagIntArray array = (NBTTagIntArray) entry;
+            int[] a = array.getIntArray();
+            if (a.length == 6) {
+                blockPositionsToBreak.add(new PosInfo(new BlockPos(a[0], a[1], a[2]), (byte)a[3], (byte)a[4], (byte)a[5]));
+            }
+        }
+
+        //compound.setString("player", player.getName());
+        horizontalPlane = compound.getBoolean("horizontalPlane");
+        fortune = compound.getInteger("fortune");
+        metadata = compound.getInteger("metadata");
+
+    }
+
+    public NBTTagCompound writeToNBT(NBTTagCompound compound)
+    {
+        NBTTagList list = new NBTTagList();
+        for (Block b : blocks)
+        {
+            ResourceLocation resourcelocation = Block.REGISTRY.getNameForObject(b);
+            if (resourcelocation != null) {
+                NBTTagString s = new NBTTagString(resourcelocation.toString());
+                list.appendTag(s);
+            }
+        }
+        compound.setTag("blocks", list);
+
+        list = new NBTTagList();
+        for (Block b : extraBlocks) {
+            ResourceLocation resourcelocation = Block.REGISTRY.getNameForObject(b);
+            if (resourcelocation != null) {
+                NBTTagString s = new NBTTagString(resourcelocation.toString());
+                    list.appendTag(s);
+            }
+        }
+
+        list = new NBTTagList();
+        for (PosInfo p : blockPositionsToBreak) {
+            NBTTagIntArray array = new NBTTagIntArray(new int[] {p.pos.getX(), p.pos.getY(), p.pos.getZ(), p.fromX, p.fromY, p.fromZ});
+            list.appendTag(array);
+        }
+        compound.setTag("blockPositionsToBreak", list);
+
+        if (player != null) compound.setString("player", player.getName());
+        compound.setBoolean("horizontalPlane", horizontalPlane);
+        compound.setInteger("fortune", fortune);
+        compound.setInteger("metadata", metadata);
+
+        return compound;
+    }
+
 }

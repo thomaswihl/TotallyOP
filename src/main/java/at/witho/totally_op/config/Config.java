@@ -32,7 +32,7 @@ public class Config {
             initGeneralConfig(cfg);
         }
         catch (Exception e1) {
-            TotallyOP.logger.log(Level.ERROR, "Problem loading config file!", e1);
+            TotallyOP.logger.log(Level.WARN, "Problem loading config file!", e1);
         }
         finally {
             if (cfg.hasChanged()) cfg.save();

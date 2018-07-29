@@ -51,7 +51,7 @@ public abstract class TileFunctionFlower extends TileEntity implements ITickable
     protected ItemStack filter = ItemStack.EMPTY;
     protected boolean filterIsWhitelist = true;
 
-    private int checkCounter = 0;
+    private int checkCounter = 1000;
     private int lastSlot = 0;
     private int lastInventory = 0;
 
