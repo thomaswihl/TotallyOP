@@ -1,5 +1,6 @@
 package at.witho.totally_op.items;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 import at.witho.totally_op.TotallyOP;
@@ -32,6 +33,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
 
 public class PeacefulTool extends ItemTool {
     private static final String VEIN_MINE_INFO = "VeinMineId";

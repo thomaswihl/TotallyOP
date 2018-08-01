@@ -50,6 +50,7 @@ import org.apache.logging.log4j.Level;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -429,6 +430,52 @@ public class RoughTool extends ItemTool {
             }
         }
     }
+
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+        ItemStack stack = playerIn.getHeldItem(handIn);
+        if (playerIn.isSneaking()) {
+            if (!worldIn.isRemote) {
+                printIEChunk(playerIn, worldIn, (int)playerIn.posX, (int)playerIn.posZ);
+            }
+            return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
+        }
+        return new ActionResult<ItemStack>(EnumActionResult.PASS, stack);
+    }
+
+    public void printIEChunk(EntityPlayer player, World world, int x, int z) {
+        try {
+            Class<?> ExcavatorHandler = Class.forName("blusunrize.immersiveengineering.api.tool.ExcavatorHandler");
+            TotallyOP.logger.log(Level.ERROR, "Found class");
+            java.lang.reflect.Method getMineralWorldInfo = ExcavatorHandler.getMethod("getMineralWorldInfo", World.class, int.class, int.class);
+            TotallyOP.logger.log(Level.ERROR, "Found method");
+            Object o = getMineralWorldInfo.invoke(null, world, x >> 4, z >> 4);
+            TotallyOP.logger.log(Level.ERROR, o.toString());
+            Field fieldMineral = o.getClass().getDeclaredField("mineral");
+            Object mineral = fieldMineral.get(o);
+            if (mineral == null) return;
+            TotallyOP.logger.log(Level.ERROR, mineral.toString());
+            Field fieldOres = mineral.getClass().getDeclaredField("ores");
+            String[] ores = (String[])fieldOres.get(mineral);
+            Field fieldChances = mineral.getClass().getDeclaredField("chances");
+            float[] chances = (float[])fieldChances.get(mineral);
+            Field fieldName = mineral.getClass().getDeclaredField("name");
+            String name = (String)fieldName.get(mineral);
+            if (ores != null && chances != null && name != null) {
+                String summary = name + " [";
+                for (int i = 0; i < ores.length && i < chances.length; ++i) {
+                    if (i != 0) summary += ", ";
+                    summary += ((int)(chances[i] * 100)) + "% " + ores[i];
+                }
+                summary += "]";
+                player.sendMessage(new TextComponentString(summary));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
 }
 
