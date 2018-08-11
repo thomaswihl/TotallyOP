@@ -24,6 +24,7 @@ public class Config {
     public static Block efficiencyUpgradeTierBlock;
     public static Block rangeUpgradeTierBlock;
     public static int xpForHarvesting = 1;
+    public static boolean friendlyMobs;
 
     public static void readConfig() {
         Configuration cfg = CommonProxy.config;
@@ -62,6 +63,7 @@ public class Config {
         efficiencyDelay = cfg.get(CATEGORY_FARMING, "Efficiency", TileFunctionFlower.DEFAULT_EFFICIENCY_CONFIG, "The number of ticks between operations for each efficiency tier below the plant.");
         farmingRange = cfg.get(CATEGORY_FARMING, "Range", TileFunctionFlower.DEFAULT_RANGE_CONFIG, "The number of blocks that are checked for farming in x and z direction, for sucking in all 3 directions, so 3 means a 3x3 area in front of it or a 3x3x3 cube. The sucking flower adds a border of 1 block.");
         xpForHarvesting = cfg.getInt("XpForHarvesting", CATEGORY_GENERAL, 0, 0, 10, "Specifies the XP amount for harvesting logs or bushes");
+        friendlyMobs = cfg.getBoolean("FriendlyMobs", CATEGORY_GENERAL, true, "If you select true and have a peacful tool on you, mobs won't attack you.");
     }
 
 }

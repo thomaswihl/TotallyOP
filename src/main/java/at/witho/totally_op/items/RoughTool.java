@@ -4,6 +4,7 @@ import at.witho.totally_op.Helper;
 import at.witho.totally_op.TotallyOP;
 import at.witho.totally_op.net.PacketHandler;
 import at.witho.totally_op.net.RoughToolChange;
+import at.witho.totally_op.util.HightlightBlock;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -70,6 +71,7 @@ public class RoughTool extends ItemTool {
         public int radius = 0;
         public boolean round = false;
         public BlockPos startPos = null;
+        public EnumFacing playerFacing = null;
     }
 
     private boolean active = false;
@@ -108,160 +110,35 @@ public class RoughTool extends ItemTool {
             itemstack = player.getHeldItem(EnumHand.OFF_HAND);
             if (!(itemstack.getItem() instanceof RoughTool)) return;
         }
-        RayTraceResult result = Minecraft.getMinecraft().objectMouseOver;
-        if (result == null) return;
-        BlockPos pos = result.getBlockPos();
+        BlockPos pos = HightlightBlock.getBlockPos(player);
         if (pos == null) return;
-        IBlockState state = player.world.getBlockState(pos);
-        if (state == null || state.getBlock() == Blocks.AIR) return;
 
-        GlStateManager.pushMatrix();
-        GlStateManager.disableTexture2D();
-
-        GL11.glPushAttrib(GL11.GL_LIGHTING_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-        GlStateManager.disableLighting();
-        GlStateManager.disableDepth();
-
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
+        HightlightBlock.begin();
         ParameterSet p = getParameters(itemstack, pos, player);
+        HightlightBlock.color = new Color(255, 255, 255, 32);
+        if (p.xstart == p.xstop) {
+            if (p.playerFacing == EnumFacing.EAST) HightlightBlock.mX = true;
+            else HightlightBlock.pX = true;
+        }
+        if (p.ystart == p.ystop) {
+            if (p.playerFacing == EnumFacing.DOWN)  HightlightBlock.mY = true;
+            else HightlightBlock.pY = true;
+        }
+        if (p.zstart == p.zstop) {
+            if (p.playerFacing == EnumFacing.SOUTH) HightlightBlock.mZ = true;
+            else HightlightBlock.pZ = true;
+        }
+
         for (int x = p.xstart; x <= p.xstop; x++) {
             for (int y = p.ystart; y <= p.ystop; y++) {
                 for (int z = p.zstart; z <= p.zstop; z++) {
                     if (p.round && (x*x + y*y + z*z > p.radius)) continue;
                     BlockPos bp = p.startPos.add(x, y, z);
-                    outlineBlock(bp, ev.getPartialTicks(), p.xstart == p.xstop, p.ystart == p.ystop, p.zstart == p.zstop);
+                    HightlightBlock.outlineBlock(bp, ev.getPartialTicks());
                 }
             }
         }
-
-        GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
-        GL11.glPopAttrib();
-        GlStateManager.popMatrix();
-    }
-
-    @SideOnly(Side.CLIENT)
-    private void outlineBlock(BlockPos pos, double partialTicks, boolean renderX, boolean renderY, boolean renderZ) {
-        Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
-
-        double d0 = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double)partialTicks;
-        double d1 = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double)partialTicks;
-        double d2 = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * (double)partialTicks;
-        Tessellator tes = Tessellator.getInstance();
-        BufferBuilder bb = tes.getBuffer();
-        bb.setTranslation(-d0, -d1, -d2);
-        AxisAlignedBB aabb = new AxisAlignedBB(pos);
-        Color color = new Color(255, 255, 255, 32);
-        renderRectangle(tes, bb, aabb, color, renderX, renderY, renderZ);
-        //drawMask(bb, sX, sY, sZ, sX + 1, sY + 1, sZ + 1, 1, 1, 1, 1);
-        bb.setTranslation(0, 0, 0);
-    }
-
-    @SideOnly(Side.CLIENT)
-    private void renderRectangle(Tessellator tes, BufferBuilder bb, AxisAlignedBB aabb, Color color, boolean renderX, boolean renderY, boolean renderZ) {
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(aabb.minX, aabb.minY, aabb.minZ);
-        GL11.glColor4ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue(), (byte) color.getAlpha());
-
-
-        double x = aabb.maxX - aabb.minX;
-        double y = aabb.maxY - aabb.minY;
-        double z = aabb.maxZ - aabb.minZ;
-
-        if (renderY) {
-            // TOP
-            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-            bb.pos(x, y, 0).endVertex();
-            bb.pos(0, y, 0).endVertex();
-            bb.pos(0, y, z).endVertex();
-            bb.pos(x, y, z).endVertex();
-            tes.draw();
-            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-            bb.pos(x, y, 0).endVertex();
-            bb.pos(x, y, z).endVertex();
-            bb.pos(0, y, z).endVertex();
-            bb.pos(0, y, 0).endVertex();
-            tes.draw();
-
-            // BOTTOM
-            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-            bb.pos(x, 0, z).endVertex();
-            bb.pos(0, 0, z).endVertex();
-            bb.pos(0, 0, 0).endVertex();
-            bb.pos(x, 0, 0).endVertex();
-            tes.draw();
-            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-            bb.pos(x, 0, z).endVertex();
-            bb.pos(x, 0, 0).endVertex();
-            bb.pos(0, 0, 0).endVertex();
-            bb.pos(0, 0, z).endVertex();
-            tes.draw();
-        }
-
-        if (renderZ) {
-            // LEFT
-            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-            bb.pos(x, 0, 0).endVertex();
-            bb.pos(0, 0, 0).endVertex();
-            bb.pos(0, y, 0).endVertex();
-            bb.pos(x, y, 0).endVertex();
-            tes.draw();
-            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-            bb.pos(x, 0, 0).endVertex();
-            bb.pos(x, y, 0).endVertex();
-            bb.pos(0, y, 0).endVertex();
-            bb.pos(0, 0, 0).endVertex();
-            tes.draw();
-
-            // RIGHT
-            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-            bb.pos(x, y, z).endVertex();
-            bb.pos(0, y, z).endVertex();
-            bb.pos(0, 0, z).endVertex();
-            bb.pos(x, 0, z).endVertex();
-            tes.draw();
-            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-            bb.pos(x, y, z).endVertex();
-            bb.pos(x, 0, z).endVertex();
-            bb.pos(0, 0, z).endVertex();
-            bb.pos(0, y, z).endVertex();
-            tes.draw();
-        }
-
-        if (renderX) {
-            // FRONT
-            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-            bb.pos(0, y, 0).endVertex();
-            bb.pos(0, 0, 0).endVertex();
-            bb.pos(0, 0, z).endVertex();
-            bb.pos(0, y, z).endVertex();
-            tes.draw();
-            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-            bb.pos(0, y, 0).endVertex();
-            bb.pos(0, y, z).endVertex();
-            bb.pos(0, 0, z).endVertex();
-            bb.pos(0, 0, 0).endVertex();
-            tes.draw();
-
-            // BACK
-            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-            bb.pos(x, y, z).endVertex();
-            bb.pos(x, 0, z).endVertex();
-            bb.pos(x, 0, 0).endVertex();
-            bb.pos(x, y, 0).endVertex();
-            tes.draw();
-            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-            bb.pos(x, y, z).endVertex();
-            bb.pos(x, y, 0).endVertex();
-            bb.pos(x, 0, 0).endVertex();
-            bb.pos(x, 0, z).endVertex();
-            tes.draw();
-        }
-
-        GL11.glColor4ub((byte) 255, (byte) 255, (byte) 255, (byte) 255);
-        GlStateManager.popMatrix();
+        HightlightBlock.end();
     }
 
     public void changeDimension(ItemStack stack, EntityPlayer player, int amount) {
@@ -346,6 +223,7 @@ public class RoughTool extends ItemTool {
         width >>= 1;
 
         EnumFacing facing = EnumFacing.getHorizontal(MathHelper.floor((double)(player.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3);
+        p.playerFacing = facing;
 
         int angle = Math.round(player.rotationPitch / 22.5f);
 
@@ -387,6 +265,9 @@ public class RoughTool extends ItemTool {
 
             }
 
+        } else {
+            if (angle < -2) p.playerFacing = EnumFacing.DOWN;
+            else p.playerFacing = EnumFacing.UP;
         }
         if (p.startPos == null) p.startPos = new BlockPos(pos);
         if (!vertical) {

@@ -1,6 +1,7 @@
 package at.witho.totally_op;
 
 import at.witho.totally_op.blocks.PeacefulFlower;
+import at.witho.totally_op.config.Config;
 import at.witho.totally_op.entity.TotallyOpDamage;
 import net.minecraft.entity.*;
 import net.minecraft.entity.monster.EntityEnderman;
@@ -24,6 +25,7 @@ public class MobInteraction {
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void livingSetAttackTarget(LivingSetAttackTargetEvent e) {
+	    if (!Config.friendlyMobs) return;
 		if (e != null && e.getTarget() instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer)e.getTarget();
 			if (e.getEntity() instanceof EntityLiving && Helper.hasPeacefulItem(player)) {

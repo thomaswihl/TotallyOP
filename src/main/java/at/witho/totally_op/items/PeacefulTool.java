@@ -1,13 +1,21 @@
 package at.witho.totally_op.items;
 
+import java.awt.*;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.List;
 
 import at.witho.totally_op.TotallyOP;
+import at.witho.totally_op.util.HightlightBlock;
 import at.witho.totally_op.util.VeinMiner;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -23,8 +31,11 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.common.MinecraftForge;
@@ -34,6 +45,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
+import org.lwjgl.opengl.GL11;
 
 public class PeacefulTool extends ItemTool {
     private static final String VEIN_MINE_INFO = "VeinMineId";
@@ -58,8 +70,20 @@ public class PeacefulTool extends ItemTool {
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
-    }    
+        ModelResourceLocation silkModel = new ModelResourceLocation(getRegistryName() + "_silk", "inventory");
+        ModelResourceLocation fortuneModel = new ModelResourceLocation(getRegistryName() + "_fortune", "inventory");
+        ModelBakery.registerItemVariants(this, silkModel, fortuneModel);
+        ModelLoader.setCustomMeshDefinition(this, new ItemMeshDefinition() {
+            @Override
+            public ModelResourceLocation getModelLocation(ItemStack stack) {
+                if (isSilk(stack)) {
+                    return silkModel;
+                } else {
+                    return fortuneModel;
+                }
+            }
+        });
+    }
 
 	@Override
 	public boolean itemInteractionForEntity(ItemStack itemstack, EntityPlayer playerIn, EntityLivingBase entity, EnumHand hand) {
@@ -85,20 +109,28 @@ public class PeacefulTool extends ItemTool {
 	}
 
 	@Override
+    @SideOnly(Side.CLIENT)
+    public boolean hasEffect(ItemStack stack) { return false; }
+
+	boolean isSilk(ItemStack stack) {
+        NBTTagList ench = stack.getEnchantmentTagList();
+        NBTTagCompound nbt = ench.getCompoundTagAt(0);
+        return nbt.getShort("id") == 33;
+    }
+
+	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         ItemStack stack = playerIn.getHeldItem(handIn);
         if (playerIn.isSneaking()) {
             if (!worldIn.isRemote) {
-                NBTTagList ench = stack.getEnchantmentTagList();
-                NBTTagCompound nbt = ench.getCompoundTagAt(0);
-                if (nbt.getShort("id") != 33) {
-                    stack.setTagInfo("ench", new NBTTagList());
-                    stack.addEnchantment(Enchantment.getEnchantmentByID(33), 1);
-                    playerIn.sendMessage(new TextComponentString("Your tool has now silk touch."));
-                } else {
+                if (isSilk(stack)) {
                     stack.setTagInfo("ench", new NBTTagList());
                     stack.addEnchantment(Enchantment.getEnchantmentByID(35), fortune);
                     playerIn.sendMessage(new TextComponentString("Your tool has now fortune " + StringUtils.repeat('I', fortune) + "."));
+                } else {
+                    stack.setTagInfo("ench", new NBTTagList());
+                    stack.addEnchantment(Enchantment.getEnchantmentByID(33), 1);
+                    playerIn.sendMessage(new TextComponentString("Your tool has now silk touch."));
                 }
                 magnetActive = MAGNET_ACTIVE_TIME;
             }
@@ -223,5 +255,50 @@ public class PeacefulTool extends ItemTool {
             if (!entry.getValue().harvestBlock()) iterator.remove();
         }
 	}
+
+/*    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void renderOutline(RenderWorldLastEvent ev) {
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        ItemStack itemstack = player.getHeldItem(EnumHand.MAIN_HAND);
+        if (!(itemstack.getItem() instanceof PeacefulTool)) {
+            itemstack = player.getHeldItem(EnumHand.OFF_HAND);
+            if (!(itemstack.getItem() instanceof PeacefulTool)) return;
+        }
+        BlockPos pos = HightlightBlock.getBlockPos(player);
+        if (pos == null) return;
+
+        HightlightBlock.begin();
+
+        boolean fortune = false;
+        NBTTagList ench = itemstack.getEnchantmentTagList();
+        NBTTagCompound nbt = ench.getCompoundTagAt(0);
+        if (nbt.getShort("id") != 33) fortune = true;
+
+        switch (HightlightBlock.sideHit) {
+            case DOWN:
+                HightlightBlock.mY = true;
+                break;
+            case UP:
+                HightlightBlock.pY = true;
+                break;
+            case NORTH:
+                HightlightBlock.mZ = true;
+                break;
+            case SOUTH:
+                HightlightBlock.pZ = true;
+                break;
+            case WEST:
+                HightlightBlock.mX = true;
+                break;
+            case EAST:
+                HightlightBlock.pX = true;
+                break;
+        }
+        HightlightBlock.color = new Color(128, fortune ? 128 : 255, fortune ? 255 : 128, 32);
+        HightlightBlock.outlineBlock(pos, ev.getPartialTicks());
+
+        HightlightBlock.end();
+    }*/
 }
 
