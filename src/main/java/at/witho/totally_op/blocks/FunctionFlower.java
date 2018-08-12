@@ -118,7 +118,7 @@ public abstract class FunctionFlower extends BlockBush implements ITileEntityPro
                     flower.setFilter(playerIn.getHeldItem(hand));
                     flower.setFilterIsWhitelist(true);
                 }
-                String info = "Fortune multiplier is " + flower.getFortune() + ", delay is " + flower.getEfficiency() + " and range is " + flower.getRange() + " filter block is " + (flower.getFilterIsWhitelist() ? "" : "all but ") + flower.getFilter().getItem().getItemStackDisplayName(flower.getFilter());
+                String info = "TierableItem multiplier is " + flower.getFortune() + ", delay is " + flower.getEfficiency() + " and range is " + flower.getRange() + " filter block is " + (flower.getFilterIsWhitelist() ? "" : "all but ") + flower.getFilter().getItem().getItemStackDisplayName(flower.getFilter());
                 playerIn.sendMessage(new TextComponentString(info));
             }
             return true;

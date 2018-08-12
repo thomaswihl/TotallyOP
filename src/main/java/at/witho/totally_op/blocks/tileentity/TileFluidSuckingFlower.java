@@ -38,7 +38,7 @@ public class TileFluidSuckingFlower extends TileFunctionFlower {
             resetPos();
             return;
         }
-        if (veinMiner != null) {
+        if (veinMiner != null && fluidStack != null) {
             if (needToSetWorld) {
                 needToSetWorld = false;
                 veinMiner.setWorld(world);
@@ -67,6 +67,7 @@ public class TileFluidSuckingFlower extends TileFunctionFlower {
                 fluidStack = new FluidStack(fluid, Fluid.BUCKET_VOLUME);
                 veinMiner = new VeinMiner(this.getWorld(), null, block, 0);
                 veinMiner.addToBreak(currentPos);
+                if (fluid == FluidRegistry.WATER) veinMiner.setReplaceWith(Blocks.DIRT);
             }
         }
         nextBlock();
@@ -79,6 +80,10 @@ public class TileFluidSuckingFlower extends TileFunctionFlower {
             NBTTagCompound comp = nbt.getCompoundTag("veinMiner");
             veinMiner = new VeinMiner(world, null, comp);
         }
+        if (nbt.hasKey("fluidStack")) {
+            NBTTagCompound comp = nbt.getCompoundTag("fluidStack");
+            fluidStack = FluidStack.loadFluidStackFromNBT(comp);
+        }
     }
 
     @Override
@@ -89,6 +94,11 @@ public class TileFluidSuckingFlower extends TileFunctionFlower {
             NBTTagCompound comp = new NBTTagCompound();
             veinMiner.writeToNBT(comp);
             nbt.setTag("veinMiner", comp);
+        }
+        if (fluidStack != null) {
+            NBTTagCompound comp = new NBTTagCompound();
+            fluidStack.writeToNBT(comp);
+            nbt.setTag("fluidStack", comp);
         }
         return nbt;
     }

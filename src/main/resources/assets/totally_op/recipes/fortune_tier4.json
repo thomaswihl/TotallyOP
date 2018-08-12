@@ -1,0 +1,35 @@
+{
+  "type": "forge:ore_shapeless",
+  "group": "totally_op",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "blockLapis"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "blockLapis"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "blockLapis"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "blockLapis"
+    },
+    {
+      "type": "minecraft:item_nbt",
+      "item": "totally_op:fortune",
+      "nbt": {
+        "Tier": 0
+      }
+    }
+  ],
+  "result": {
+    "item": "totally_op:fortune",
+    "nbt": {
+      "Tier": 4
+    }
+  }
+}

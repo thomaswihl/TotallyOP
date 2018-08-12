@@ -4,8 +4,11 @@ import at.witho.totally_op.util.CraftingUtils;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialLogic;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemArmor;
+import net.minecraft.world.World;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
 import at.witho.totally_op.proxy.CommonProxy;
@@ -16,6 +19,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.common.util.EnumHelper;
+
+import java.util.UUID;
 
 @Mod(modid = TotallyOP.MODID, version = TotallyOP.VERSION)
 public class TotallyOP
@@ -52,5 +57,7 @@ public class TotallyOP
     public void postInit(FMLPostInitializationEvent e) {
         proxy.postInit(e);
         CraftingUtils.init();
+        UUID sprint = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
+        logger.log(Level.ERROR, "Leaset = " + sprint.getLeastSignificantBits() + ", Most = " + sprint.getMostSignificantBits());
     }
 }

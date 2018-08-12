@@ -28,26 +28,31 @@ public class VeinMiner {
     class PosInfo {
         public BlockPos pos;
         public byte fromX, fromY, fromZ;
+
         public PosInfo(BlockPos pos, byte fromX, byte fromY, byte fromZ) {
             this.pos = pos;
             this.fromX = fromX;
             this.fromY = fromY;
             this.fromZ = fromZ;
         }
+
         public PosInfo(BlockPos pos) {
             this.pos = pos;
             fromX = fromY = fromZ = 0;
         }
+
         public PosInfo(PosInfo other) {
             this.pos = other.pos;
             this.fromX = other.fromX;
             this.fromY = other.fromY;
             this.fromZ = other.fromZ;
         }
+
         public String toString() {
             return "PosInfo{" + pos.toString() + ", from{" + fromX + ", " + fromY + ", " + fromZ + "}}";
         }
     }
+
     private ArrayDeque<PosInfo> blockPositionsToBreak = new ArrayDeque<PosInfo>();
     private List<Block> blocks = new ArrayList<>();
     private List<Block> extraBlocks = new ArrayList<>();
@@ -56,11 +61,14 @@ public class VeinMiner {
     private boolean horizontalPlane = false;
     private int fortune = 0;
     private int metadata = -1;
+    private Block replaceWith = Blocks.AIR;
 
     public interface ShouldAddBlock {
         boolean testIsSimilar(Block block);
+
         boolean testIsExtra(Block block);
     }
+
     private ShouldAddBlock shouldAddBlock = null;
 
     public VeinMiner(World world, EntityPlayerMP player, Block block) {
@@ -76,17 +84,31 @@ public class VeinMiner {
         this.metadata = metadata;
     }
 
-    public  VeinMiner(World world, EntityPlayerMP player, NBTTagCompound comp) {
+    public VeinMiner(World world, EntityPlayerMP player, NBTTagCompound comp) {
         this.world = world;
         this.player = player;
         readFromNBT(comp);
     }
 
-    public void setWorld(World worldIn) { world = worldIn; }
+    public void setWorld(World worldIn) {
+        world = worldIn;
+    }
 
-    public void setHorizontalPlane(boolean plane) { horizontalPlane = plane; }
-    public void setShouldAddBlock(ShouldAddBlock sbb) { shouldAddBlock = sbb; }
-    public void setFortune(int f) { fortune = f; }
+    public void setHorizontalPlane(boolean plane) {
+        horizontalPlane = plane;
+    }
+
+    public void setShouldAddBlock(ShouldAddBlock sbb) {
+        shouldAddBlock = sbb;
+    }
+
+    public void setFortune(int f) {
+        fortune = f;
+    }
+
+    public void setReplaceWith(Block block) {
+        replaceWith = block;
+    }
 
     private boolean findAndAdd(Block b, int meta, List<Block> list, PosInfo pi) {
         for (Block block : list) {
@@ -149,8 +171,7 @@ public class VeinMiner {
                                         if (shouldAddBlock.testIsSimilar(b)) {
                                             blocks.add(b);
                                             findAndAdd(b, meta, blocks, pi);
-                                        }
-                                        else if (shouldAddBlock.testIsExtra(b)) {
+                                        } else if (shouldAddBlock.testIsExtra(b)) {
                                             extraBlocks.add(b);
                                             findAndAdd(b, meta, extraBlocks, pi);
                                         }
@@ -176,8 +197,7 @@ public class VeinMiner {
                 if (player != null) {
                     if (pstate.getMaterial().isLiquid()) continue;
                     player.interactionManager.tryHarvestBlock(p);
-                }
-                else {
+                } else {
                     Block b = pstate.getBlock();
                     if (metadata != -1 && metadata != b.getMetaFromState(pstate)) continue;
                     boolean found = false;
@@ -196,8 +216,10 @@ public class VeinMiner {
                         }
                     }
                     if (!found) continue;
-                    if (pstate.getMaterial().isLiquid()) world.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.ITEM_BUCKET_FILL, SoundCategory.BLOCKS, 1, 1);
-                    else world.playSound(null, p.getX(), p.getY(), p.getZ(), b.getSoundType(pstate, world, p, null).getBreakSound(), SoundCategory.BLOCKS, 1, 1);
+                    if (pstate.getMaterial().isLiquid())
+                        world.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.ITEM_BUCKET_FILL, SoundCategory.BLOCKS, 1, 1);
+                    else
+                        world.playSound(null, p.getX(), p.getY(), p.getZ(), b.getSoundType(pstate, world, p, null).getBreakSound(), SoundCategory.BLOCKS, 1, 1);
                     List<ItemStack> drops = b.getDrops(world, p, pstate, 0);
                     for (ItemStack stack : drops) {
                         for (Block block : extraBlocks) {
@@ -208,7 +230,7 @@ public class VeinMiner {
                         }
                         world.spawnEntity(new EntityItem(world, p.getX(), p.getY(), p.getZ(), stack));
                     }
-                    world.setBlockState(p, Blocks.AIR.getDefaultState(), 3);
+                    world.setBlockState(p, replaceWith.getDefaultState(), 3);
 
                     addSurroundings(pi);
                 }
@@ -218,31 +240,27 @@ public class VeinMiner {
         return true;
     }
 
-    private void readFromNBT(NBTTagCompound compound)
-    {
+    private void readFromNBT(NBTTagCompound compound) {
         NBTTagList list = compound.getTagList("blocks", 8);
-        for (NBTBase entry : list)
-        {
-            NBTTagString s = (NBTTagString)entry;
+        for (NBTBase entry : list) {
+            NBTTagString s = (NBTTagString) entry;
             Block b = Block.getBlockFromName(s.getString());
             if (b != null) blocks.add(b);
         }
 
         list = compound.getTagList("extraBlocks", 8);
-        for (NBTBase entry : list)
-        {
-            NBTTagString s = (NBTTagString)entry;
+        for (NBTBase entry : list) {
+            NBTTagString s = (NBTTagString) entry;
             Block b = Block.getBlockFromName(s.getString());
             if (b != null) blocks.add(b);
         }
 
         list = compound.getTagList("blockPositionsToBreak", 11);
-        for (NBTBase entry : list)
-        {
+        for (NBTBase entry : list) {
             NBTTagIntArray array = (NBTTagIntArray) entry;
             int[] a = array.getIntArray();
             if (a.length == 6) {
-                blockPositionsToBreak.add(new PosInfo(new BlockPos(a[0], a[1], a[2]), (byte)a[3], (byte)a[4], (byte)a[5]));
+                blockPositionsToBreak.add(new PosInfo(new BlockPos(a[0], a[1], a[2]), (byte) a[3], (byte) a[4], (byte) a[5]));
             }
         }
 
@@ -253,11 +271,9 @@ public class VeinMiner {
 
     }
 
-    public NBTTagCompound writeToNBT(NBTTagCompound compound)
-    {
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagList list = new NBTTagList();
-        for (Block b : blocks)
-        {
+        for (Block b : blocks) {
             ResourceLocation resourcelocation = Block.REGISTRY.getNameForObject(b);
             if (resourcelocation != null) {
                 NBTTagString s = new NBTTagString(resourcelocation.toString());
@@ -271,13 +287,13 @@ public class VeinMiner {
             ResourceLocation resourcelocation = Block.REGISTRY.getNameForObject(b);
             if (resourcelocation != null) {
                 NBTTagString s = new NBTTagString(resourcelocation.toString());
-                    list.appendTag(s);
+                list.appendTag(s);
             }
         }
 
         list = new NBTTagList();
         for (PosInfo p : blockPositionsToBreak) {
-            NBTTagIntArray array = new NBTTagIntArray(new int[] {p.pos.getX(), p.pos.getY(), p.pos.getZ(), p.fromX, p.fromY, p.fromZ});
+            NBTTagIntArray array = new NBTTagIntArray(new int[]{p.pos.getX(), p.pos.getY(), p.pos.getZ(), p.fromX, p.fromY, p.fromZ});
             list.appendTag(array);
         }
         compound.setTag("blockPositionsToBreak", list);

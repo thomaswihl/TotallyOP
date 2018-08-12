@@ -21,6 +21,7 @@ public class ModItems {
     public static final Rucksack rucksack = null;
     public static final Wings wings = null;
     public static final DiamondFragment diamond_fragment = null;
+    public static final TierableItem fortune = null;
 
 
     @SideOnly(Side.CLIENT)
@@ -38,6 +39,7 @@ public class ModItems {
         rucksack.initModel();
         wings.initModel();
         diamond_fragment.initModel();
+        fortune.initModel();
     }
 
 }

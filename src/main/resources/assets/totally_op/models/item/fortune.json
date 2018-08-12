@@ -1,3 +1,6 @@
 {
-    "parent": "totally_op:block/fortune"
+    "parent": "block/cube_all",
+    "textures": {
+        "all": "totally_op:blocks/fortune"
+    }
 }

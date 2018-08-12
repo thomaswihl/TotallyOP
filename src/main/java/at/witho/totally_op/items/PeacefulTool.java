@@ -255,50 +255,5 @@ public class PeacefulTool extends ItemTool {
             if (!entry.getValue().harvestBlock()) iterator.remove();
         }
 	}
-
-/*    @SubscribeEvent
-    @SideOnly(Side.CLIENT)
-    public void renderOutline(RenderWorldLastEvent ev) {
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
-        ItemStack itemstack = player.getHeldItem(EnumHand.MAIN_HAND);
-        if (!(itemstack.getItem() instanceof PeacefulTool)) {
-            itemstack = player.getHeldItem(EnumHand.OFF_HAND);
-            if (!(itemstack.getItem() instanceof PeacefulTool)) return;
-        }
-        BlockPos pos = HightlightBlock.getBlockPos(player);
-        if (pos == null) return;
-
-        HightlightBlock.begin();
-
-        boolean fortune = false;
-        NBTTagList ench = itemstack.getEnchantmentTagList();
-        NBTTagCompound nbt = ench.getCompoundTagAt(0);
-        if (nbt.getShort("id") != 33) fortune = true;
-
-        switch (HightlightBlock.sideHit) {
-            case DOWN:
-                HightlightBlock.mY = true;
-                break;
-            case UP:
-                HightlightBlock.pY = true;
-                break;
-            case NORTH:
-                HightlightBlock.mZ = true;
-                break;
-            case SOUTH:
-                HightlightBlock.pZ = true;
-                break;
-            case WEST:
-                HightlightBlock.mX = true;
-                break;
-            case EAST:
-                HightlightBlock.pX = true;
-                break;
-        }
-        HightlightBlock.color = new Color(128, fortune ? 128 : 255, fortune ? 255 : 128, 32);
-        HightlightBlock.outlineBlock(pos, ev.getPartialTicks());
-
-        HightlightBlock.end();
-    }*/
 }
 

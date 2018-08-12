@@ -327,15 +327,15 @@ public class RoughTool extends ItemTool {
     public void printIEChunk(EntityPlayer player, World world, int x, int z) {
         try {
             Class<?> ExcavatorHandler = Class.forName("blusunrize.immersiveengineering.api.tool.ExcavatorHandler");
-            TotallyOP.logger.log(Level.ERROR, "Found class");
+            //TotallyOP.logger.log(Level.ERROR, "Found class");
             java.lang.reflect.Method getMineralWorldInfo = ExcavatorHandler.getMethod("getMineralWorldInfo", World.class, int.class, int.class);
-            TotallyOP.logger.log(Level.ERROR, "Found method");
+            //TotallyOP.logger.log(Level.ERROR, "Found method");
             Object o = getMineralWorldInfo.invoke(null, world, x >> 4, z >> 4);
-            TotallyOP.logger.log(Level.ERROR, o.toString());
+            //TotallyOP.logger.log(Level.ERROR, o.toString());
             Field fieldMineral = o.getClass().getDeclaredField("mineral");
             Object mineral = fieldMineral.get(o);
             if (mineral == null) return;
-            TotallyOP.logger.log(Level.ERROR, mineral.toString());
+            //TotallyOP.logger.log(Level.ERROR, mineral.toString());
             Field fieldOres = mineral.getClass().getDeclaredField("ores");
             String[] ores = (String[])fieldOres.get(mineral);
             Field fieldChances = mineral.getClass().getDeclaredField("chances");
