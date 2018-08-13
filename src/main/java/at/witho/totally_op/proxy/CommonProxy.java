@@ -91,21 +91,21 @@ public class CommonProxy {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-    	event.getRegistry().register(new ItemBlock(ModBlocks.peaceful_flower).setRegistryName(ModBlocks.peaceful_flower.getRegistryName()));
-        event.getRegistry().register(new ItemBlock(ModBlocks.peaceful_double_flower).setRegistryName(ModBlocks.peaceful_double_flower.getRegistryName()));
-    	event.getRegistry().register(new ItemBlock(ModBlocks.farming_flower).setRegistryName(ModBlocks.farming_flower.getRegistryName()));
-        event.getRegistry().register(new ItemBlock(ModBlocks.sucking_flower).setRegistryName(ModBlocks.sucking_flower.getRegistryName()));
-        event.getRegistry().register(new ItemBlock(ModBlocks.fluid_sucking_flower).setRegistryName(ModBlocks.fluid_sucking_flower.getRegistryName()));
-        event.getRegistry().register(new ItemBlock(ModBlocks.fishing_flower).setRegistryName(ModBlocks.fishing_flower.getRegistryName()));
-        event.getRegistry().register(new ItemBlock(ModBlocks.placing_flower).setRegistryName(ModBlocks.placing_flower.getRegistryName()));
-        event.getRegistry().register(new ItemBlock(ModBlocks.breaking_flower).setRegistryName(ModBlocks.breaking_flower.getRegistryName()));
-        event.getRegistry().register(new ItemBlock(ModBlocks.compressing_flower).setRegistryName(ModBlocks.compressing_flower.getRegistryName()));
-        event.getRegistry().register(new ItemBlock(ModBlocks.splitting_flower).setRegistryName(ModBlocks.splitting_flower.getRegistryName()));
-        event.getRegistry().register(new ItemBlock(ModBlocks.cutting_flower).setRegistryName(ModBlocks.cutting_flower.getRegistryName()));
-        event.getRegistry().register(new TierableItem(ModBlocks.fortune).setRegistryName(ModBlocks.fortune.getRegistryName()));
-        event.getRegistry().register(new ItemBlock(ModBlocks.efficiency).setRegistryName(ModBlocks.efficiency.getRegistryName()));
-        event.getRegistry().register(new ItemBlock(ModBlocks.range).setRegistryName(ModBlocks.range.getRegistryName()));
-        event.getRegistry().register(new ItemBlock(ModBlocks.sun_powder).setRegistryName(ModBlocks.sun_powder.getRegistryName()));
+    	event.getRegistry().register(new ItemBlock(ModBlocks.peaceful_flower).setRegistryName(ModBlocks.peaceful_flower.NAME));
+        event.getRegistry().register(new ItemBlock(ModBlocks.peaceful_double_flower).setRegistryName(ModBlocks.peaceful_double_flower.NAME));
+    	event.getRegistry().register(new ItemBlock(ModBlocks.farming_flower).setRegistryName(ModBlocks.farming_flower.NAME));
+        event.getRegistry().register(new ItemBlock(ModBlocks.sucking_flower).setRegistryName(ModBlocks.sucking_flower.NAME));
+        event.getRegistry().register(new ItemBlock(ModBlocks.fluid_sucking_flower).setRegistryName(ModBlocks.fluid_sucking_flower.NAME));
+        event.getRegistry().register(new ItemBlock(ModBlocks.fishing_flower).setRegistryName(ModBlocks.fishing_flower.NAME));
+        event.getRegistry().register(new ItemBlock(ModBlocks.placing_flower).setRegistryName(ModBlocks.placing_flower.NAME));
+        event.getRegistry().register(new ItemBlock(ModBlocks.breaking_flower).setRegistryName(ModBlocks.breaking_flower.NAME));
+        event.getRegistry().register(new ItemBlock(ModBlocks.compressing_flower).setRegistryName(ModBlocks.compressing_flower.NAME));
+        event.getRegistry().register(new ItemBlock(ModBlocks.splitting_flower).setRegistryName(ModBlocks.splitting_flower.NAME));
+        event.getRegistry().register(new ItemBlock(ModBlocks.cutting_flower).setRegistryName(ModBlocks.cutting_flower.NAME));
+        event.getRegistry().register(new TierableItem(ModBlocks.fortune).setRegistryName(ModBlocks.fortune.NAME));
+        event.getRegistry().register(new ItemBlock(ModBlocks.efficiency).setRegistryName(ModBlocks.efficiency.NAME));
+        event.getRegistry().register(new ItemBlock(ModBlocks.range).setRegistryName(ModBlocks.range.NAME));
+        event.getRegistry().register(new ItemBlock(ModBlocks.sun_powder).setRegistryName(ModBlocks.sun_powder.NAME));
     	event.getRegistry().register(new PeacefulTool(TotallyOP.peacefulWoodMaterial, "peaceful_wood_tool", 2, 1));
     	event.getRegistry().register(new PeacefulTool(TotallyOP.peacefulIronMaterial, "peaceful_iron_tool", 4, 2));
     	event.getRegistry().register(new PeacefulTool(TotallyOP.peacefulDiamondMaterial, "peaceful_diamond_tool", 8, 3));

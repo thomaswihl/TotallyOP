@@ -27,11 +27,12 @@ import org.apache.logging.log4j.Level;
 import java.util.Random;
 
 public class PeacefulFlower extends BlockBush implements IGrowable {
-	
+    public static final String NAME = "peaceful_flower";
+
 	public PeacefulFlower() {
 		super(Material.PLANTS, Material.PLANTS.getMaterialMapColor());
-		setUnlocalizedName(TotallyOP.MODID + ".peaceful_flower");
-		setRegistryName("peaceful_flower");
+		setUnlocalizedName(TotallyOP.MODID + "." + NAME);
+		setRegistryName(NAME);
         //this.setTickRandomly(false);
         this.setSoundType(SoundType.PLANT);
         setHardness(0F);

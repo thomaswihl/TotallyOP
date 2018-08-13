@@ -37,14 +37,15 @@ public class TierableBlock extends Block {
     public static final String RANGE = "range";
     public static final PropertyInteger TIER = PropertyInteger.create("tier", 0, 6);
     private ItemStack upgradeTierBlock = null;
+    public final String NAME;
 
     public TierableBlock(Type type) {
         super(Material.ROCK, Material.ROCK.getMaterialMapColor());
-        String name = getName(type);
+        NAME = getName(type);
         upgradeTierBlock = getUpgradeTierBlock(type);
         this.setDefaultState(blockState.getBaseState().withProperty(TIER, 0));
-        setUnlocalizedName(TotallyOP.MODID + "." + name);
-        setRegistryName(name);
+        setUnlocalizedName(TotallyOP.MODID + "." + NAME);
+        setRegistryName(NAME);
         setTickRandomly(false);
         this.setSoundType(SoundType.STONE);
         setHardness(2.0f);

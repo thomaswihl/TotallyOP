@@ -26,11 +26,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.Random;
 
 public class PeacefulDoubleFlower extends BlockDoublePlant {
+    public static final String NAME = "peaceful_double_flower";
 
 	public PeacefulDoubleFlower() {
 	    super();
-		setUnlocalizedName(TotallyOP.MODID + ".peaceful_double_flower");
-		setRegistryName("peaceful_double_flower");
+		setUnlocalizedName(TotallyOP.MODID + "." + NAME);
+		setRegistryName(NAME);
         this.setTickRandomly(false);
 	}
 	

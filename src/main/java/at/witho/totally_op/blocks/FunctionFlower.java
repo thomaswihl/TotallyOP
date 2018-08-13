@@ -29,10 +29,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public abstract class FunctionFlower extends BlockBush implements ITileEntityProvider {
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
     public static final PropertyBool POWERED = PropertyBool.create("powered");
+    public final String NAME;
 
 
     FunctionFlower(String name) {
 		super(TotallyOP.flowerMaterial, TotallyOP.flowerMaterial.getMaterialMapColor());
+		NAME = name;
 		this.setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(POWERED, false));
 		setUnlocalizedName(TotallyOP.MODID + "." + name);
 		setRegistryName(name);

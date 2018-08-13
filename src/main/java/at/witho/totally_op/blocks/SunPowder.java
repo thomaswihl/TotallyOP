@@ -33,13 +33,13 @@ public class SunPowder extends Block {
     public static final PropertyDirection FACING = PropertyDirection.create("facing", new Predicate<EnumFacing>() {
         public boolean apply(@Nullable EnumFacing facing) { return true; }
     });
-    public static final String name = "sun_powder";
+    public static final String NAME = "sun_powder";
 
 	public SunPowder() {
 		super(Material.GLASS);
         setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-        setUnlocalizedName(TotallyOP.MODID + "." + name);
-        setRegistryName(name);
+        setUnlocalizedName(TotallyOP.MODID + "." + NAME);
+        setRegistryName(NAME);
         setTickRandomly(false);
 		setLightLevel(1.0f);
         setHardness(0F);

@@ -6,9 +6,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 public class SuckingFlower extends FunctionFlower {
+	public static final String NAME = "sucking_flower";
 
 	public SuckingFlower() {
-		super("sucking_flower");
+		super(NAME);
 	}
 
 	@Override
