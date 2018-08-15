@@ -14,18 +14,7 @@
   "result": {
     "item": "totally_op:sprint_leggings",
     "nbt": {
-      "ench": [{"id":0,"lvl":4}],
-      "AttributeModifiers": [
-        {
-          "AttributeName": "generic.movementSpeed",
-          "Name": "generic.movementSpeed",
-          "Amount": 0.1,
-          "Slot": "legs",
-          "Operation": 0,
-          "UUIDLeast": 384071,
-          "UUIDMost": 23359
-        }
-      ]
+      "ench": [{"id":0,"lvl":4}]
     }
   }
 }

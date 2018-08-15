@@ -103,8 +103,8 @@ public class CommonProxy {
         event.getRegistry().register(new ItemBlock(ModBlocks.splitting_flower).setRegistryName(ModBlocks.splitting_flower.NAME));
         event.getRegistry().register(new ItemBlock(ModBlocks.cutting_flower).setRegistryName(ModBlocks.cutting_flower.NAME));
         event.getRegistry().register(new TierableItem(ModBlocks.fortune).setRegistryName(ModBlocks.fortune.NAME));
-        event.getRegistry().register(new ItemBlock(ModBlocks.efficiency).setRegistryName(ModBlocks.efficiency.NAME));
-        event.getRegistry().register(new ItemBlock(ModBlocks.range).setRegistryName(ModBlocks.range.NAME));
+        event.getRegistry().register(new TierableItem(ModBlocks.efficiency).setRegistryName(ModBlocks.efficiency.NAME));
+        event.getRegistry().register(new TierableItem(ModBlocks.range).setRegistryName(ModBlocks.range.NAME));
         event.getRegistry().register(new ItemBlock(ModBlocks.sun_powder).setRegistryName(ModBlocks.sun_powder.NAME));
     	event.getRegistry().register(new PeacefulTool(TotallyOP.peacefulWoodMaterial, "peaceful_wood_tool", 2, 1));
     	event.getRegistry().register(new PeacefulTool(TotallyOP.peacefulIronMaterial, "peaceful_iron_tool", 4, 2));
