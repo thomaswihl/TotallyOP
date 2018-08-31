@@ -1,0 +1,10 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "totally_op:thin_as_air"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}]
+  }
+}

@@ -25,6 +25,8 @@ public class ModBlocks {
     public static final TierableBlock efficiency = null;
     public static final TierableBlock range = null;
     public static final SunPowder sun_powder = null;
+    public static final ThinAsAir thin_as_air = null;
+    public static final WitherMesh wither_mesh = null;
     //public static final SteadyVine steady_vine = null;
 
     @SideOnly(Side.CLIENT)
@@ -44,6 +46,8 @@ public class ModBlocks {
         efficiency.initModel();
         range.initModel();
         sun_powder.initModel();
+        thin_as_air.initModel();
+        wither_mesh.initModel();
         //steady_vine.initModel();
     }
 

@@ -1,0 +1,10 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "totally_op:wither_mesh"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}]
+  }
+}

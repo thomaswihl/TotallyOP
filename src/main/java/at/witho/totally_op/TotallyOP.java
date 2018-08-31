@@ -57,7 +57,5 @@ public class TotallyOP
     public void postInit(FMLPostInitializationEvent e) {
         proxy.postInit(e);
         CraftingUtils.init();
-        UUID sprint = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
-        logger.log(Level.ERROR, "Leaset = " + sprint.getLeastSignificantBits() + ", Most = " + sprint.getMostSignificantBits());
     }
 }

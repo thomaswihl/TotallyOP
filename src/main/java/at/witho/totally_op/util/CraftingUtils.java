@@ -1,11 +1,15 @@
 package at.witho.totally_op.util;
 
+import at.witho.totally_op.ModBlocks;
+import at.witho.totally_op.ModItems;
 import at.witho.totally_op.TotallyOP;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
@@ -16,6 +20,7 @@ import java.util.*;
 public class CraftingUtils {
     private static HashMap<ItemStack, ItemStack> toBlock9 = new HashMap<ItemStack, ItemStack>();
     private static HashMap<ItemStack, ItemStack> toBlock4 = new HashMap<ItemStack, ItemStack>();
+    private static ArrayList<ItemStack> ignoreBlock = new ArrayList<>();
 
     public static void init() {
         for (IRecipe irecipe : CraftingManager.REGISTRY)
@@ -43,10 +48,22 @@ public class CraftingUtils {
                     ItemStack output = irecipe.getRecipeOutput();
                     //TotallyOP.logger.log(Level.INFO, "Found BLOCK recipie: " + count + "x" + input + " -> " + output);
                     if (count == 9) toBlock9.put(input, output);
-                    else if (count == 4) toBlock4.put(input, output);
+                    else if (count == 4) {
+                        if (ignoreBlock.contains(output)) {
+                            TotallyOP.logger.log(Level.INFO, "Ignoring " + input + " to " + output + " recipe.");
+                        }
+                        else if (toBlock4.containsValue(output)) {
+                            TotallyOP.logger.log(Level.WARN, "Adding " + input + " to " + output + " recipe to ignore list.");
+                            ignoreBlock.add(output);
+                        }
+                        else toBlock4.put(input, output);
+                    }
                 }
             }
         }
+        toBlock4.put(new ItemStack(Item.getItemFromBlock(ModBlocks.peaceful_flower), 4), new ItemStack(Item.getItemFromBlock(ModBlocks.peaceful_double_flower)));
+        FurnaceRecipes.instance().addSmeltingRecipeForBlock(ModBlocks.wither_mesh, new ItemStack(Items.NETHER_STAR), 1.0f);
+
     }
 
     private static ItemStack reduce(ItemStack input, ItemStack output, int factor) {

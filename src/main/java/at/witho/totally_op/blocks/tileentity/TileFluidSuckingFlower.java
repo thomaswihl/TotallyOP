@@ -1,5 +1,6 @@
 package at.witho.totally_op.blocks.tileentity;
 
+import at.witho.totally_op.ModBlocks;
 import at.witho.totally_op.config.Config;
 import at.witho.totally_op.util.VeinMiner;
 import net.minecraft.block.*;
@@ -67,7 +68,7 @@ public class TileFluidSuckingFlower extends TileFunctionFlower {
                 fluidStack = new FluidStack(fluid, Fluid.BUCKET_VOLUME);
                 veinMiner = new VeinMiner(this.getWorld(), null, block, 0);
                 veinMiner.addToBreak(currentPos);
-                if (fluid == FluidRegistry.WATER) veinMiner.setReplaceWith(Blocks.DIRT);
+                veinMiner.setReplaceWith(ModBlocks.thin_as_air);
             }
         }
         nextBlock();
