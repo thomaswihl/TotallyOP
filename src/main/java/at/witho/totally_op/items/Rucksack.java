@@ -72,7 +72,7 @@ public class Rucksack extends Item {
 
     boolean matches(ItemStack stack, NonNullList<ItemStack> list, boolean whitelist) {
         for (ItemStack item : list) {
-            if (item.isItemEqual(stack)) return whitelist;
+            if (item.isItemEqual(stack) && ItemStack.areItemStackTagsEqual(item, stack)) return whitelist;
         }
         return !whitelist;
     }

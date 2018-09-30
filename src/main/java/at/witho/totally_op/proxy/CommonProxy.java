@@ -116,7 +116,6 @@ public class CommonProxy {
         event.getRegistry().register(new RoughTool());
     	event.getRegistry().register(new Alphorn());
         event.getRegistry().register(new Coin());
-        event.getRegistry().register(new Euro());
         event.getRegistry().register(new RubberBoots());
         event.getRegistry().register(new ScubaHelmet());
         event.getRegistry().register(new SprintLeggings());

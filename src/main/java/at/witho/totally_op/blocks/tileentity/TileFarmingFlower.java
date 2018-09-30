@@ -6,10 +6,14 @@ import at.witho.totally_op.config.Config;
 import at.witho.totally_op.util.PrintClassHierarchy;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.block.*;
+import net.minecraft.block.state.BlockStateBase;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.util.NonNullList;
@@ -23,7 +27,7 @@ import java.util.Random;
 
 
 public class TileFarmingFlower extends TileFunctionFlower {
-    public static final int[] DEFAULT_GROW_PROBABILITY_CONFIG = {0, 2, 4, 8, 16, 32, 64 };
+    public static final int[] DEFAULT_GROW_PROBABILITY_CONFIG = {100, 100, 100, 100, 100, 100, 100 };
     protected int[] growProbabilityConfig = DEFAULT_GROW_PROBABILITY_CONFIG;
     private int growProbability = 0;
 
@@ -52,6 +56,10 @@ public class TileFarmingFlower extends TileFunctionFlower {
             // block.getDrops(drops, world, info.harvestPos, state, 0);
             // so use the old way:
             List<ItemStack> list = block.getDrops(world, currentPos, state, 0);
+            if (block instanceof BlockMelon) {
+                list.clear();
+                list.add(new ItemStack(Blocks.MELON_BLOCK));
+            }
             if (list != null) {
                 drops.addAll(list);
                 world.setBlockToAir(info.harvestPos);
@@ -80,6 +88,10 @@ public class TileFarmingFlower extends TileFunctionFlower {
                     if (item instanceof IPlantable) {
                         IPlantable seed = (IPlantable) item;
                         world.setBlockState(currentPos, seed.getPlant(world, currentPos), 3);
+                    } else if (item instanceof ItemDye) {
+                        world.setBlockState(currentPos, info.state.withProperty(BlockCocoa.AGE, 0), 3);
+                    } else if (item == Items.NETHER_WART) {
+                        world.setBlockState(currentPos, Blocks.NETHER_WART.getDefaultState(), 3);
                     } else {
                         Block b = Block.getBlockFromItem(item);
                         if (b instanceof BlockBush) {
@@ -100,9 +112,9 @@ public class TileFarmingFlower extends TileFunctionFlower {
                     IGrowable crop = (IGrowable) block;
                     crop.grow(world, world.rand, currentPos, state);
                 } else if (block == Blocks.NETHER_WART) {
-                    int i = state.getValue(BlockNetherWart.AGE).intValue();
-                    if (i < 3) {
-                        IBlockState newState = state.withProperty(BlockNetherWart.AGE, Integer.valueOf(i + 1));
+                    int age = state.getValue(BlockNetherWart.AGE).intValue();
+                    if (age < 3) {
+                        IBlockState newState = state.withProperty(BlockNetherWart.AGE, Integer.valueOf(age + 1));
                         world.setBlockState(currentPos, newState, 2);
                     }
                 }
@@ -116,6 +128,7 @@ public class TileFarmingFlower extends TileFunctionFlower {
         public ItemStack seed = null;
         public BlockPos harvestPos = null;
         public boolean ignoreFortune = false;
+        public IBlockState state = null;
     }
 
 	protected HarvestInfo canHarvest(IBlockState state) {
@@ -130,6 +143,14 @@ public class TileFarmingFlower extends TileFunctionFlower {
             }
         } else if (block instanceof BlockMelon || block instanceof BlockPumpkin) {
             return new HarvestInfo();
+        } else if (block.equals(Blocks.NETHER_WART)) {
+            //BlockNetherWart nw = (BlockNetherWart)block;
+            int age = state.getValue(BlockNetherWart.AGE).intValue();
+            if (age >= 3) {
+                HarvestInfo info = new HarvestInfo();
+                info.seed = new ItemStack(Items.NETHER_WART);
+                return info;
+            }
         } else if (block instanceof IGrowable) {
             // cocoa beans
             IGrowable growable = (IGrowable)block;
@@ -138,6 +159,8 @@ public class TileFarmingFlower extends TileFunctionFlower {
             if (block instanceof BlockStem) return null;
             HarvestInfo info = new HarvestInfo();
             info.seed = new ItemStack(block.getItemDropped(state, world.rand, 0));
+            if (info.seed.isEmpty()) info.seed = block.getItem(world, pos, state);
+            info.state = state;
             return info;
         } else if (block instanceof IPlantable) {
             // cactus and sugar cane
@@ -150,18 +173,9 @@ public class TileFarmingFlower extends TileFunctionFlower {
             if (size > 1) {
                 HarvestInfo info = new HarvestInfo();
                 info.harvestPos = pos.down();
-                info.ignoreFortune = true;
-                return info;
-            }
-        } else if (block.equals(Blocks.NETHER_WART)) {
-            BlockNetherWart nw = (BlockNetherWart)block;
-            if (state.getValue(BlockNetherWart.AGE).intValue() >= 3) {
-                HarvestInfo info = new HarvestInfo();
-                info.seed = new ItemStack(block.getItemDropped(state, world.rand, 0));
                 return info;
             }
         }
-
         return null;
     }
 }

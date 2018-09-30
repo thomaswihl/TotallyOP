@@ -14,7 +14,6 @@ public class ModItems {
     public static final RoughTool rough_tool = null;
     public static final Alphorn alphorn = null;
     public static final Coin coin = null;
-    public static final Euro euro = null;
     public static final RubberBoots rubber_boots = null;
     public static final ScubaHelmet scuba_helmet = null;
     public static final SprintLeggings sprint_leggings = null;
@@ -32,7 +31,6 @@ public class ModItems {
         rough_tool.initModel();
 		alphorn.initModel();
         coin.initModel();
-        euro.initModel();
         rubber_boots.initModel();
         scuba_helmet.initModel();
         sprint_leggings.initModel();
