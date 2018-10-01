@@ -49,7 +49,44 @@ public class RucksackStorage extends InventoryBasic implements IInventoryChanged
 
     @Override
     public ItemStack addItem(ItemStack stack) {
-        return super.addItem(stack);
+        ItemStack itemstack = stack.copy();
+
+        for (int i = 0; i < INVENTORY_SIZE; ++i)
+        {
+            ItemStack itemstack1 = this.getStackInSlot(i);
+
+            if (itemstack1.isEmpty())
+            {
+                this.setInventorySlotContents(i, itemstack);
+                this.markDirty();
+                return ItemStack.EMPTY;
+            }
+
+            if (ItemStack.areItemsEqual(itemstack1, itemstack) && ItemStack.areItemStackTagsEqual(itemstack1, itemstack))
+            {
+                int j = Math.min(this.getInventoryStackLimit(), itemstack1.getMaxStackSize());
+                int k = Math.min(itemstack.getCount(), j - itemstack1.getCount());
+
+                if (k > 0)
+                {
+                    itemstack1.grow(k);
+                    itemstack.shrink(k);
+
+                    if (itemstack.isEmpty())
+                    {
+                        this.markDirty();
+                        return ItemStack.EMPTY;
+                    }
+                }
+            }
+        }
+
+        if (itemstack.getCount() != stack.getCount())
+        {
+            this.markDirty();
+        }
+
+        return itemstack;
     }
 
     /**
